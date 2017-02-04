@@ -1,0 +1,51 @@
+body {
+	font-family: \5FAE\8F6F\96C5\9ED1;
+}
+
+.text-left {
+	text-align: left;
+}
+
+.text-right {
+	text-align: right;
+}
+
+.content2 {
+	min-width: 400px;
+	position: relative;
+	min-height: 1200px;
+	background: #fff;
+	border-left: 3px solid #999999;
+}
+
+#architect {
+	border: 1px solid #41C7DB;
+	margin: 0px 10px 10px 0px;
+	width: 190px;
+	float: left;
+	height: 700px;
+	overflow-y: scroll;
+	overflow-x: scroll;
+}
+
+#treeName {
+	background: rgba(0, 0, 0, 0)
+		-moz-linear-gradient(center bottom, #e6e6e6 0%, #ffffff 100%) repeat
+		scroll 0 0;
+}
+
+.table th, .table td {
+	text-align: center;
+}
+
+
+#delPostPro, #delOrganizationPro, #delOrganization,#delPostRel {
+	display: none;
+	border: 1px solid #41C7DB;
+	height: 213px;
+	width: 505px;
+	position: absolute;
+	left: 600px;
+	top: 200px;
+	background-color: White
+}

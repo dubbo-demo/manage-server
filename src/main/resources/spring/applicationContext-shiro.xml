@@ -1,0 +1,118 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans.xsd">
+    <description>Shiro Configuration</description>
+    <!-- 针对shiroREDIS的基础操作类，并统一配置相关参数-->
+    <bean id="shiroRedis" class="com.myph.manage.common.shiro.session.ShiroRedis">
+        <property name="expire" value="${shiro.session.expire}"/>
+        <property name="redisTemplate" ref="objRedisTemplate"/>
+        <property name="sessionRediskeyPrefix" value="${shiro.session.redis.keyPrefix}"/>
+        <property name="cacheRediskeyPrefix" value="${shiro.cache.redis.keyPrefix}"/>
+    </bean>
+
+    <!-- 使用redis存储session信息， -->
+    <bean id="redisShiroSessionDao" class="com.myph.manage.common.shiro.session.ShiroRedisSessionDao">
+        <property name="shiroRedis" ref="shiroRedis"/>
+    </bean>
+
+    <!-- 用户授权/认证信息Cache, 采用Redis 缓存 -->
+    <bean id="redisCacheManager" class="com.myph.manage.common.shiro.session.ShiroRedisCacheManager">
+        <property name="shiroRedis" ref="shiroRedis"/>
+    </bean>
+
+    <!-- 自定义会话管理配置  sessionIdCookie的实现,用于重写覆盖容器默认的JSESSIONID -->
+    <bean id="shareSession" class="org.apache.shiro.web.servlet.SimpleCookie">
+        <!-- 重新定义会话的cookie name -->
+        <constructor-arg value="sid"/>
+        <!-- jsessionId的path为 / 用于多个系统共享jsessionId -->
+        <property name="path" value="/"/>
+        <property name="HttpOnly" value="true"/>
+    </bean>
+
+    <!-- session存储管理期 -->
+    <bean id="sessionManager"
+          class="org.apache.shiro.web.session.mgt.DefaultWebSessionManager">
+        <!-- session存储的实现 -->
+        <property name="sessionDAO" ref="redisShiroSessionDao"/>
+        <!-- sessionIdCookie的实现,用于重写覆盖容器默认的JSESSIONID -->
+        <property name="sessionIdCookie" ref="shareSession"/>
+        <!-- 会话超时时间，单位：毫秒 -->
+        <property name="globalSessionTimeout" value="${shiro.session.expire}"/>
+        <!-- 定时清理失效会话, 清理用户直接关闭浏览器造成的孤立会话 -->
+        <property name="sessionValidationInterval" value="${shiro.sessionValidationInterval}"/>
+        <property name="sessionValidationSchedulerEnabled" value="${shiro.sessionValidationSchedulerEnabled}"/>
+    </bean>
+
+    <!--自定义realm配置，realm是shiro的桥梁，它主要是用来判断subject是否可以登录及权限等 -->
+    <bean id="maiyaRealm" class="com.myph.manage.common.shiro.MaiyaphRealm">
+        <property name="cachingEnabled" value="true"/>
+        <property name="authenticationCachingEnabled" value="false"/>
+        <property name="authenticationCacheName" value="authenticationCache"/>
+        <property name="authorizationCachingEnabled" value="true"/>
+        <property name="authorizationCacheName" value="authorizationCache"/>
+    </bean>
+
+    <!--securityManager是shiro的核心，初始化时协调各个模块运行 -->
+    <bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
+        <!--单个realm使用realm,如果有多个realm，使用realms属性代替 -->
+        <property name="realm" ref="maiyaRealm"/>
+        <property name="cacheManager" ref="redisCacheManager"/>
+        <property name="sessionManager" ref="sessionManager"/>
+    </bean>
+
+    <!-- 基于Form表单的身份验证过滤器 -->
+    <bean id="formAuthenticationFilter" class="com.myph.manage.common.shiro.FormAuthentication">
+        <property name="usernameParam" value="phone"/>
+        <property name="passwordParam" value="smsCode"/>
+        <property name="failureKeyAttribute" value="shiroLoginFailure"/>
+        <property name="loginUrl" value="/login.htm"/>
+    </bean>
+    <!-- 并发登录控制 -->
+    <bean id="concurrentLoginControlFilter"
+          class="com.myph.manage.common.shiro.ConcurrentLoginControlFilter">
+        <property name="cacheManager" ref="redisCacheManager"/>
+        <property name="sessionManager" ref="sessionManager"/>
+        <!-- 默认剔除前者 -->
+        <property name="kickoutAfter" value="false"/>
+        <!-- 允许并发登录的数量 -->
+        <property name="maxSession" value="1"/>
+        <!-- 地址 -->
+        <property name="kickoutUrl" value="/login.htm"/>
+    </bean>
+
+    <!--shiro过滤器配置，bean的id值须与web中的filter-name的值相同-->
+    <bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
+        <property name="securityManager" ref="securityManager"/>
+        <property name="loginUrl" value="/login.htm"/>
+        <property name="successUrl" value="/index.htm"/>  <!-- 登陆成功之后跳转的页面 -->
+        <property name="unauthorizedUrl" value="/unauthorized.htm"/>
+        <property name="filters">
+            <map>
+                <entry key="authc" value-ref="formAuthenticationFilter"/>
+                <entry key="concurrentlogin" value-ref="concurrentLoginControlFilter"/>
+            </map>
+        </property>
+        <property name="filterChainDefinitions">
+            <value>
+                /css/** = anon
+                /js/** = anon
+                /images/** = anon
+                /commom/** = anon
+                /unauthorized.htm = anon
+                /login.htm=anon
+                /sendLoginSmsCode.htm=anon
+                /dologin.htm=anon
+                /**/*.htm=authc,concurrentlogin
+            </value>
+        </property>
+    </bean>
+
+    <!-- 保证实现了Shiro内部lifecycle函数的bean执行 -->
+    <bean id="lifecycleBeanPostProcessor" class="org.apache.shiro.spring.LifecycleBeanPostProcessor"/>
+    <!-- 相当于调用SecurityUtils.setSecurityManager(securityManager) -->
+    <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+        <property name="staticMethod" value="org.apache.shiro.SecurityUtils.setSecurityManager"/>
+        <property name="arguments" ref="securityManager"/>
+    </bean>
+</beans>
