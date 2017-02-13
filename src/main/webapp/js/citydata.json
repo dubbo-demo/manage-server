@@ -5335,6 +5335,8 @@
 {"name":"蓝田县","code":"10210110","cityId":"102101","provinceCode":"1021","provinceName":"陕西","cityCode":"102101","cityName":"西安"},
 {"name":"周至县","code":"10210111","cityId":"102101","provinceCode":"1021","provinceName":"陕西","cityCode":"102101","cityName":"西安"},
 {"name":"户县","code":"10210112","cityId":"102101","provinceCode":"1021","provinceName":"陕西","cityCode":"102101","cityName":"西安"},
+{"name":"长安区","code":"10210113","cityId":"102101","provinceCode":"1021","provinceName":"陕西","cityCode":"102101","cityName":"西安"},
+{"name":"高陵区","code":"10210114","cityId":"102101","provinceCode":"1021","provinceName":"陕西","cityCode":"102101","cityName":"西安"},
 {"name":"城区","code":"10210201","cityId":"102102","provinceCode":"1021","provinceName":"陕西","cityCode":"102102","cityName":"铜川"},
 {"name":"郊区","code":"10210202","cityId":"102102","provinceCode":"1021","provinceName":"陕西","cityCode":"102102","cityName":"铜川"},
 {"name":"宜君县","code":"10210204","cityId":"102102","provinceCode":"1021","provinceName":"陕西","cityCode":"102102","cityName":"铜川"},
