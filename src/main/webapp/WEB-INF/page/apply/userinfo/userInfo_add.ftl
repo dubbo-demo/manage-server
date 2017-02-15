@@ -104,7 +104,7 @@
 								<div class="control-group span6 ">
 									<label class="control-label">户籍地址<span class="required">*</span></label>
 									<div class="controls">
-										<input type="text" name="censusAddr" id="censusAddr" value="请选择" readonly class="m-wrap large" maxlength="200"/>
+										<input type="text" name="censusAddr" id="censusAddr" placeholder = "请选择" readonly class="m-wrap large" maxlength="200"/>
 										<input type="hidden" name="censusProvcode" id="censusProvcode" class="m-wrap large" value="0" />
 										<input type="hidden" name="censusCitycode" id="censusCitycode" class="m-wrap large" value="0" />
 										<input type="hidden" name="censusTowncode" id="censusTowncode" class="m-wrap large" value="0" />
@@ -113,7 +113,7 @@
 								<div class="control-group span6 ">
 									<label class="control-label">现住址<span class="required">*</span></label>
 									<div class="controls">
-										<input type="text" name="liveAddr" id="liveAddr" value="请选择" readonly class="m-wrap large" maxlength="200"/>
+										<input type="text" name="liveAddr" id="liveAddr" placeholder = "请选择" readonly class="m-wrap large" maxlength="200"/>
 										<input type="hidden" name="liveProvcode" id="liveProvcode" class="m-wrap large" value="0" />
 										<input type="hidden" name="liveCitycode" id="liveCitycode" class="m-wrap large" value="0" />
 										<input type="hidden" name="liveTowncode" id="liveTowncode" class="m-wrap large" value="0" />

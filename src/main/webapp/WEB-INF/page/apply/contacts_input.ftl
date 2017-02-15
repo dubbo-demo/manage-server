@@ -48,7 +48,7 @@
 		<tr>
 			<td>
 				<span class="control-label span4">家庭住址&nbsp;<span class="required">*</span></span>
-				<input type="text" class="span6 m-wrap" id = "contactHomeAddress" name="linkManHomeName" value="${(familyMap.linkManHomeName)!'请选择'}" readonly />
+				<input type="text" class="span6 m-wrap" id = "contactHomeAddress" name="linkManHomeName" placeholder = "请选择" value="${(familyMap.linkManHomeName)!''}" readonly />
 			</td>
 			
 			<td>
@@ -63,7 +63,7 @@
 			</td>
 			<td>
 				<span class="control-label span4">单位地址</span>
-				<input type="text" class="span6 m-wrap"  id = "linkManCompanyAddress" name="linkManCompanyAddress" value = "${(familyMap.linkManCompanyAddress)!'请选择'}" readonly />
+				<input type="text" class="span6 m-wrap"  id = "linkManCompanyAddress" name="linkManCompanyAddress" placeholder = "请选择" value = "${(familyMap.linkManCompanyAddress)!''}" readonly />
 			</td>
 			<td>
 				<span class="control-label span4">详细地址</span>
@@ -98,7 +98,7 @@
 		<tr>
 			<td>
 				<span class="control-label span4">家庭住址</span>
-				<input type="text" class="span6 m-wrap"  id = "contactHomeAddress2" name="linkManHomeName" value = "${(otherMap.linkManHomeName)!'请选择'}" readonly />
+				<input type="text" class="span6 m-wrap"  id = "contactHomeAddress2" name="linkManHomeName" placeholder = "请选择" value = "${(otherMap.linkManHomeName)!''}" readonly />
 			</td>
 			<td>
 				<span class="control-label span4">详细地址</span>
@@ -112,7 +112,7 @@
 			</td>
 			<td>
 				<span class="control-label span4">单位地址</span>
-				<input type="text" class="span6 m-wrap"  id = "linkManCompanyAddress2" name="linkManCompanyAddress"  value = "${(otherMap.linkManCompanyAddress)!'请选择'}" readonly />
+				<input type="text" class="span6 m-wrap"  id = "linkManCompanyAddress2" name="linkManCompanyAddress" placeholder = "请选择"  value = "${(otherMap.linkManCompanyAddress)!''}" readonly />
 			</td>
 			<td>
 				<span class="control-label span4">详细地址</span>
@@ -147,7 +147,7 @@
 		<tr>
 			<td>
 				<span class="control-label span4">家庭住址</span>
-				<input type="text" class="span6 m-wrap"  id = "contactHomeAddress3" name="linkManHomeName" value="${(workMap.linkManHomeName)!'请选择'}" readonly />
+				<input type="text" class="span6 m-wrap"  id = "contactHomeAddress3" name="linkManHomeName" placeholder = "请选择" value="${(workMap.linkManHomeName)!''}" readonly />
 			</td>
 			<td>
 				<span class="control-label span4">详细地址</span>
@@ -161,7 +161,7 @@
 			</td>
 			<td>
 				<span class="control-label span4">单位地址</span>
-				<input type="text" class="span6 m-wrap"  id = "linkManCompanyAddress3" name="linkManCompanyAddress" value="${(workMap.linkManCompanyAddress)!'请选择'}" readonly />
+				<input type="text" class="span6 m-wrap"  id = "linkManCompanyAddress3" name="linkManCompanyAddress" placeholder = "请选择" value="${(workMap.linkManCompanyAddress)!''}" readonly />
 			</td>
 			<td>
 				<span class="control-label span4">详细地址</span>
@@ -197,7 +197,7 @@
 		<tr>
 			<td>
 				<span class="control-label span4">家庭住址</span>
-				<input type="text" class="span6 m-wrap"  id = "contactHomeAddress4" name="linkManHomeName" value="${(friendMap.linkManHomeName)!'请选择'}" readonly />
+				<input type="text" class="span6 m-wrap"  id = "contactHomeAddress4" name="linkManHomeName" placeholder = "请选择" value="${(friendMap.linkManHomeName)!''}" readonly />
 			</td>
 			<td>
 				<span class="control-label span4">详细地址</span>
@@ -211,7 +211,7 @@
 			</td>
 			<td>
 				<span class="control-label span4">单位地址</span>
-				<input type="text" class="span6 m-wrap"  id = "linkManCompanyAddress4" name="linkManCompanyAddress" value="${(friendMap.linkManCompanyAddress)!'请选择'}" readonly />
+				<input type="text" class="span6 m-wrap"  id = "linkManCompanyAddress4" name="linkManCompanyAddress" placeholder = "请选择" value="${(friendMap.linkManCompanyAddress)!''}" readonly />
 			</td>
 			<td>
 				<span class="control-label span4">详细地址</span>

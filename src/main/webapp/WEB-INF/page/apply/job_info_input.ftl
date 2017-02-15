@@ -84,7 +84,7 @@
 					<label class="control-label">单位地址<span class="required">*</span></label>
 			
 					<div class="controls">
-						<input type="text" class = "span9 m-wrap js_input" id = "companyAddress" name="companyAddress" value="${(jobInfo.companyAddress)!'请选择'}" readonly />					
+						<input type="text" class = "span9 m-wrap js_input" id = "companyAddress" name="companyAddress" placeholder = "请选择" value="${(jobInfo.companyAddress)!''}" readonly />					
 					</div>
 					
 			    <#else>
@@ -92,7 +92,7 @@
 			    	<label class="control-label">单位地址</label>
 			
 					<div class="controls">																			      				
-						<input type="text" class = "span9 m-wrap" id = "companyAddress" name="companyAddress" value="${(jobInfo.companyAddress)!'请选择'}" readonly />						
+						<input type="text" class = "span9 m-wrap" id = "companyAddress" name="companyAddress" placeholder = "请选择" value="${(jobInfo.companyAddress)!''}" readonly />						
 					</div>
 			    		
 			    </#if>

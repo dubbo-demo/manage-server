@@ -196,7 +196,7 @@
 								<div class="control-group span4 ">
 									<label class="control-label">开户城市</label>
 									<div class="controls">
-										<input type="text" class="span9 m-wrap js_input" id = "bankCityID" name="bankCity" value="${(jkContractDto.bankCity)!'请选择'}" readonly />
+										<input type="text" class="span9 m-wrap js_input" id = "bankCityID" name="bankCity" placeholder = "请选择" value="${(jkContractDto.bankCity)!''}" readonly />
 									</div>
 								</div>
 							</div>
