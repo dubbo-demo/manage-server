@@ -341,7 +341,6 @@ function checkPhone(formID,elementID) {
 }
 
 function contactsSaveInfo(nextFlag,formID,next) {
-	debugger;
 	if(next != undefined) { // 下一步
 		$('.' + formID + ' input[name=state]').val(next);
 	}
