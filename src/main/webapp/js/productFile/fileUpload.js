@@ -48,7 +48,7 @@ $(function() {
 							if(arr.length > 1){
 								postfix = arr[1].toLowerCase();
 							}
-							if ((postfix == 'jpg' || postfix == 'jpeg'
+							if ((postfix == 'jpg' || postfix == 'jpeg' || postfix == 'tif'|| postfix == 'tiff'
 									|| postfix == 'bmp' || postfix == 'png')
 									&& arr[0] != 'fileImg'
 									&& src.indexOf("fileImg") >= 0) {

@@ -20,7 +20,7 @@
 		<div>
 			<div class="portlet-body form">
 				<form id="searchForm" class="form-horizontal" method="post">
-					<@p.pageForm value=page!  type="sort"/>
+					<@p.pageForm value=page />
 					<input type="hidden" id="progress" name="progress" value="${progress!''}" />
 					<div class="row-fluid">
                         <div class="control-group span4 ">
@@ -115,6 +115,8 @@
                             <@p.sort field="t.signTime" sortField="${(page.sortField)!}" sortOrder="${(page.sortOrder)!}" name="签约日期" ></@p.sort>
 							<#if progress=='done'>
 							    <th>审核人</th>
+							    <th>审批结果</th>
+							    <th>审批日期</th>
 							</#if>
 							<th>状态</th>
 							<th>操作</th>
@@ -139,6 +141,14 @@
                                 <td><#if item.signTime??>${item.signTime?datetime}</#if></td>
 								<#if progress == 'done'>
 								    <td>${item.auditor!""}</td>
+								    <td>
+                                        <#if (item.result)?? && item.result==1>
+                                                                                                                        通过
+                                        <#elseif (item.result)?? && item.result==2>
+                                                                                                                         回退
+                                        </#if>
+                                    </td>
+								    <td><#if item.complianceTime??>${item.complianceTime?datetime}</#if></td>
 								</#if>
                                 <td>${item.stateName!""}</td>
                                 <#if progress == 'done'>
@@ -151,7 +161,7 @@
 						</#if>
 					</tbody>
 				</table>
-				<@p.pagination value=page! />
+				<@p.pagination value=page />
 			</div>
 		</div>
 	</div>

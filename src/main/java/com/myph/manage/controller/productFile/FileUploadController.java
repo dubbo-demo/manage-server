@@ -26,6 +26,9 @@ import com.myph.position.service.PositionService;
 import com.myph.product.dto.ProductFiletypeDto;
 import com.myph.product.service.ProductFileTypeService;
 import com.myph.product.service.ProductService;
+import com.myph.reception.dto.ApplyReceptionDto;
+import com.myph.reception.service.ApplyReceptionService;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
@@ -74,6 +77,9 @@ public class FileUploadController {
 
     @Autowired
     private PositionService positionService;
+    
+    @Autowired
+    private ApplyReceptionService applyReceptionService;
 
     @RequestMapping("/fileUpload")
     public String fileUpload(Model model, FileUploadDto fileUploadDto) {
@@ -89,9 +95,12 @@ public class FileUploadController {
                 fileUploadDto.setStateName(ApplyUtils.getFullStateDesc(state, subState));
             }
             // 2、补充产品名称
+            // 查询申请表信息,由于产品类型变更会对附件产生影响，这里取最初的产品类型。
+            ServiceResult<ApplyReceptionDto> applyReceptionResult = applyReceptionService
+                    .queryInfoByApplyLoanNo(fileUploadDto.getApplyLoanNo());
             ServiceResult<String> productNameResult = productService
-                    .getProductNameById(result.getData().getProductType());
-            fileUploadDto.setProductTypeId(result.getData().getProductType());
+                    .getProductNameById(applyReceptionResult.getData().getProdType());
+            fileUploadDto.setProductTypeId(applyReceptionResult.getData().getProdType());
             fileUploadDto.setProductName(productNameResult.getData());
             // 3、补充客户姓名
             fileUploadDto.setMemberName(result.getData().getMemberName());
@@ -262,6 +271,7 @@ public class FileUploadController {
                 ServiceResult<ProductFiletypeDto> productFiletypeDtoResult = productFileTypeService
                         .selectByPrimaryKey(uploadType);
                 record.setUploadType(productFiletypeDtoResult.getData().getDirectoryName());
+                record.setUploadId(productFiletypeDtoResult.getData().getId());
                 fileInfoService.insertSelective(record);
                 String operatorName = ShiroUtils.getCurrentUserName();
                 Long operatorId = ShiroUtils.getCurrentUserId();
@@ -330,15 +340,15 @@ public class FileUploadController {
                 return AjaxResult.success(true);
             }
             // 查询指定上传阶段的文件目录
-            ServiceResult<List<String>> uploadTypeListResult = fileInfoService
+            ServiceResult<List<Long>> uploadTypeListResult = fileInfoService
                     .selectFileInfo(fileUploadDto.getApplyLoanNo(), fileUpState);
-            List<String> uploadTypeList = uploadTypeListResult.getData();
+            List<Long> uploadTypeList = uploadTypeListResult.getData();
             // 有必传目录且未查到文件直接返回校验不通过
             if (uploadTypeList.isEmpty()) {
                 return AjaxResult.success(false);
             }
             for (int i = 0; i < productFiletypeDtoList.size(); i++) {
-                if (!uploadTypeList.contains(productFiletypeDtoList.get(i).getDirectoryName())) {
+                if (!uploadTypeList.contains(productFiletypeDtoList.get(i).getId())) {
                     return AjaxResult.success(false);
                 }
             }

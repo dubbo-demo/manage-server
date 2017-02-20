@@ -18,6 +18,7 @@ import com.myph.apply.dto.ApplyInfoDto;
 import com.myph.apply.dto.ComplianceDto;
 import com.myph.apply.service.ApplyInfoService;
 import com.myph.apply.service.ComplianceService;
+import com.myph.common.constant.Constants;
 import com.myph.common.log.MyphLogger;
 import com.myph.common.result.AjaxResult;
 import com.myph.common.result.ServiceResult;
@@ -36,6 +37,7 @@ import com.myph.constant.bis.SignBisStateEnum;
 import com.myph.flow.dto.ContinueActionDto;
 import com.myph.flow.dto.FallbackActionDto;
 import com.myph.manage.common.shiro.ShiroUtils;
+import com.myph.manage.common.shiro.dto.EmpDetailDto;
 import com.myph.manage.controller.BaseController;
 import com.myph.manage.facadeService.FacadeFlowStateExchangeService;
 import com.myph.organization.dto.OrganizationDto;
@@ -96,8 +98,13 @@ public class ComplianceController extends BaseController {
             if (null == complianceDto.getSignTimeDatee()) {
                 complianceDto.setSignTimeDatee(new Date());
             }
-            // 默认只查当前用户的，管理员用户可看全部
+            // 默认只查当前用户的，管理员及管理岗用户可看全部
+            EmpDetailDto empDetail = ShiroUtils.getEmpDetail();
             complianceDto.setIsManager(ShiroUtils.getAccountType());
+            if(empDetail.getIsManage() == Constants.IS_MANAGE){
+                complianceDto.setIsManager(Constants.IS_MANAGE);
+            }
+
             complianceDto.setAuditor(ShiroUtils.getCurrentUserName());
             ServiceResult<Pagination<ComplianceDto>> result = complianceService.getJkApplyCompliance(complianceDto,
                     basePage);
