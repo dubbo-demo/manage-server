@@ -134,7 +134,8 @@
                         <div class="div">
                         <#if (fileUploadDto.fileDtoList??) && (fileUploadDto.fileDtoList?size>0)>  
                             <#list fileUploadDto.fileDtoList as fileDto>
-                                <#if fileDto.uploadType == productFiletypeDto.directoryName && fileDto.uploadState == productFiletypeDto.fileUpState>
+                            <#if fileDto.uploadId??>
+                                <#if fileDto.uploadId == productFiletypeDto.id && fileDto.uploadState == productFiletypeDto.fileUpState>
                                     <#assign haveFile = 1>
                                     <div style="float:left; width:178px; height:180px" class="checkboxParent" id=${fileDto.id}>
                                         <img  src="${cdnPath}/images/productFile/fileImg.png" alt="默认图片" class="img" style=" width:103px; height:103px"/>
@@ -148,6 +149,7 @@
                                         </div>
                                     </div>
                                 </#if>
+                            </#if>
                             </#list>
                         </#if> 
                         </div> 
