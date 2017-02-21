@@ -99,7 +99,7 @@ public class FileUploadController {
             ServiceResult<ApplyReceptionDto> applyReceptionResult = applyReceptionService
                     .queryInfoByApplyLoanNo(fileUploadDto.getApplyLoanNo());
             ServiceResult<String> productNameResult = productService
-                    .getProductNameById(applyReceptionResult.getData().getProdType());
+                    .getProductNameById(applyReceptionResult.getData().getProductId());
             fileUploadDto.setProductTypeId(applyReceptionResult.getData().getProdType());
             fileUploadDto.setProductName(productNameResult.getData());
             // 3、补充客户姓名
