@@ -318,6 +318,9 @@ public class FileUploadController {
             // 查询进件表基本信息
             ServiceResult<FileManageApplyInfoDto> fileManageApplyInfoDtoResult = applyInfoService
                     .selectByApplyLoanNo(fileUploadDto.getApplyLoanNo());
+            ServiceResult<ApplyReceptionDto> applyReceptionResult = applyReceptionService
+                    .queryInfoByApplyLoanNo(fileUploadDto.getApplyLoanNo());
+            Long productId = applyReceptionResult.getData().getProductId();
             // 补充主状态名称
             Integer state = fileManageApplyInfoDtoResult.getData().getState();
             if (state != null) {
@@ -330,7 +333,6 @@ public class FileUploadController {
             // 如果未传文件上传阶段，指定默认阶段。
             setDefaultFileUpState(fileUploadDto, fileUpSysNodeListResult.getData());
             // 根据产品id查询指定上传阶段必传文件目录
-            Long productId = fileManageApplyInfoDtoResult.getData().getProductType();
             Long fileUpState = fileUploadDto.getFileUpState();
             ServiceResult<List<ProductFiletypeDto>> productFiletypeDtoListResult = productFileTypeService
                     .showMustFile(productId, fileUpState);
