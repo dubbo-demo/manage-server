@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:task="http://www.springframework.org/schema/task" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+	xmlns:util="http://www.springframework.org/schema/util" xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/task
+		http://www.springframework.org/schema/task/spring-task.xsd
+		http://www.springframework.org/schema/context
+		http://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/util
+		http://www.springframework.org/schema/util/spring-util.xsd
+		http://www.springframework.org/schema/tx
+        http://www.springframework.org/schema/tx/spring-tx.xsd
+        http://www.springframework.org/schema/aop
+		http://www.springframework.org/schema/aop/spring-aop.xsd
+        http://www.springframework.org/schema/jdbc
+       	http://www.springframework.org/schema/jdbc/spring-jdbc.xsd
+		http://www.springframework.org/schema/mvc
+		http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+
+	<!-- 配置RestTemplate -->
+	<!--使用httpclient的实现，带连接池-->
+    <bean id="HttPPollingConnectionManager" class="org.apache.http.impl.conn.PoolingHttpClientConnectionManager">
+        <!--整个连接池的并发-->
+        <property name="maxTotal" value="1000" />
+        <!--每个主机的并发-->
+        <property name="defaultMaxPerRoute" value="200" />
+    </bean>
+	
+	<bean id="HttpClientBuilder" class="org.apache.http.impl.client.HttpClientBuilder" factory-method="create">
+        <property name="connectionManager" ref="HttPPollingConnectionManager" />
+        <!--关闭重试-->
+        <property name="retryHandler">
+            <bean class="org.apache.http.impl.client.DefaultHttpRequestRetryHandler">
+                <constructor-arg value="0"/>
+                <constructor-arg value="false"/>
+            </bean>
+        </property>
+        <property name="defaultHeaders">
+            <list>
+                <bean class="org.apache.http.message.BasicHeader">
+                    <constructor-arg value="User-Agent"/>
+                    <constructor-arg value="Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.16 Safari/537.36"/>
+                </bean>
+                <bean class="org.apache.http.message.BasicHeader">
+                    <constructor-arg value="Accept-Encoding"/>
+                    <constructor-arg value="gzip,deflate"/>
+                </bean>
+                <bean class="org.apache.http.message.BasicHeader">
+                    <constructor-arg value="Accept-Language"/>
+                    <constructor-arg value="zh-CN"/>
+                </bean>
+            </list>
+        </property>
+    </bean>
+	
+	<bean id="HttpClient" factory-bean="HttpClientBuilder" factory-method="build" />
+	
+	<bean id="HttpclientHttpRequestFactory" class="org.springframework.http.client.HttpComponentsClientHttpRequestFactory">
+        <constructor-arg ref="HttpClient"/>
+        <!--连接超时时间，毫秒-->
+        <property name="connectTimeout" value="${rest.connect.timeout}"/>
+        <!--读写超时时间，毫秒-->
+        <property name="readTimeout" value="${rest.read.timeout}"/>
+    </bean>
+	<bean id="restTemplate" class="org.springframework.web.client.RestTemplate">
+		<constructor-arg ref="HttpclientHttpRequestFactory" />
+		<property name="errorHandler">
+            <bean class="org.springframework.web.client.DefaultResponseErrorHandler"/>
+        </property>
+	</bean>
+	
+</beans>

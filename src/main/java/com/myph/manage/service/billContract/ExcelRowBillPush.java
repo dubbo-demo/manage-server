@@ -2,6 +2,7 @@ package com.myph.manage.service.billContract;
 
 import com.myph.manage.common.util.ExcelRowToObj;
 import com.myph.manage.common.util.ExcelUtil;
+import com.myph.manage.service.billContract.dto.RepayPlanRequestVo;
 import com.myph.member.blacklist.service.InnerBlackService;
 import org.apache.poi.ss.usermodel.Row;
 
@@ -18,7 +19,7 @@ import java.util.List;
  * @Description: TODO (用一句话描述该文件做什么)
  * @date 2017/3/6
  */
-public class ExcelRowBillPush implements ExcelRowToObj<BillPushDto> {
+public class ExcelRowBillPush implements ExcelRowToObj<RepayPlanRequestVo> {
     private InnerBlackService innerBlackService;
     private List<String> excelErrorMsgs = new ArrayList<String>();
 
@@ -26,6 +27,7 @@ public class ExcelRowBillPush implements ExcelRowToObj<BillPushDto> {
     private String contractNo;// 合同号
     private String term;//	期数
     private String billingNo;//	账单编号
+    private String billId;//	账单编号
     private String repayDate;//	还款日期:格式yyyy-MM-dd HH:mm:ss
     private String startPrinBalance;// 期初本金余额
     private String dueFromDate;// 应还日期:格式yyyy-MM-dd HH:mm:ss
@@ -60,36 +62,37 @@ public class ExcelRowBillPush implements ExcelRowToObj<BillPushDto> {
      * @version V1.0
      */
     @Override
-    public BillPushDto excelRowToObj(Row row) {
+    public RepayPlanRequestVo excelRowToObj(Row row) {
         rowNumber = row.getRowNum() + 1;
 
         channelCode = ExcelUtil.getCellValue(row.getCell(0));
         contractNo = ExcelUtil.getCellValue(row.getCell(1));
         term = ExcelUtil.getCellValue(row.getCell(2));
         billingNo = ExcelUtil.getCellValue(row.getCell(3));
-        repayDate = ExcelUtil.getCellValue(row.getCell(4));
-        startPrinBalance = ExcelUtil.getCellValue(row.getCell(5));
-        dueFromDate = ExcelUtil.getCellValue(row.getCell(6));
-        dueFromPrin = ExcelUtil.getCellValue(row.getCell(7));
-        dueFromItr = ExcelUtil.getCellValue(row.getCell(8));
-        dueFromAmt = ExcelUtil.getCellValue(row.getCell(9));
-        endPrinBalance = ExcelUtil.getCellValue(row.getCell(10));
-        clrRetServiceAmt = ExcelUtil.getCellValue(row.getCell(11));
-        advanceClrAmt = ExcelUtil.getCellValue(row.getCell(12));
-        interst = ExcelUtil.getCellValue(row.getCell(13));
-        lateFee = ExcelUtil.getCellValue(row.getCell(14));
-        fee = ExcelUtil.getCellValue(row.getCell(15));
-        repayMode = ExcelUtil.getCellValue(row.getCell(16));
-        RepayAmt = ExcelUtil.getCellValue(row.getCell(17));
-        RepayType = ExcelUtil.getCellValue(row.getCell(18));
-        paidAmt = ExcelUtil.getCellValue(row.getCell(19));
-        restDueFrom = ExcelUtil.getCellValue(row.getCell(20));
-        pushType = ExcelUtil.getCellValue(row.getCell(21));
-        subtractApplyId = ExcelUtil.getCellValue(row.getCell(22));
-        executeStatus = ExcelUtil.getCellValue(row.getCell(23));
-        executeNote = ExcelUtil.getCellValue(row.getCell(24));
-        overDueDays = ExcelUtil.getCellValue(row.getCell(25));
-        status = ExcelUtil.getCellValue(row.getCell(26));
+        billId = ExcelUtil.getCellValue(row.getCell(4));
+        repayDate = ExcelUtil.getCellValue(row.getCell(5));
+        startPrinBalance = ExcelUtil.getCellValue(row.getCell(6));
+        dueFromDate = ExcelUtil.getCellValue(row.getCell(7));
+        dueFromPrin = ExcelUtil.getCellValue(row.getCell(8));
+        dueFromItr = ExcelUtil.getCellValue(row.getCell(9));
+        dueFromAmt = ExcelUtil.getCellValue(row.getCell(10));
+        endPrinBalance = ExcelUtil.getCellValue(row.getCell(11));
+        clrRetServiceAmt = ExcelUtil.getCellValue(row.getCell(12));
+        advanceClrAmt = ExcelUtil.getCellValue(row.getCell(13));
+        interst = ExcelUtil.getCellValue(row.getCell(14));
+        lateFee = ExcelUtil.getCellValue(row.getCell(15));
+        fee = ExcelUtil.getCellValue(row.getCell(16));
+        repayMode = ExcelUtil.getCellValue(row.getCell(17));
+        RepayAmt = ExcelUtil.getCellValue(row.getCell(18));
+        RepayType = ExcelUtil.getCellValue(row.getCell(19));
+        paidAmt = ExcelUtil.getCellValue(row.getCell(20));
+        restDueFrom = ExcelUtil.getCellValue(row.getCell(21));
+        pushType = ExcelUtil.getCellValue(row.getCell(22));
+        subtractApplyId = ExcelUtil.getCellValue(row.getCell(23));
+        executeStatus = ExcelUtil.getCellValue(row.getCell(24));
+        executeNote = ExcelUtil.getCellValue(row.getCell(25));
+        overDueDays = ExcelUtil.getCellValue(row.getCell(26));
+        status = ExcelUtil.getCellValue(row.getCell(27));
 
         if (null == channelCode) {
             excelErrorMsgs.add("行[" + rowNumber + "] 渠道为空");
@@ -134,13 +137,14 @@ public class ExcelRowBillPush implements ExcelRowToObj<BillPushDto> {
                 return null;
             }
         }
-        BillPushDto dto = new BillPushDto();
+        RepayPlanRequestVo dto = new RepayPlanRequestVo();
         dto.setChannelCode(channelCode);
         dto.setContractNo(contractNo);
         if (null != term) {
             dto.setTerm(Integer.parseInt(term));
         }
         dto.setBillingNo(billingNo);
+        dto.setBillId(billId);
         dto.setRepayDate(repayDate);
         dto.setStartPrinBalance(new BigDecimal(startPrinBalance));
         dto.setDueFromDate(dueFromDate);
@@ -151,7 +155,7 @@ public class ExcelRowBillPush implements ExcelRowToObj<BillPushDto> {
         dto.setClrRetServiceAmt(new BigDecimal(clrRetServiceAmt));
         dto.setAdvanceClrAmt(new BigDecimal(advanceClrAmt));
         dto.setInterst(new BigDecimal(interst));
-        dto.setLateFee(new BigDecimal(lateFee));
+        dto.setLateFees(new BigDecimal(lateFee));
         dto.setFee(new BigDecimal(fee));
         dto.setRepayMode(repayMode);
         dto.setRepayAmt(new BigDecimal(RepayAmt));

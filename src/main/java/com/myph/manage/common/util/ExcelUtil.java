@@ -29,6 +29,7 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * 
@@ -64,7 +65,7 @@ public class ExcelUtil {
     /**
      * 操作Excel2003以前（包括2003）的版本,扩展名是.xls
      * 
-     * @param templetFile 文件
+     * @param file 文件
      * @param startrow 开始行号
      * @param startcol 开始列号
      * @param sheetnum sheet
@@ -159,7 +160,7 @@ public class ExcelUtil {
     /**
      * 是操作Excel2007的版本，扩展名是.xlsx
      * 
-     * @param templetFile 文件
+     * @param file 文件
      * @param startrow 开始行号
      * @param startcol 开始列号
      * @param sheetnum sheet
@@ -462,6 +463,51 @@ public class ExcelUtil {
                 varList.add(t);
             }
 
+        } catch (Exception e) {
+            log.error("异常[readExcel]", e);
+        }
+        return varList;
+    }
+
+    /**
+     *
+     * @param file
+     * @param rowToObj
+     * @return
+     * @Description:Excel转实体类
+     */
+    public static <T> List<T> readExcel(MultipartFile file, ExcelRowToObj<T> rowToObj) {
+        Workbook wb = null;
+        List<T> varList = new ArrayList<T>();
+        try {
+            if (file != null) {
+                String ofn = file.getOriginalFilename();// 文件名
+                String extName = ""; // 扩展名格式：
+                if (ofn.lastIndexOf(".") >= 0) {
+                    extName = ofn.substring(ofn.lastIndexOf("."));
+                }
+                if (".xls".equals(extName.toLowerCase())) {
+                    wb = new HSSFWorkbook(file.getInputStream());
+                } else if (".xlsx".equals(extName.toLowerCase())) {
+                    wb = new XSSFWorkbook(file.getInputStream());
+                }
+            }
+            if (null == wb) {
+                return varList;
+            }
+            Sheet sheet = wb.getSheetAt(0); // sheet 从0开始
+            int rowNum = sheet.getLastRowNum() + 1; // 取得最后一行的行号
+            if (rowNum == 1) {
+                return varList;
+            }
+            for (int i = 1; i < rowNum; i++) { // 行循环开始
+                if (null == sheet.getRow(i)) {
+                    continue;
+                }
+                T t = (T) rowToObj.excelRowToObj(sheet.getRow(i));
+                varList.add(t);
+            }
+            file.getInputStream().close();
         } catch (Exception e) {
             log.error("异常[readExcel]", e);
         }

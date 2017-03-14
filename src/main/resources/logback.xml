@@ -151,24 +151,24 @@
 
     <!--输入spring的error -->
     <logger name="com.myph" level="info"/>
-    <logger name="com.alibaba.dubbo" level="error"/>
-    <logger name="com.ibatis" level="error"/>
-    <logger name="org.springframework" level="error"/>
-    <logger name="com.ibatis.sqlmap.engine.impl.SqlMapClientDelegate" level="error"/>
-    <logger name="org.apache.commons" level="error"/>
-    <logger name="catalia" level="error"/>
-    <logger name="org.apache" level="error"/>
-    <logger name="org.apache.shiro" level="error"/>
-    <logger name="com.ibatis.common.jdbc.SimpleDataSource" level="error"/>
-    <logger name="java.sql.ResultSet" level="error"/>
-    <logger name="com.ibatis.common.jdbc.ScriptRunner" level="error"/>
-    <logger name="java.sql.Connection" level="error"/>
-    <logger name="java.sql.PreparedStatement" level="error"/>
+    <logger name="com.alibaba.dubbo" level="info" />
+    <logger name="com.ibatis" level="info"/>
+    <logger name="org.springframework" level="info"/>
+    <logger name="com.ibatis.sqlmap.engine.impl.SqlMapClientDelegate" level="info"/>
+    <logger name="org.apache.commons" level="info"/>
+    <logger name="catalia" level="info"/>
+    <logger name="org.apache" level="info"/>
+    <logger name="org.apache.shiro" level="info"/>
+    <logger name="com.ibatis.common.jdbc.SimpleDataSource" level="debug"/>
+    <logger name="java.sql.ResultSet" level="debug"/>
+    <logger name="com.ibatis.common.jdbc.ScriptRunner" level="debug"/>
+    <logger name="java.sql.Connection" level="debug"/>
+    <logger name="java.sql.PreparedStatement" level="debug"/>
     <!--定义root 级别 -->
     <root level="info">
-        <appender-ref ref="platform.async"/>
-        <!--&lt;!&ndash; 本地测试开始&ndash;&gt;
-        <appender-ref ref="STDOUT"/>-->
+        <appender-ref ref="platform"/>
+        <!-- 本地测试开始-->
+        <appender-ref ref="STDOUT"/>
     </root>
 
 

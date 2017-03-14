@@ -6,7 +6,7 @@
         <artifactId>parent</artifactId>
         <groupId>com.myph</groupId>
         <version>1.0.0-SNAPSHOT</version>
-        <relativePath>../../../01基础层/parent/pom.xml</relativePath>
+        <relativePath>../parent/pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
