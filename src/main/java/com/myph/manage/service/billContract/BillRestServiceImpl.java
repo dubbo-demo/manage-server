@@ -32,8 +32,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import javax.xml.ws.ServiceMode;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Created by dell on 2017/3/9.
@@ -80,12 +82,18 @@ public class BillRestServiceImpl implements BillRestService {
     @Autowired
     private ContractService contractService;
 
+    @Autowired
+    private RestTemplate restTemplate;
+
+    @Autowired
+    private MYPHConfigUtils mYPHConfigUtils;
+
     List<String> excelErrorMsgs = null;
 
     /**
+     * @return ContractRequestVo
      * @Description: 合同账单用户基本信息推送
      * @author heyx
-     * @return ContractRequestVo
      * @date 2017/3/10
      * @version V1.0
      */
@@ -107,9 +115,9 @@ public class BillRestServiceImpl implements BillRestService {
                 .selectByMemberId(memberDto.getData().getId());
         toInfoJob(fristDto, memberJobR.getData());
 
-        //1,现住址;2,公司地址;3,户籍地址
-        if ("2".equals(memberDto.getData().getMailAddress())) {
-            fristDto.setMailAddr(memberDto.getData().getLiveAddress()); //邮寄地址
+        //邮寄地址:公司地址
+        if (BillPushConstant.MAIL_ADDR_COMPANY.equals(memberDto.getData().getMailAddress())) {
+            fristDto.setMailAddr(memberJobR.getData().getDetailAddr()); //邮寄地址
         }
 
         // TODO 抓取联系人信息
@@ -126,7 +134,8 @@ public class BillRestServiceImpl implements BillRestService {
      * @date 2017/3/14
      * @version V1.0
      */
-    public List<String> restCS(List<RepayPlanRequestVo> successDatas) throws Exception {
+    @Override
+    public List<String> restCS(List<RepayPlanRequestVo> successDatas) {
         excelErrorMsgs = new ArrayList<String>();
         if (null == successDatas) {
             return excelErrorMsgs;
@@ -136,58 +145,80 @@ public class BillRestServiceImpl implements BillRestService {
             successData = successDatas.get(i);
             // TODO 通过合同号查询推送合同账单推送执行结果表，是否有成功发送的数据
             PushContarctAndBillTaskDto record = new PushContarctAndBillTaskDto();
-            record.setBillPushedStatu(BillPushEnum.SUCCESS.getCode());
             record.setContractId(successData.getContractNo());
             record.setBillId(successData.getBillId());
             PushContarctAndBillTaskDto resultPush = pushContarctAndBillTaskService.selectSuccessInfo(record);
-            // 没有获取记录数据,该账单已经推送
-            if (null != resultPush) {
+            // 获取记录数据状态为发送成功,该账单已经推送
+            if (null != resultPush && BillPushEnum.SUCCESS.getCode().equals(resultPush.getBillPushedStatu())) {
+                excelErrorMsgs.add("合同号:" + successData.getContractNo() + "-账单号:" + successData.getBillId() + "-发送时间:"
+                        + DateUtils.dateParseString(resultPush.getLastPushedTime())
+                        + ",接口调用成功，推送失败");
                 MyphLogger.info("ContractNo:{},BillId:{},已经推送", successData.getContractNo(), successData.getBillId());
                 return excelErrorMsgs;
             }
+            // 查询是否有合同内账单发送
             record.setBillPushedStatu(BillPushEnum.SUCCESS.getCode());
             record.setContractId(successData.getContractNo());
             record.setBillId(null);
-            resultPush = pushContarctAndBillTaskService.selectSuccessInfo(record);
-            // 合同账单基础数据
-            ContractRequestVo fristVo= null;
-            // 没有获取记录数据,第一次发送
-            if (null == resultPush) {
+            Integer haveSucsRest = pushContarctAndBillTaskService.selectSucCount(record);
+            ContractRequestVo fristVo = null;
+            // 第一次发送，组装合同账单基础数据
+            if (null == haveSucsRest || 0 == haveSucsRest) {
                 // 推送送合同账单用户基础信息bean
                 fristVo = getContractAndBill(successData);
             }
             try {
-                // TODO 组装插入记录表
-                record = new PushContarctAndBillTaskDto();
-                record.setBillId(successData.getBillId());
-                record.setContractId(successData.getContractNo());
-                ResultParams response = null;
-                if (null != fristVo) {
-                    // TODO http发送正确数据给催收系统 req 合同基础数据接口
-//                    response = restPushBillAndContract(fristVo);
-                } else {
-                    // 第二次发送该合同逾期账单
-                    // TODO http发送正确数据给催收系统
-//                    response = restPushBill(successData);
-                }
-                if(response.SUCCESS_CODE.equals(response.getRetcode())){
-                    record.setBillPushedStatu(BillPushEnum.SUCCESS.getCode());
-                    MyphLogger.info("ContractNo:{},BillId:{},接口调用成功，推送成功，插入记录表", successData.getContractNo(), successData.getBillId());
-                } else {
-                    record.setBillPushedStatu(BillPushEnum.ERROR.getCode());
-                    excelErrorMsgs.add("合同号:"+successData.getContractNo()+"-账单号:"+successData.getBillId()+",接口调用成功，推送失败");
-                    MyphLogger.info("ContractNo:{},BillId:{},接口调用成功，推送失败", successData.getContractNo(), successData.getBillId());
-                }
-                // TODO 插入记录表
-                pushContarctAndBillTaskService.insert(record);
+                // 调用催收接口，记录推送结果
+                restCS(resultPush, successData, fristVo);
             } catch (Exception e) {
-                excelErrorMsgs.add("合同号:"+successData.getContractNo()+"-账单号:"+successData.getBillId()+",接口调用异常");
-                MyphLogger.error("ContractNo:{},BillId:{},接口调用异常", successData.getContractNo(), successData.getBillId());
-                throw new Exception(e);
+                excelErrorMsgs
+                        .add("合同号:" + successData.getContractNo() + "-账单号:" + successData.getBillId() + ",接口调用异常");
+                MyphLogger
+                        .error("ContractNo:{},BillId:{},接口调用异常", successData.getContractNo(), successData.getBillId());
             }
 
         }
         return excelErrorMsgs;
+    }
+
+    private void restCS(PushContarctAndBillTaskDto resultPush, RepayPlanRequestVo successData,
+            ContractRequestVo fristVo) {
+        // TODO 组装插入记录表
+        PushContarctAndBillTaskDto record = new PushContarctAndBillTaskDto();
+        record.setBillId(successData.getBillId());
+        record.setContractId(successData.getContractNo());
+        ResultParams response = null;
+        if (null != fristVo) {
+            // TODO http发送正确数据给催收系统 req 合同基础数据接口
+            fristVo.setPushedTime(DateUtils.dateParseString(new Date()));
+            MyphLogger.info("=============开始调用合同基础数据接口");
+            //                    response = restPushBillAndContract(fristVo);
+        } else {
+            // TODO http发送逾期账单给催收系统
+            successData.setPushedTime(DateUtils.dateParseString(new Date()));
+            MyphLogger.info("=============开始调用逾期账单接口");
+            //                    response = restPushBill(successData);
+        }
+        if (null != response && BillPushConstant.SUCCESS_CODE.equals(response.getRetcode())) {
+            record.setBillPushedStatu(BillPushEnum.SUCCESS.getCode());
+            MyphLogger.info("ContractNo:{},BillId:{},接口调用成功，推送成功，插入记录表", successData.getContractNo(),
+                    successData.getBillId());
+        } else {
+            record.setBillPushedStatu(BillPushEnum.ERROR.getCode());
+            excelErrorMsgs.add("合同号:" + successData.getContractNo() + "-账单号:" + successData.getBillId()
+                    + ",接口调用成功，推送失败");
+            MyphLogger.info("ContractNo:{},BillId:{},接口调用成功，推送失败", successData.getContractNo(),
+                    successData.getBillId());
+        }
+        // 已经插入该账单记录，修改状态
+        if (null != resultPush) {
+            record.setFailureTimes(resultPush.getFailureTimes() + 1);
+            // TODO update记录表为成功标记
+            pushContarctAndBillTaskService.updateByStatuToSuc(record);
+        } else {
+            // TODO 插入记录表
+            pushContarctAndBillTaskService.insert(record);
+        }
     }
 
     /**
@@ -216,7 +247,7 @@ public class BillRestServiceImpl implements BillRestService {
             }
             fristDto.setLinkmanList(list);
         } catch (Exception e) {
-            excelErrorMsgs.add("合同号:"+fristDto.getContractNo()+"-账单号:"+fristDto.getBillId()+",组装联系人异常");
+            excelErrorMsgs.add("合同号:" + fristDto.getContractNo() + "-账单号:" + fristDto.getBillId() + ",组装联系人异常");
             MyphLogger.error("组装联系人异常", e);
         }
     }
@@ -246,7 +277,8 @@ public class BillRestServiceImpl implements BillRestService {
                     fristDto.setIndustryType(bnode.getData() == null ? "" : bnode.getData().getNodeName()); //行业类别
                 }
             }
-            fristDto.setUnitProperty(BillPushConstant.getOtherCompanyNature(memberJobDto.getOtherCompanyNature())); //单位性质
+            fristDto.setUnitProperty(
+                    BillPushConstant.getOtherCompanyNature(memberJobDto.getOtherCompanyNature())); //单位性质
             fristDto.setPost(""); //担任职务
             if (null != memberJobDto.getPositionsCode()) {
                 bnode = nodeService.selectByPrimaryKey((long) memberJobDto.getPositionsCode());
@@ -254,11 +286,12 @@ public class BillRestServiceImpl implements BillRestService {
                     fristDto.setPost(bnode.getData() == null ? "" : bnode.getData().getNodeName()); //担任职务
                 }
             }
-            fristDto.setPayDate(memberJobDto.getSalaryDay() == null ? "" : memberJobDto.getSalaryDay().toString()); //每月发薪日
+            fristDto.setPayDate(
+                    memberJobDto.getSalaryDay() == null ? "" : memberJobDto.getSalaryDay().toString()); //每月发薪日
             fristDto.setSalary(
                     memberJobDto.getMonthlySalary() == null ? "" : memberJobDto.getMonthlySalary().toString()); //月基本工资
         } catch (Exception e) {
-            excelErrorMsgs.add("合同号:"+fristDto.getContractNo()+"-账单号:"+fristDto.getBillId()+",组装工作信息异常");
+            excelErrorMsgs.add("合同号:" + fristDto.getContractNo() + "-账单号:" + fristDto.getBillId() + ",组装工作信息异常");
             MyphLogger.error("组装工作信息异常", e);
         }
     }
@@ -270,7 +303,7 @@ public class BillRestServiceImpl implements BillRestService {
      * @param memberInfo
      */
     private void toInfoMember(ContractRequestVo fristDto, MemberInfoDto memberInfo) {
-        if(null == memberInfo) {
+        if (null == memberInfo) {
             return;
         }
         try {
@@ -285,11 +318,10 @@ public class BillRestServiceImpl implements BillRestService {
             AddrDto map = new AddrDto();
             map.setAddr("");// 现地址
             map.setDetailAddr(memberInfo.getLiveAddress());//详细地址
-            //1,现住址;2,公司地址;3,户籍地址
-            if ("1".equals(memberInfo.getMailAddress())) {
-                fristDto.setMailAddr(memberInfo.getLiveAddress()); //邮寄地址
-            } else if ("3".equals(memberInfo.getMailAddress())) {
-                fristDto.setMailAddr(memberInfo.getCensusAddress()); //邮寄地址
+            if (BillPushConstant.MAIL_ADDR_NOW.equals(memberInfo.getMailAddress())) {
+                fristDto.setMailAddr(memberInfo.getLiveAddress()); //邮寄地址:现住址
+            } else if (BillPushConstant.MAIL_ADDR_HOME.equals(memberInfo.getMailAddress())) {
+                fristDto.setMailAddr(memberInfo.getCensusAddress()); //邮寄地址:户籍地址
             }
             // 备用电话
             if (!StringUtils.isEmpty(memberInfo.getAlternatePhone())) {
@@ -303,16 +335,10 @@ public class BillRestServiceImpl implements BillRestService {
             fristDto.setRegisterAddr("");
             fristDto.setRegisterDetailAddr(memberInfo.getCensusAddress()); //详细户籍地址
         } catch (Exception e) {
-            excelErrorMsgs.add("合同号:"+fristDto.getContractNo()+"-账单号:"+fristDto.getBillId()+",组装会员基本信息异常");
+            excelErrorMsgs.add("合同号:" + fristDto.getContractNo() + "-账单号:" + fristDto.getBillId() + ",组装会员基本信息异常");
             MyphLogger.error("组装会员基本信息异常", e);
         }
     }
-
-    @Autowired
-    private RestTemplate restTemplate;
-
-    @Autowired
-    private MYPHConfigUtils mYPHConfigUtils;
 
     /**
      * @Description: 推送合同账单用户基础信息
@@ -327,8 +353,8 @@ public class BillRestServiceImpl implements BillRestService {
         try {
             response = restTemplate.postForObject(url, vo, ResultParams.class);
         } catch (Exception e) {
-            excelErrorMsgs.add("合同号:"+vo.getContractNo()+"-账单号:"+vo.getBillId()+",推送合同账单用户信息接口异常");
-            MyphLogger.error(url+"===rest异常===", e);
+            excelErrorMsgs.add("合同号:" + vo.getContractNo() + "-账单号:" + vo.getBillId() + ",推送合同账单用户信息接口异常");
+            MyphLogger.error(url + "===rest异常===", e);
         }
         return response;
     }
@@ -346,8 +372,8 @@ public class BillRestServiceImpl implements BillRestService {
         try {
             response = restTemplate.postForObject(url, vo, ResultParams.class);
         } catch (Exception e) {
-            excelErrorMsgs.add("合同号:"+vo.getContractNo()+"-账单号:"+vo.getBillId()+",推送账单接口调用异常");
-            MyphLogger.error(url+"===rest异常===", e);
+            excelErrorMsgs.add("合同号:" + vo.getContractNo() + "-账单号:" + vo.getBillId() + ",推送账单接口调用异常");
+            MyphLogger.error(url + "===rest异常===", e);
         }
         return response;
     }

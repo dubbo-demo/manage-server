@@ -15,5 +15,5 @@ import java.util.List;
  */
 public interface BillRestService {
     
-    public List<String> restCS(List<RepayPlanRequestVo> successDatas) throws Exception;
+    public List<String> restCS(List<RepayPlanRequestVo> successDatas);
 }

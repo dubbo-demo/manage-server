@@ -7,7 +7,32 @@ public class BillPushConstant {
 
     public static final String CHANNEL_MYPH = "myph";
 
-    public static final String CHANNEL_MYD= "myd";
+    public static final String CHANNEL_MYD = "myd";
+
+    /**
+     * 成功
+     */
+    public static final String SUCCESS_CODE = "000000";
+
+    /**
+     * 失败
+     */
+    public static final String FAIL_CODE = "000001";
+
+    /**
+     * 现住址
+     */
+    public static final String MAIL_ADDR_NOW = "1";
+
+    /**
+     * 公司地址
+     */
+    public static final String MAIL_ADDR_COMPANY = "2";
+
+    /**
+     * 户籍地址
+     */
+    public static final String MAIL_ADDR_HOME = "3";
 
     public static String getEdu(int code) {
         switch (code) {
@@ -34,6 +59,7 @@ public class BillPushConstant {
 
     /**
      * 单位属性
+     *
      * @param code
      * @return
      */

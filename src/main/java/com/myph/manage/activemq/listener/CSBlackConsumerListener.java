@@ -62,7 +62,7 @@ public class CSBlackConsumerListener extends BaseActivemqListener {
             if(null == obj || null == obj.getChannel()) {
                 return;
             } else if(!BillPushConstant.CHANNEL_MYPH.equals(obj.getChannel())) {
-                MyphLogger.info("MQ-CS-CALLBACK ！渠道不匹配！parm:{}",result.toJSONString());
+                MyphLogger.info("MQ-CS-BLACKLIST-CALLBACK ！渠道不匹配！parm:{}",result.toJSONString());
                 return;
             }
             // 组装第三方黑名单
@@ -71,7 +71,7 @@ public class CSBlackConsumerListener extends BaseActivemqListener {
             // 插入第三方黑名单
             insertThirdBlackDto(thirdBlack);
         } catch (Exception e) {
-            MyphLogger.error("MQ-CS-CALLBACK ！添加到黑名单中异常！",e);
+            MyphLogger.error("MQ-CS-BLACKLIST-CALLBACK ！添加到黑名单中异常！",e);
         }
 
     }
@@ -89,9 +89,9 @@ public class CSBlackConsumerListener extends BaseActivemqListener {
         // 存在则不插入
         if (!thirdBlackService.isIdCardExist(thirdBlack.getIdCard(), "第三方", ThirdBlackChannel.CS.getDesc())) {
             thirdBlackService.edit(thirdBlack);
-            MyphLogger.info("MQ-CS-CALLBACK ！添加到黑名单中结束！");
+            MyphLogger.info("MQ-CS-BLACKLIST-CALLBACK ！添加到黑名单中结束！");
         }else{
-            MyphLogger.info("MQ-CS-CALLBACK ！黑名单已经存在此消息！");
+            MyphLogger.info("MQ-CS-BLACKLIST-CALLBACK ！黑名单已经存在此消息！");
         }
     }
     
@@ -105,9 +105,9 @@ public class CSBlackConsumerListener extends BaseActivemqListener {
         ThirdBlackDto thirdBlack = new ThirdBlackDto();
         thirdBlack.setChannel(obj.getChannel());
         thirdBlack.setCreateTime(new Date());
-        thirdBlack.setCreateUser("MQ_CS_CALLBACK");
+        thirdBlack.setCreateUser("MQ_CS_BLACKLIST_CALLBACK");
         thirdBlack.setIsReject(Constants.YES_INT);
-        thirdBlack.setModifyUser("MQ_CS_CALLBACK");
+        thirdBlack.setModifyUser("MQ_CS_BLACKLIST_CALLBACK");
         ServiceResult<MemberInfoDto> memberDto = memberInfoService
                 .queryInfoByIdCard(obj.getIdCard());
         if(null != memberDto && null != memberDto.getData()) {

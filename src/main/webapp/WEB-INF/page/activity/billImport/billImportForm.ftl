@@ -19,25 +19,25 @@
 				<form action="#" id="searchForm" class="form-horizontal"
 					method="post">
 					<div class="row-fluid">
-						<div class="control-group span4 ">
-							<label class="help-inline text-right span4">姓名：</label> <input
-								type="text" class="m-wrap span8" name="memberName"
-								value="">
-						</div>
-						<div class="control-group span4 ">
-							<label class="help-inline text-right span4">身份证：</label> <input
-								type="text" class="m-wrap span8" name="idCard"
-								value="">
-						</div>
+						<#--<div class="control-group span4 ">-->
+							<#--<label class="help-inline text-right span4">姓名：</label> <input-->
+								<#--type="text" class="m-wrap span8" name="memberName"-->
+								<#--value="">-->
+						<#--</div>-->
+						<#--<div class="control-group span4 ">-->
+							<#--<label class="help-inline text-right span4">身份证：</label> <input-->
+								<#--type="text" class="m-wrap span8" name="idCard"-->
+								<#--value="">-->
+						<#--</div>-->
 					</div>
 					<p>
 						<#--<button type="button" class="btn blue" onclick="search()">查询</button>-->
 						<shiro:hasPermission name="thirdBlack:import">
 						<a href="#import" data-toggle="modal" class="btn blue">导入</a>
 						</shiro:hasPermission>
-						<shiro:hasPermission name="thirdBlack:export">
-						<button type="button" class="btn blue" onclick="export_excel()">导出</button>
-						</shiro:hasPermission>
+						<#--<shiro:hasPermission name="thirdBlack:export">-->
+						<#--<button type="button" class="btn blue" onclick="export_excel()">导出</button>-->
+						<#--</shiro:hasPermission>-->
 					</p>
 				</form>
 			</div>
@@ -45,20 +45,20 @@
 			<div class="tabbable tabbable-custom tabbable-custom-profile">
 				<!-- table -->
 				<table class="table table-striped table-bordered table-hover">
-					<thead>
-						<tr>
-							<th>序号</th>
-							<th>姓名</th>
-							<th>身份证号</th>
-							<th>数据来源</th>
-							<th>来源名称</th>
-							<th>是否拒绝</th>
-							<th>拒绝原因</th>
-							<th style="width:350px">返回信息</th>
-							<th>创建日期</th>
-							<th>操作</th>
-						</tr>
-					</thead>
+					<#--<thead>-->
+						<#--<tr>-->
+							<#--<th>序号</th>-->
+							<#--<th>姓名</th>-->
+							<#--<th>身份证号</th>-->
+							<#--<th>数据来源</th>-->
+							<#--<th>来源名称</th>-->
+							<#--<th>是否拒绝</th>-->
+							<#--<th>拒绝原因</th>-->
+							<#--<th style="width:350px">返回信息</th>-->
+							<#--<th>创建日期</th>-->
+							<#--<th>操作</th>-->
+						<#--</tr>-->
+					<#--</thead>-->
 					<tbody>
 					</tbody>
 				</table>

@@ -27,15 +27,4 @@ public class ResultParams extends BaseEntity {
 	 */
 	String retinfo;
 
-	/**
-	 * 成功
-	 */
-	public static final String SUCCESS_CODE = "000000";
-
-	/**
-	 * 失败
-	 */
-	public static final String FAIL_CODE = "000001";
-	
-
 }

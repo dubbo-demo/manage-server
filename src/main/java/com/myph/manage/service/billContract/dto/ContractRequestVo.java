@@ -256,6 +256,11 @@ public class ContractRequestVo extends BaseInfo {
      */
     private String salary;
 
+    /**
+     * 推送时间
+     */
+    private String pushedTime;
+
     /*
      * 现住址
      * 现地址	addr

@@ -113,4 +113,9 @@ public class RepayPlanRequestVo extends BaseInfo {
      */
     private String status;
 
+    /**
+     * 推送时间
+     */
+    private String pushedTime;
+
 }
