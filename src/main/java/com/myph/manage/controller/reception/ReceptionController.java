@@ -36,7 +36,7 @@ import com.myph.idgenerator.service.IdGeneratorService;
 import com.myph.manage.common.constant.ApplyOperateEnum;
 import com.myph.manage.common.constant.ClientType;
 import com.myph.manage.common.shiro.ShiroUtils;
-import com.myph.manage.common.shiro.dto.EmpDetailDto;
+import com.myph.employee.dto.EmpDetailDto;
 import com.myph.member.base.constant.MemberInfoServiceResultCode;
 import com.myph.member.base.dto.MemberInfoDto;
 import com.myph.member.base.service.MemberInfoService;

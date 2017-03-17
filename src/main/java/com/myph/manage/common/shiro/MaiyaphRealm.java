@@ -29,7 +29,7 @@ import com.myph.constant.NodeConstant;
 import com.myph.employee.dto.EmployeeDetailDto;
 import com.myph.employee.dto.EmployeeInfoDto;
 import com.myph.employee.service.EmployeeInfoService;
-import com.myph.manage.common.shiro.dto.EmpDetailDto;
+import com.myph.employee.dto.EmpDetailDto;
 import com.myph.node.dto.SysNodeDto;
 import com.myph.node.service.NodeService;
 import com.myph.organization.service.OrganizationService;

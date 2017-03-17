@@ -1,5 +1,6 @@
 package com.myph.manage.controller.sys;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -15,11 +16,14 @@ import org.apache.shiro.authc.UnknownAccountException;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.session.SessionException;
 import org.apache.shiro.subject.Subject;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.client.RestTemplate;
 
 import com.alibaba.dubbo.rpc.RpcException;
 import com.myph.base.common.SmsTemplateEnum;
@@ -33,6 +37,7 @@ import com.myph.common.result.ServiceResult;
 import com.myph.common.util.DateUtils;
 import com.myph.common.util.IpUtil;
 import com.myph.employee.dto.EmployeeInfoDto;
+import com.myph.employee.dto.EmployeeLoginDto;
 import com.myph.employee.dto.EmployeePositionInfoDto;
 import com.myph.employee.service.EmployeeInfoService;
 import com.myph.log.dto.OperatorLogDto;
@@ -75,6 +80,12 @@ public class LoginController {
 
 	@Autowired
 	private LogService logService;
+	
+	@Autowired
+    private RestTemplate restTemplate;	
+	
+	@Value("${mycs_url}")
+	private String mycsUrl;
 
 	/**
 	 * 麦芽普惠信贷系统登录
@@ -202,6 +213,9 @@ public class LoginController {
 				String userName = ShiroUtils.getCurrentUserName();
 				MyphLogger.info("用户{}退出登录", userName);
 				subject.logout();
+				//调用催收登录退出接口
+				String url = mycsUrl + "/loginOut.htm";
+				restTemplate.postForObject(url, "", Object.class);
 			}
 		} catch (Exception e) {
 			MyphLogger.error(e, "用户退出登录异常");
@@ -247,4 +261,5 @@ public class LoginController {
 			MyphLogger.access("{}发送登录短信", phone);
 		}
 	}
+	
 }

@@ -27,7 +27,7 @@ import com.myph.employee.dto.EmployeeMoveInfoDto;
 import com.myph.employee.dto.EmployeeSearchInfoDto;
 import com.myph.employee.service.EmployeeInfoService;
 import com.myph.manage.common.shiro.ShiroUtils;
-import com.myph.manage.common.shiro.dto.EmpDetailDto;
+import com.myph.employee.dto.EmpDetailDto;
 import com.myph.organization.dto.OrganizationDto;
 import com.myph.organization.service.OrganizationService;
 import com.myph.position.service.PositionService;
