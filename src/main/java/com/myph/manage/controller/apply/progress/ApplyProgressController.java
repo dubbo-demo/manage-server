@@ -53,7 +53,7 @@ import com.myph.constant.bis.FinishBisStateEnum;
 import com.myph.constant.bis.SignBisStateEnum;
 import com.myph.employee.dto.EmployeeInfoDto;
 import com.myph.manage.common.shiro.ShiroUtils;
-import com.myph.manage.common.shiro.dto.EmpDetailDto;
+import com.myph.employee.dto.EmpDetailDto;
 import com.myph.manage.common.util.BeanUtils;
 import com.myph.manage.controller.BaseController;
 import com.myph.organization.dto.OrganizationDto;

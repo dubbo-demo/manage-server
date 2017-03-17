@@ -28,6 +28,7 @@
         <!-- jsessionId的path为 / 用于多个系统共享jsessionId -->
         <property name="path" value="/"/>
         <property name="HttpOnly" value="true"/>
+        <property name="domain" value=".maiyabank.com"/>
     </bean>
 
     <!-- session存储管理期 -->
