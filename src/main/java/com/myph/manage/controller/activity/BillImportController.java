@@ -24,6 +24,15 @@ import java.beans.PropertyDescriptor;
 import java.lang.reflect.Method;
 import java.util.*;
 
+/**
+ * @author heyx
+ * @version V1.0
+ * @Title: BillImportController
+ * @Package: com.myph.manage.controller.activity
+ * @company: 麦芽金服
+ * @Description: 逾期账单导入
+ * @date 2017/3/16
+ */
 @Controller
 @RequestMapping("/billImport")
 public class BillImportController extends BaseController {
@@ -75,53 +84,17 @@ public class BillImportController extends BaseController {
             MyphLogger.error(e, "异常[账单导入：/billImport/impInfo.htm]");
         }
         if (null != excelErrorMsgs && !excelErrorMsgs.isEmpty()) {
+            // 导入数据有错误
             result = AjaxResult.ERROR_CODE;
             model.addAttribute("excelErrorMsgs", excelErrorMsgs);
             MyphLogger.info("====结束账单导入：/billImport/impInfo.htm|导入失败");
-        } else {
+        } else if (AjaxResult.SUCCESS_CODE == result) {
             model.addAttribute("successDataSize", null == successDatas ? 0 : successDatas.size());
             MyphLogger.debug("successData=============" + successDatas);
             MyphLogger.info("====结束账单导入：/billImport/impInfo.htm|导入成功");
         }
         model.addAttribute("result", result);
         return "/activity/billImport/billImport";
-    }
-
-    /**
-     * Bean --> Map 1: 利用Introspector和PropertyDescriptor 将Bean --> Map
-     *
-     * @名称 transBeanMap
-     * @描述 Bean转Map
-     * @返回类型 Map<String,Object>
-     * @日期 2017年3月7日 下午5:15:33
-     * @创建人 heyx
-     * @更新人 heyx
-     */
-    public static Map<String, Object> transBeanMap(Object obj) {
-
-        if (obj == null) {
-            return null;
-        }
-        Map<String, Object> map = new HashMap<String, Object>();
-        try {
-            BeanInfo beanInfo = Introspector.getBeanInfo(obj.getClass());
-            PropertyDescriptor[] propertyDescriptors = beanInfo.getPropertyDescriptors();
-            for (PropertyDescriptor property : propertyDescriptors) {
-                String key = property.getName();
-                // 过滤class属性
-                if (!key.equals("class")) {
-                    // 得到property对应的getter方法
-                    Method getter = property.getReadMethod();
-                    Object value = getter.invoke(obj);
-                    map.put(key, value);
-                }
-            }
-        } catch (Exception e) {
-            System.out.println("transBean2Map Error " + e);
-        }
-
-        return map;
-
     }
 
 }
