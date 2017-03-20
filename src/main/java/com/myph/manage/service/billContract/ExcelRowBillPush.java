@@ -110,25 +110,21 @@ public class ExcelRowBillPush implements ExcelRowToObj<RepayPlanRequestVo> {
             excelErrorMsgs.add("行[" + rowNumber + "] 账单编号为空");
             return null;
         }
-        if (null == repayDate) {
-            excelErrorMsgs.add("行[" + rowNumber + "] 还款日期为空");
-            return null;
-        }
-
-        if (null == startPrinBalance) {
-            excelErrorMsgs.add("行[" + rowNumber + "] 期初本金余额为空");
+        if (null == billId) {
+            excelErrorMsgs.add("行[" + rowNumber + "] 账单id为空");
             return null;
         }
         if (null == dueFromDate) {
             excelErrorMsgs.add("行[" + rowNumber + "] 应还日期为空");
             return null;
         }
-        if (null == dueFromPrin) {
-            excelErrorMsgs.add("行[" + rowNumber + "] 应还本金为空");
+
+        if (null == pushType) {
+            excelErrorMsgs.add("行[" + rowNumber + "] 推送类型为空");
             return null;
         }
-        if (null == dueFromItr) {
-            excelErrorMsgs.add("行[" + rowNumber + "] 应还利息为空");
+        if (null == status) {
+            excelErrorMsgs.add("行[" + rowNumber + "] 状态为空");
             return null;
         }
         if (null != overDueDays) {
