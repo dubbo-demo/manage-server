@@ -17,11 +17,13 @@ import com.myph.common.constant.ThirdBlackChannel;
 import com.myph.common.log.MyphLogger;
 import com.myph.common.result.ServiceResult;
 import com.myph.manage.common.constant.BillPushConstant;
+import com.myph.manage.common.util.StringUtil;
 import com.myph.manage.param.CsBlackMqParam;
 import com.myph.member.base.dto.MemberInfoDto;
 import com.myph.member.base.service.MemberInfoService;
 import com.myph.member.blacklist.dto.ThirdBlackDto;
 import com.myph.member.blacklist.service.ThirdBlackService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.Serializable;
@@ -50,28 +52,28 @@ public class CSBlackConsumerListener extends BaseActivemqListener {
      */
     @Override
     public void onBaseMessage(Serializable map, String name, String type) {
-
         MyphLogger.info("MQ 催收系统黑名单信息[" + map + "] name[{}],type[{}]", name, type);
         JSONObject result = JSONObject.parseObject((String) map);
         try {
-            if(null == result) {
+            if (null == result) {
                 return;
             }
             CsBlackMqParam obj = (CsBlackMqParam) JSON.parseObject(result.toString(),
                     CsBlackMqParam.class);
-            if(null == obj || null == obj.getChannel()) {
-                return;
-            } else if(!BillPushConstant.CHANNEL_MYPH.equals(obj.getChannel())) {
-                MyphLogger.info("MQ-CS-BLACKLIST-CALLBACK ！渠道不匹配！parm:{}",result.toJSONString());
+            if (null == obj || null == obj.getChannel()) {
                 return;
             }
+//            else if (!BillPushConstant.CHANNEL_MYPH.equals(obj.getChannel())) {
+//                MyphLogger.info("MQ-CS-BLACKLIST-CALLBACK ！渠道不匹配！parm:{}", result.toJSONString());
+//                return;
+//            }
             // 组装第三方黑名单
             ThirdBlackDto thirdBlack = getThirdBlackDto(obj);
             thirdBlack.setRespMessage(result.toJSONString());
             // 插入第三方黑名单
             insertThirdBlackDto(thirdBlack);
         } catch (Exception e) {
-            MyphLogger.error("MQ-CS-BLACKLIST-CALLBACK ！添加到黑名单中异常！",e);
+            MyphLogger.error("MQ-CS-BLACKLIST-CALLBACK ！添加到黑名单中异常！", e);
         }
 
     }
@@ -83,18 +85,18 @@ public class CSBlackConsumerListener extends BaseActivemqListener {
      * @version V1.0
      */
     private void insertThirdBlackDto(ThirdBlackDto thirdBlack) {
-        if(null == thirdBlack) {
+        if (null == thirdBlack) {
             return;
         }
         // 存在则不插入
         if (!thirdBlackService.isIdCardExist(thirdBlack.getIdCard(), "第三方", ThirdBlackChannel.CS.getDesc())) {
             thirdBlackService.edit(thirdBlack);
             MyphLogger.info("MQ-CS-BLACKLIST-CALLBACK ！添加到黑名单中结束！");
-        }else{
+        } else {
             MyphLogger.info("MQ-CS-BLACKLIST-CALLBACK ！黑名单已经存在此消息！");
         }
     }
-    
+
     /**
      * @Description: 组装第三方黑名单
      * @author heyx
@@ -105,17 +107,19 @@ public class CSBlackConsumerListener extends BaseActivemqListener {
         ThirdBlackDto thirdBlack = new ThirdBlackDto();
         thirdBlack.setChannel(obj.getChannel());
         thirdBlack.setCreateTime(new Date());
-        thirdBlack.setCreateUser("MQ_CS_BLACKLIST_CALLBACK");
+        thirdBlack.setCreateUser("MYCS");
         thirdBlack.setIsReject(Constants.YES_INT);
-        thirdBlack.setModifyUser("MQ_CS_BLACKLIST_CALLBACK");
-        ServiceResult<MemberInfoDto> memberDto = memberInfoService
-                .queryInfoByIdCard(obj.getIdCard());
-        if(null != memberDto && null != memberDto.getData()) {
-            thirdBlack.setMemberName(memberDto.getData().getMemberName());
-        }
+        thirdBlack.setModifyUser("MYCS");
+        //        ServiceResult<MemberInfoDto> memberDto = memberInfoService
+        //                .queryInfoByIdCard(obj.getIdCard());
+        //        if(null != memberDto && null != memberDto.getData()) {
+        //            thirdBlack.setMemberName(memberDto.getData().getMemberName());
+        //        } else {
+        thirdBlack.setMemberName(StringUtils.isEmpty(obj.getMemberName()) ? "" : obj.getMemberName());
+        //        }
         thirdBlack.setIdCard(obj.getIdCard());
         thirdBlack.setUpdateTime(new Date());
-        thirdBlack.setChannel("第三方");
+        thirdBlack.setChannel(obj.getChannel());
         thirdBlack.setRejectReason(obj.getRejectReason());
         thirdBlack.setSrcOrg(ThirdBlackChannel.CS.getDesc());
         return thirdBlack;

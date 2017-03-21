@@ -27,7 +27,7 @@ import lombok.ToString;
 public class CsBlackMqParam extends BaseInfo {
 
     private static final long serialVersionUID = 5064101134536748895L;
-
+    private String 	memberName; //用户名
     private String channel ; //渠道
     private String 	idCard; //身份证号
     private String 	mobile; //手机号

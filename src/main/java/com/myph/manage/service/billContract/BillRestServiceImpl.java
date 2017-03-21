@@ -156,7 +156,7 @@ public class BillRestServiceImpl implements BillRestService {
                 MyphLogger.info("ContractNo:{},BillId:{},已经推送", successData.getContractNo(), successData.getBillId());
                 return excelErrorMsgs;
             }
-            // 查询是否有合同内账单发送
+            // 查询是否有合同内账单已经推送
             record.setBillPushedStatu(BillPushEnum.SUCCESS.getCode());
             record.setContractId(successData.getContractNo());
             record.setBillId(null);
@@ -169,7 +169,7 @@ public class BillRestServiceImpl implements BillRestService {
             }
             try {
                 // 调用催收接口，记录推送结果
-                restCS(resultPush, successData, fristVo);
+                toRest(resultPush, successData, fristVo);
             } catch (Exception e) {
                 excelErrorMsgs
                         .add("合同号:" + successData.getContractNo() + "-账单号:" + successData.getBillId() + ",接口调用异常");
@@ -181,7 +181,13 @@ public class BillRestServiceImpl implements BillRestService {
         return excelErrorMsgs;
     }
 
-    private void restCS(PushContarctAndBillTaskDto resultPush, RepayPlanRequestVo successData,
+    /**
+     * @Description: 推送催收信息
+     * @author heyx
+     * @date 2017/3/16
+     * @version V1.0
+     */
+    private void toRest(PushContarctAndBillTaskDto resultPush, RepayPlanRequestVo successData,
             ContractRequestVo fristVo) {
         // TODO 组装插入记录表
         PushContarctAndBillTaskDto record = new PushContarctAndBillTaskDto();
@@ -192,12 +198,12 @@ public class BillRestServiceImpl implements BillRestService {
             // TODO http发送正确数据给催收系统 req 合同基础数据接口
             fristVo.setPushedTime(DateUtils.dateParseString(new Date()));
             MyphLogger.info("=============开始调用合同基础数据接口");
-            //                    response = restPushBillAndContract(fristVo);
+                                response = restPushBillAndContract(fristVo);
         } else {
             // TODO http发送逾期账单给催收系统
             successData.setPushedTime(DateUtils.dateParseString(new Date()));
             MyphLogger.info("=============开始调用逾期账单接口");
-            //                    response = restPushBill(successData);
+                                response = restPushBill(successData);
         }
         if (null != response && BillPushConstant.SUCCESS_CODE.equals(response.getRetcode())) {
             record.setBillPushedStatu(BillPushEnum.SUCCESS.getCode());
