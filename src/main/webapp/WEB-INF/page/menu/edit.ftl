@@ -53,7 +53,7 @@
 						<div class="control-group span6 ">
 					    <label class="control-label">访问路径<span class="required">*</span></label> 
 					    <div class="controls">
-					 	<input	type="text" name="menuUrl" id="menuUrl" maxlength="50"
+					 	<input	type="text" name="menuUrl" id="menuUrl" maxlength="100"
 						class="m-wrap span6" value="${(menu.menuUrl)!'' }">
 						</div>
 						</div>
