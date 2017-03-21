@@ -2,7 +2,9 @@ package com.myph.manage.controller.sys;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -14,6 +16,7 @@ import org.apache.shiro.authc.IncorrectCredentialsException;
 import org.apache.shiro.authc.LockedAccountException;
 import org.apache.shiro.authc.UnknownAccountException;
 import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.session.Session;
 import org.apache.shiro.session.SessionException;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.BeanUtils;
@@ -32,6 +35,7 @@ import com.myph.base.service.MenuService;
 import com.myph.common.constant.Constants;
 import com.myph.common.exception.SmsException;
 import com.myph.common.log.MyphLogger;
+import com.myph.common.redis.CacheService;
 import com.myph.common.result.AjaxResult;
 import com.myph.common.result.ServiceResult;
 import com.myph.common.util.DateUtils;
@@ -43,8 +47,10 @@ import com.myph.employee.service.EmployeeInfoService;
 import com.myph.log.dto.OperatorLogDto;
 import com.myph.log.service.LogService;
 import com.myph.manage.common.shiro.ShiroUtils;
+import com.myph.manage.common.shiro.session.ShiroRedisSessionDao;
 import com.myph.manage.permission.AuthPermission;
 import com.myph.manage.permission.AuthorityType;
+import com.myph.permission.dto.PermissionDto;
 import com.myph.permission.service.PermissionService;
 import com.myph.role.service.SysRoleService;
 import com.myph.sms.service.SmsService;
@@ -82,11 +88,16 @@ public class LoginController {
 	private LogService logService;
 	
 	@Autowired
-    private RestTemplate restTemplate;	
+    private RestTemplate restTemplate;
+	
+	@Autowired
+    private ShiroRedisSessionDao shiroRedisSessionDao;
 	
 	@Value("${mycs_url}")
 	private String mycsUrl;
 
+	public static final String SHIRO_REDIS_SESSION = "myph:shiro_redis:session";
+	
 	/**
 	 * 麦芽普惠信贷系统登录
 	 *
@@ -262,4 +273,32 @@ public class LoginController {
 		}
 	}
 	
+	@RequestMapping(value = "/checkLogin", method = RequestMethod.POST)
+    @ResponseBody
+	public ServiceResult<EmployeeLoginDto> checkLogin(String loginToken) {
+        MyphLogger.info("checkLogin :{}",loginToken);
+        final String redisKey = SHIRO_REDIS_SESSION + ":" + loginToken;
+        // 验证是否存在redis缓存，存在表示已登录
+        if (!CacheService.KeyBase.isExistsKey(redisKey)) {
+            return ServiceResult.newFailure();
+        }
+        // 抽取员工、菜单、按钮权限信息给催收系统
+        EmployeeLoginDto employeeLoginDto = new EmployeeLoginDto();
+        Session session = shiroRedisSessionDao.readSession(redisKey.getBytes());
+        EmployeeInfoDto employeeInfoDto = (EmployeeInfoDto) session.getAttribute("currentUser");
+        List<MenuDto> menuList = (List<MenuDto>) session.getAttribute("menus");
+        Map<String, List<String>> menuUrlPermissionCode = new HashMap<String, List<String>>();
+        for(int i = 0;i<menuList.size();i++){
+            ServiceResult<List<PermissionDto>> permissionDtoListResult = permissionService.getPermissionByMenuId(menuList.get(i).getId());
+            List<PermissionDto> permissionDtoList = permissionDtoListResult.getData();
+            List<String> permissionCodeList = new ArrayList<String>();
+            for(int j=0;j<permissionDtoList.size();j++){
+                permissionCodeList.add(permissionDtoList.get(j).getPermissionCode());
+            }
+            menuUrlPermissionCode.put(menuList.get(i).getMenuUrl(), permissionCodeList);
+        }
+        BeanUtils.copyProperties(employeeInfoDto, employeeLoginDto);
+        employeeLoginDto.setMenuUrlPermissionCode(menuUrlPermissionCode);
+        return ServiceResult.newSuccess(employeeLoginDto);
+    }
 }
