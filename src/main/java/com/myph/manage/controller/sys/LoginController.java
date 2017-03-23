@@ -95,7 +95,7 @@ public class LoginController {
 	@Autowired
     private ShiroRedisSessionDao shiroRedisSessionDao;
 	
-	@Value("${mycs_url}")
+	@Value("#{configProperties['mycs_url']}")
 	private String mycsUrl;
 
 	public static final String SHIRO_REDIS_SESSION = "myph:shiro_redis:session";
