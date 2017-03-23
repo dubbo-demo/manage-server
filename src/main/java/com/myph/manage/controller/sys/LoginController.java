@@ -23,8 +23,10 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.client.RestTemplate;
 
@@ -273,29 +275,38 @@ public class LoginController {
 		}
 	}
 	
-	@RequestMapping(value = "/checkLogin", method = RequestMethod.POST)
+	@RequestMapping(value = "/checkLogin", method = RequestMethod.GET)
     @ResponseBody
-	public ServiceResult<EmployeeLoginDto> checkLogin(String loginToken) {
-        MyphLogger.info("checkLogin :{}",loginToken);
-        final String redisKey = SHIRO_REDIS_SESSION + ":" + loginToken;
+	public ServiceResult<EmployeeLoginDto> checkLogin(String token) {
+        MyphLogger.info("checkLogin :{}",token);
+        final String redisKey = SHIRO_REDIS_SESSION + ":" + token;
         // 验证是否存在redis缓存，存在表示已登录
         if (!CacheService.KeyBase.isExistsKey(redisKey)) {
             return ServiceResult.newFailure();
         }
         // 抽取员工、菜单、按钮权限信息给催收系统
         EmployeeLoginDto employeeLoginDto = new EmployeeLoginDto();
-        Session session = shiroRedisSessionDao.readSession(redisKey.getBytes());
+        Session session = (Session) CacheService.StringKey.getCached(redisKey.getBytes());
+       // Session session = shiroRedisSessionDao.readSession(redisKey.getBytes());
         EmployeeInfoDto employeeInfoDto = (EmployeeInfoDto) session.getAttribute("currentUser");
-        List<MenuDto> menuList = (List<MenuDto>) session.getAttribute("menus");
+        ServiceResult<List<String>> roleResult = sysRoleService
+                .getRolesByPositionId(employeeInfoDto.getPositionId());// 获取岗位对应的角色ID
+        ServiceResult<List<Long>> permissionResult = permissionService
+                .getPermissionsByRoleId(roleResult.getData());// 根据角色获取对应的权限ID
+        ServiceResult<List<Long>> menuResult = permissionService
+                .getMenuIdsByPerId(permissionResult.getData());// 根据权限ID获取菜单ID
         Map<String, List<String>> menuUrlPermissionCode = new HashMap<String, List<String>>();
-        for(int i = 0;i<menuList.size();i++){
-            ServiceResult<List<PermissionDto>> permissionDtoListResult = permissionService.getPermissionByMenuId(menuList.get(i).getId());
-            List<PermissionDto> permissionDtoList = permissionDtoListResult.getData();
-            List<String> permissionCodeList = new ArrayList<String>();
-            for(int j=0;j<permissionDtoList.size();j++){
-                permissionCodeList.add(permissionDtoList.get(j).getPermissionCode());
+        if(menuResult.getData() != null){
+            for(int i=0;i<menuResult.getData().size();i++){
+                ServiceResult<MenuDto> menuDtoResult = menuService.getMenuById(menuResult.getData().get(i));
+                ServiceResult<List<PermissionDto>> permissionDtoListResult = permissionService.getPermissionByMenuId(menuResult.getData().get(i));
+                List<PermissionDto> permissionDtoList = permissionDtoListResult.getData();
+                List<String> permissionCodeList = new ArrayList<String>();
+                for(int j=0;j<permissionDtoList.size();j++){
+                    permissionCodeList.add(permissionDtoList.get(j).getPermissionCode());
+                }
+                menuUrlPermissionCode.put(menuDtoResult.getData().getMenuUrl(), permissionCodeList);
             }
-            menuUrlPermissionCode.put(menuList.get(i).getMenuUrl(), permissionCodeList);
         }
         BeanUtils.copyProperties(employeeInfoDto, employeeLoginDto);
         employeeLoginDto.setMenuUrlPermissionCode(menuUrlPermissionCode);

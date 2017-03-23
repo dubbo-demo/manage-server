@@ -102,6 +102,7 @@
                 /commom/** = anon
                 /unauthorized.htm = anon
                 /login.htm=anon
+                /checkLogin.htm=anon
                 /sendLoginSmsCode.htm=anon
                 /dologin.htm=anon
                 /**/*.htm=authc,concurrentlogin
