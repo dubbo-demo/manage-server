@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.beans.BeanInfo;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
@@ -54,6 +55,33 @@ public class BillImportController extends BaseController {
     }
 
     /**
+     * @Description: 导出模板
+     * @author heyx
+     * @date 2017/3/23
+     * @version V1.0
+     */
+    @RequestMapping("/exportTemplate")
+    public void exportTemplate(HttpServletRequest request, HttpServletResponse response) {
+        MyphLogger.debug("开始黑名单导出模板：/thirdBlack/exportTemplate.htm");
+        try {
+            String columnNames[] = { "渠道","合同号","期数","账单编号","账单id"
+                    ,"还款日期","期初本金余额","应还日期","应还本金","应还利息","当期应还"
+                    ,"期末本金余额","结清返还服务费","提前结清金额","罚息"
+                    ,"滞纳金","*手续费","还款方式","还款金额","还款类型","已还金额","剩余应还","推送类型"
+                    ,"减免申请流水","减免执行状态","减免执行备注","逾期天数","状态" };// 列名
+            String keys[] = {};
+            String fileName = "导入催收账单Template";
+            // 获取Excel数据
+            List<Map<String, Object>> excelList = new ArrayList<Map<String, Object>>();
+            // 导出Excel数据
+            exportExcel(response, fileName, columnNames, keys, excelList);
+        } catch (Exception e) {
+            MyphLogger.error(e, "异常[催收账单导出模板：/thirdBlack/exportTemplate.htm]");
+        }
+        MyphLogger.debug("结束催收账单导出模板：/thirdBlack/exportTemplate.htm");
+    }
+
+    /**
      * 导入账单
      *
      * @return
@@ -70,6 +98,8 @@ public class BillImportController extends BaseController {
         List<RepayPlanRequestVo> successDatas = new ArrayList<RepayPlanRequestVo>();
         // 错误记录
         List<String> excelErrorMsgs = null;
+        // 检验数据成功
+        model.addAttribute("validateType",AjaxResult.SUCCESS_CODE);
         try {
             // excel转为bean
             ExcelRowBillPush excelBlack = new ExcelRowBillPush();
@@ -78,6 +108,9 @@ public class BillImportController extends BaseController {
             if (null == excelErrorMsgs || excelErrorMsgs.isEmpty()) {
                 // 组装报文，推送催收接口
                 excelErrorMsgs = billRestService.restCS(successDatas);
+            } else {
+                // 检验数据失败
+                model.addAttribute("validateType", AjaxResult.ERROR_CODE);
             }
         } catch (Exception e) {
             result = AjaxResult.ERROR_CODE;

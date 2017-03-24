@@ -83,7 +83,7 @@
 
 								<p>
 									上传文件<input type="file" id="fileName" name="upFile" /><span>
-										&nbsp;&nbsp;<a href="${ctx}/thirdBlack/exportTemplate.htm" />模板下载</a>
+										&nbsp;&nbsp;<a href="${ctx}/billImport/exportTemplate.htm" />模板下载</a>
 									</span>
 								</p>
 							</div>

@@ -104,15 +104,29 @@ public class BillRestServiceImpl implements BillRestService {
         // TODO 抓取合同信息,申请单对象
         FristBillPushEntityDto eFristDto = pushContarctAndBillTaskService
                 .selectApplyContractLoan(fristDto.getContractNo());
+        if(null == eFristDto) {
+            excelErrorMsgs.add("合同号:" + successData.getContractNo() + "-账单号:" + successData.getBillId()
+                    + ",不存在该账单的合同基本信息");
+                return null;
+        }
         BeanUtils.copyProperties(eFristDto, fristDto);
-
         // TODO 备用电话，memeberInfo表里，逗号分隔
         ServiceResult<MemberInfoDto> memberDto = memberInfoService
                 .queryInfoByIdCard(eFristDto.getIdCard());
+        if(null == memberDto || null == memberDto.getData()) {
+            excelErrorMsgs.add("合同号:" + successData.getContractNo() + "-账单号:" + successData.getBillId()
+                    + ",不存在该账单的会员信息");
+            return null;
+        }
         toInfoMember(fristDto, memberDto.getData());
         // TODO 抓取工作信息
         ServiceResult<MemberJobDto> memberJobR = memberJobService
                 .selectByMemberId(memberDto.getData().getId());
+        if(null == memberJobR || null == memberJobR.getData()) {
+            excelErrorMsgs.add("合同号:" + successData.getContractNo() + "-账单号:" + successData.getBillId()
+                    + ",不存在该账单的工作信息");
+            return null;
+        }
         toInfoJob(fristDto, memberJobR.getData());
 
         //邮寄地址:公司地址
@@ -123,6 +137,11 @@ public class BillRestServiceImpl implements BillRestService {
         // TODO 抓取联系人信息
         ServiceResult<List<MemberLinkmanDto>> linkMans =
                 memberLinkmanService.getLinkmansByMemId(memberDto.getData().getId());
+        if(null == linkMans || null == linkMans.getData()) {
+            excelErrorMsgs.add("合同号:" + successData.getContractNo() + "-账单号:" + successData.getBillId()
+                    + ",不存在该账单的联系人信息");
+            return null;
+        }
         toInfoLinkMans(fristDto, linkMans.getData());
 
         return fristDto;
@@ -166,6 +185,9 @@ public class BillRestServiceImpl implements BillRestService {
             if (null == haveSucsRest || 0 == haveSucsRest) {
                 // 推送送合同账单用户基础信息bean
                 fristVo = getContractAndBill(successData);
+                if(null == fristVo) {
+                    return excelErrorMsgs;
+                }
             }
             try {
                 // 调用催收接口，记录推送结果
