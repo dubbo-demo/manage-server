@@ -88,7 +88,7 @@ public class BillRestServiceImpl implements BillRestService {
     @Autowired
     private MYPHConfigUtils mYPHConfigUtils;
 
-    List<String> excelErrorMsgs = null;
+    private static List<String> excelErrorMsgs = new ArrayList<String>();
 
     /**
      * @return ContractRequestVo
@@ -104,16 +104,16 @@ public class BillRestServiceImpl implements BillRestService {
         // TODO 抓取合同信息,申请单对象
         FristBillPushEntityDto eFristDto = pushContarctAndBillTaskService
                 .selectApplyContractLoan(fristDto.getContractNo());
-        if(null == eFristDto) {
+        if (null == eFristDto) {
             excelErrorMsgs.add("合同号:" + successData.getContractNo() + "-账单号:" + successData.getBillId()
                     + ",不存在该账单的合同基本信息");
-                return null;
+            return null;
         }
         BeanUtils.copyProperties(eFristDto, fristDto);
         // TODO 备用电话，memeberInfo表里，逗号分隔
         ServiceResult<MemberInfoDto> memberDto = memberInfoService
                 .queryInfoByIdCard(eFristDto.getIdCard());
-        if(null == memberDto || null == memberDto.getData()) {
+        if (null == memberDto || null == memberDto.getData()) {
             excelErrorMsgs.add("合同号:" + successData.getContractNo() + "-账单号:" + successData.getBillId()
                     + ",不存在该账单的会员信息");
             return null;
@@ -122,7 +122,7 @@ public class BillRestServiceImpl implements BillRestService {
         // TODO 抓取工作信息
         ServiceResult<MemberJobDto> memberJobR = memberJobService
                 .selectByMemberId(memberDto.getData().getId());
-        if(null == memberJobR || null == memberJobR.getData()) {
+        if (null == memberJobR || null == memberJobR.getData()) {
             excelErrorMsgs.add("合同号:" + successData.getContractNo() + "-账单号:" + successData.getBillId()
                     + ",不存在该账单的工作信息");
             return null;
@@ -137,7 +137,7 @@ public class BillRestServiceImpl implements BillRestService {
         // TODO 抓取联系人信息
         ServiceResult<List<MemberLinkmanDto>> linkMans =
                 memberLinkmanService.getLinkmansByMemId(memberDto.getData().getId());
-        if(null == linkMans || null == linkMans.getData()) {
+        if (null == linkMans || null == linkMans.getData()) {
             excelErrorMsgs.add("合同号:" + successData.getContractNo() + "-账单号:" + successData.getBillId()
                     + ",不存在该账单的联系人信息");
             return null;
@@ -155,7 +155,7 @@ public class BillRestServiceImpl implements BillRestService {
      */
     @Override
     public List<String> restCS(List<RepayPlanRequestVo> successDatas) {
-        excelErrorMsgs = new ArrayList<String>();
+        excelErrorMsgs.isEmpty();
         if (null == successDatas) {
             return excelErrorMsgs;
         }
@@ -185,7 +185,7 @@ public class BillRestServiceImpl implements BillRestService {
             if (null == haveSucsRest || 0 == haveSucsRest) {
                 // 推送送合同账单用户基础信息bean
                 fristVo = getContractAndBill(successData);
-                if(null == fristVo) {
+                if (null == fristVo) {
                     return excelErrorMsgs;
                 }
             }
@@ -220,12 +220,12 @@ public class BillRestServiceImpl implements BillRestService {
             // TODO http发送正确数据给催收系统 req 合同基础数据接口
             fristVo.setPushedTime(DateUtils.dateParseString(new Date()));
             MyphLogger.info("=============开始调用合同基础数据接口");
-                                response = restPushBillAndContract(fristVo);
+            response = restPushBillAndContract(fristVo);
         } else {
             // TODO http发送逾期账单给催收系统
             successData.setPushedTime(DateUtils.dateParseString(new Date()));
             MyphLogger.info("=============开始调用逾期账单接口");
-                                response = restPushBill(successData);
+            response = restPushBill(successData);
         }
         if (null != response && BillPushConstant.SUCCESS_CODE.equals(response.getRetcode())) {
             record.setBillPushedStatu(BillPushEnum.SUCCESS.getCode());
