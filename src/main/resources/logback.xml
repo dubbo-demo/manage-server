@@ -151,9 +151,9 @@
 
     <!--输入spring的error -->
     <logger name="com.myph" level="info"/>
-    <logger name="com.alibaba.dubbo" level="info" />
+    <logger name="com.alibaba.dubbo" level="debug" />
     <logger name="com.ibatis" level="info"/>
-    <logger name="org.springframework" level="info"/>
+    <logger name="org.springframework" level="debug"/>
     <logger name="com.ibatis.sqlmap.engine.impl.SqlMapClientDelegate" level="info"/>
     <logger name="org.apache.commons" level="info"/>
     <logger name="catalia" level="info"/>
@@ -165,7 +165,7 @@
     <logger name="java.sql.Connection" level="debug"/>
     <logger name="java.sql.PreparedStatement" level="debug"/>
     <!--定义root 级别 -->
-    <root level="info">
+    <root level="debug">
         <appender-ref ref="platform"/>
         <!-- 本地测试开始-->
         <appender-ref ref="STDOUT"/>
