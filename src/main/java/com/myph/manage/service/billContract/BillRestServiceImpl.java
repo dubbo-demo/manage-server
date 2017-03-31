@@ -240,7 +240,7 @@ public class BillRestServiceImpl implements BillRestService {
         }
         // 已经插入该账单记录，修改状态
         if (null != resultPush) {
-            record.setFailureTimes(resultPush.getFailureTimes() + 1);
+            record.setPushTimes(resultPush.getPushTimes() + 1);
             // TODO update记录表为成功标记
             pushContarctAndBillTaskService.updateByStatuToSuc(record);
         } else {
