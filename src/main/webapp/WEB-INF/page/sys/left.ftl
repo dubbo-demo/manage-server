@@ -39,14 +39,22 @@
 									 <#list menu.chirdlen as child>
 									 	 <#if menu_index == _menu_index?number>
 											<#if child_index == _child_index?number>
-												<li class="active"><a href="${serverPath}${child.menuUrl}?menu_index=${menu_index}&child_index=${child_index}">${child.menuName}</a></li>
+    											    <#if child.menuUrl?index_of("http")!=-1>
+    												    <li class="active"><a href="${child.menuUrl}?menu_index=${menu_index}&child_index=${child_index}">${child.menuName}</a></li>
+    												<#else>
+    												    <li class="active"><a href="${serverPath}${child.menuUrl}?menu_index=${menu_index}&child_index=${child_index}">${child.menuName}</a></li>
+                                                    </#if>
 											 	<#assign exists_child="true"/>
 											 <#else>
 											    <#assign exists_child="false"/>
 											 </#if>										
 										</#if>
 										<#if exists_child != "true">
-											<li><a href="${serverPath}${child.menuUrl}?menu_index=${menu_index}&child_index=${child_index}">${child.menuName}</a></li>
+										    <#if child.menuUrl?index_of("http")!=-1>
+											    <li><a href="${child.menuUrl}?menu_index=${menu_index}&child_index=${child_index}">${child.menuName}</a></li>
+											<#else>
+                                                <li><a href="${serverPath}${child.menuUrl}?menu_index=${menu_index}&child_index=${child_index}">${child.menuName}</a></li>
+                                            </#if>
 										</#if>
 									 </#list>
 								</#if>
