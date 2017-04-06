@@ -65,7 +65,7 @@
 
 	<div class="logo" style="width:500px;">
 
-		<img src="${cdnPath}/common/bootstrap/media/image/maiyaphlogo.png" alt="麦芽普惠信贷信息管理平台" /> 
+		<img src="${cdnPath}/common/bootstrap/media/image/maiyaphlogo2.png" alt="麦芽普惠信贷信息管理平台" />
 
 	</div>
 
