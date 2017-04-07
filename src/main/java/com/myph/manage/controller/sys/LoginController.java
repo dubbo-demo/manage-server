@@ -8,6 +8,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.myph.manage.po.EmployeeLoginDto;
 import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
@@ -43,7 +44,6 @@ import com.myph.common.result.ServiceResult;
 import com.myph.common.util.DateUtils;
 import com.myph.common.util.IpUtil;
 import com.myph.employee.dto.EmployeeInfoDto;
-import com.myph.employee.dto.EmployeeLoginDto;
 import com.myph.employee.dto.EmployeePositionInfoDto;
 import com.myph.employee.service.EmployeeInfoService;
 import com.myph.log.dto.OperatorLogDto;
@@ -103,7 +103,7 @@ public class LoginController {
 	/**
 	 * 麦芽普惠信贷系统登录
 	 *
-	 * @param model
+	 * @param
 	 * @param phone
 	 * @param smsCode
 	 * @return
@@ -307,6 +307,10 @@ public class LoginController {
                 }
                 menuUrlPermissionCode.put(menuDtoResult.getData().getMenuUrl(), permissionCodeList);
             }
+			ServiceResult<List<MenuDto>> menuDtoResult = menuService.getMenuListByIds(menuResult.getData());// 根据菜单ID获取所有菜单
+			if(menuDtoResult.getData() != null){
+				employeeLoginDto.setMenuDtos(menuDtoResult.getData());
+			}
         }
         BeanUtils.copyProperties(employeeInfoDto, employeeLoginDto);
         employeeLoginDto.setMenuUrlPermissionCode(menuUrlPermissionCode);

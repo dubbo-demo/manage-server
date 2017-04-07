@@ -155,7 +155,7 @@ public class BillRestServiceImpl implements BillRestService {
      */
     @Override
     public List<String> restCS(List<RepayPlanRequestVo> successDatas) {
-        excelErrorMsgs.isEmpty();
+        excelErrorMsgs.removeAll(excelErrorMsgs);
         if (null == successDatas) {
             return excelErrorMsgs;
         }
@@ -306,7 +306,9 @@ public class BillRestServiceImpl implements BillRestService {
                 }
             }
             fristDto.setUnitProperty(
-                    BillPushConstant.getOtherCompanyNature(memberJobDto.getOtherCompanyNature())); //单位性质
+                    BillPushConstant.getOtherCompanyNature((memberJobDto.getOtherCompanyNature() == null ?
+                            0 :
+                            memberJobDto.getOtherCompanyNature()))); //单位性质
             fristDto.setPost(""); //担任职务
             if (null != memberJobDto.getPositionsCode()) {
                 bnode = nodeService.selectByPrimaryKey((long) memberJobDto.getPositionsCode());
