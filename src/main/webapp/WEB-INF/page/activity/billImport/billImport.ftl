@@ -25,7 +25,7 @@
 						<h3>
 							<#if validateType==1>账单数据校验失败:
 							<#else>
-                                错误点上面的账单发送成功，数据错误记录处发送失败:
+                               上面的账单发送成功，数据错误记录处发送失败:
 							</#if>
 						</h3>
 						<#list	excelErrorMsgs as msg> <font color="#ff0000">${msg}</font> <br />
