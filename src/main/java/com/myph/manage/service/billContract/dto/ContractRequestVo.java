@@ -276,7 +276,7 @@ public class ContractRequestVo extends BaseInfo {
      * 现住址	addr
      * 详细地址	destilAddr
      */
-    private List<LinkmanDto> linkmanList;
+    private List<LinkmanDto> linkmanDtoList;
 
     /*
      *设备号

@@ -274,7 +274,7 @@ public class BillRestServiceImpl implements BillRestService {
                 dto.setDetailAddr(mdto.getLinkManHomeAddress());
                 list.add(dto);
             }
-            fristDto.setLinkmanList(list);
+            fristDto.setLinkmanDtoList(list);
         } catch (Exception e) {
             excelErrorMsgs.add("合同号:" + fristDto.getContractNo() + "-账单号:" + fristDto.getBillId() + ",组装联系人异常");
             MyphLogger.error("组装联系人异常", e);
