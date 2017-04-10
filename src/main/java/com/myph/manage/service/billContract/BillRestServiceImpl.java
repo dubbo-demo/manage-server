@@ -169,9 +169,10 @@ public class BillRestServiceImpl implements BillRestService {
             PushContarctAndBillTaskDto resultPush = pushContarctAndBillTaskService.selectSuccessInfo(record);
             // 获取记录数据状态为发送成功,该账单已经推送
             if (null != resultPush && BillPushEnum.SUCCESS.getCode().equals(resultPush.getBillPushedStatu())) {
-                excelErrorMsgs.add("合同号:" + successData.getContractNo() + "-账单号:" + successData.getBillId() + "-发送时间:"
+                excelErrorMsgs.add("该账单已经成功推送过，合同号:" + successData.getContractNo() + "-账单号:" + successData.getBillId()
+                        + "-发送时间:"
                         + DateUtils.dateParseString(resultPush.getLastPushedTime())
-                        + ",接口调用成功，推送失败");
+                );
                 MyphLogger.info("ContractNo:{},BillId:{},已经推送", successData.getContractNo(), successData.getBillId());
                 return excelErrorMsgs;
             }
