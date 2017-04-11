@@ -61,7 +61,7 @@
     			            <td>${record_index+1}</td>
     			            <td>${(record.teamName)!}</td>
     			            <td>${(record.productTypeNames)!}</td>
-    			            <td>${(record.createTime)!}</td>
+    			            <td>${record.createTime?string('yyyy-MM-dd HH:mm:ss')}</td>
     			            <td><a href="#updateTeamProduct" data-toggle="modal" onclick="update(${(record.id)!})">修改</a></td>
     			            <td><a href="#" onclick="del(${(record.id)!})">删除</a></td>
     			        </tr>

@@ -9,30 +9,20 @@
  */
 package com.myph.manage.controller.teamProduct;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.myph.common.constant.Constants;
-import com.myph.common.result.AjaxResult;
 import com.myph.common.result.ServiceResult;
 import com.myph.common.rom.annotation.BasePage;
 import com.myph.common.rom.annotation.Pagination;
-import com.myph.employee.dto.EmployeeSysUserDto;
-import com.myph.manage.common.shiro.ShiroUtils;
 import com.myph.node.dto.SysNodeDto;
 import com.myph.node.service.NodeService;
-import com.myph.product.dto.ProductDto;
-import com.myph.product.service.ProductService;
 import com.myph.teamProduct.dto.TeamProductDto;
 import com.myph.teamProduct.service.TeamProductService;
 
@@ -42,9 +32,9 @@ public class TeamProductController {
 
     @Autowired
     private TeamProductService teamProductService;
-
+    
     @Autowired
-    private ProductService productService;
+    private NodeService nodeService;
 
     @RequestMapping("/queryPageList")
     public String queryPageList(@RequestParam(value = "pageIndex", required = false, defaultValue = "1") int pageIndex,
@@ -55,19 +45,20 @@ public class TeamProductController {
         BasePage basePage = new BasePage(pageIndex, pageSize);
         // 查询团队产品关系信息
         ServiceResult<Pagination<TeamProductDto>> result = teamProductService.queryTeamProductInfo(basePage);
+        List<TeamProductDto> teamProductDtoList = result.getData().getResult();
         // 补充产品名称
-        for (int i = 0; i < result.getData().getResult().size(); i++) {
-            String productTypes = result.getData().getResult().get(i).getProductTypes();
+        for (int i = 0; i < teamProductDtoList.size(); i++) {
+            String productTypes = teamProductDtoList.get(i).getProductTypes();
             List<String> productTypeNameList = new ArrayList<String>();
-            StringBuffer productTypeNames = null;
+            StringBuffer productTypeNames = new StringBuffer();
             String[] productTypeArray = productTypes.split("\\|");
             for (int j = 0; j < productTypeArray.length; j++) {
-                ServiceResult<String> nameResult = productService.getProductNameById(Long.valueOf(productTypeArray[i]));
-                productTypeNameList.add(nameResult.getData());
+                ServiceResult<SysNodeDto> nameResult = nodeService.selectByPrimaryKey(Long.valueOf(productTypeArray[j]));
+                productTypeNameList.add(nameResult.getData().getNodeName());
                 if (productTypeNames.length() <= 0) {
-                    productTypeNames = new StringBuffer(nameResult.getData());
+                    productTypeNames = new StringBuffer(nameResult.getData().getNodeName());
                 } else {
-                    productTypeNames.append(",").append(nameResult.getData());
+                    productTypeNames.append(",").append(nameResult.getData().getNodeName());
                 }
             }
             result.getData().getResult().get(i).setProductTypeNames(productTypeNames);
