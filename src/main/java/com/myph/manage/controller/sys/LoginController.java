@@ -228,7 +228,8 @@ public class LoginController {
 				subject.logout();
 				//调用催收登录退出接口
 				String url = mycsUrl + "/loginOut.htm";
-				restTemplate.postForObject(url, "", Object.class);
+				String phone = ShiroUtils.getCurrentUser().getMobilePhone();
+				restTemplate.postForObject(url, phone, Object.class);
 			}
 		} catch (Exception e) {
 			MyphLogger.error(e, "用户退出登录异常");
