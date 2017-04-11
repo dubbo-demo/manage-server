@@ -89,7 +89,7 @@ public class CSBlackConsumerListener extends BaseActivemqListener {
             return;
         }
         // 存在则不插入
-        if (!thirdBlackService.isIdCardExist(thirdBlack.getIdCard(), "第三方", ThirdBlackChannel.CS.getDesc())) {
+        if (!thirdBlackService.isIdCardExist(thirdBlack.getIdCard(), thirdBlack.getChannel(), ThirdBlackChannel.CS.getDesc())) {
             thirdBlackService.edit(thirdBlack);
             MyphLogger.info("MQ-CS-BLACKLIST-CALLBACK ！添加到黑名单中结束！");
         } else {
