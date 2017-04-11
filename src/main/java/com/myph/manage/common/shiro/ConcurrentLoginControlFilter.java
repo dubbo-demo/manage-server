@@ -124,7 +124,8 @@ public class ConcurrentLoginControlFilter extends AccessControlFilter {
             session.setTimeout(2000);
             //调用催收登录退出接口
             String url = mycsUrl + "/loginOut.htm";
-            restTemplate.postForObject(url, "", Object.class);
+            String phone = ShiroUtils.getCurrentUser().getMobilePhone();
+            restTemplate.postForObject(url, phone, Object.class);
             return false;
         }
         return true;
