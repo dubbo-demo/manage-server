@@ -224,11 +224,11 @@ public class LoginController {
 				// 记录退出日志
 				// 更新此次登录的退出时间
 				String userName = ShiroUtils.getCurrentUserName();
+				String phone = ShiroUtils.getCurrentUser().getMobilePhone();
 				MyphLogger.info("用户{}退出登录", userName);
 				subject.logout();
 				//调用催收登录退出接口
 				String url = mycsUrl + "/loginOut.htm";
-				String phone = ShiroUtils.getCurrentUser().getMobilePhone();
 				restTemplate.postForObject(url, phone, Object.class);
 			}
 		} catch (Exception e) {
@@ -314,6 +314,8 @@ public class LoginController {
 			}
         }
         BeanUtils.copyProperties(employeeInfoDto, employeeLoginDto);
+        ServiceResult<EmployeePositionInfoDto> employeePositionResult = employeeInfoService.queryPositionInfoByEmployeeId(employeeInfoDto.getId());
+        employeeLoginDto.setPositionName(employeePositionResult.getData().getPositionName());
         employeeLoginDto.setMenuUrlPermissionCode(menuUrlPermissionCode);
         return ServiceResult.newSuccess(employeeLoginDto);
     }

@@ -118,13 +118,13 @@ public class ConcurrentLoginControlFilter extends AccessControlFilter {
 //        }
         // 如果被踢出了，直接退出，重定向到踢出后的地址
         if (session.getAttribute("kickout") != null) {
+            String phone = ShiroUtils.getCurrentUser().getMobilePhone();
             saveRequest(request);
             request.setAttribute("kickout", "true");
             WebUtils.issueRedirect(request, response, kickoutUrl);
             session.setTimeout(2000);
             //调用催收登录退出接口
             String url = mycsUrl + "/loginOut.htm";
-            String phone = ShiroUtils.getCurrentUser().getMobilePhone();
             restTemplate.postForObject(url, phone, Object.class);
             return false;
         }
