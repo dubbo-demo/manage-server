@@ -51,7 +51,7 @@
     					<th>团队</th>
     					<th>取件产品类型</th>
     					<th>创建时间</th>
-    					<th>操作</th>
+    					<th>创建人</th>
     					<th>操作</th>
     				</tr>
     			</thead>
@@ -62,8 +62,8 @@
     			            <td>${(record.teamName)!}</td>
     			            <td>${(record.productTypeNames)!}</td>
     			            <td>${record.createTime?string('yyyy-MM-dd HH:mm:ss')}</td>
+    			            <td>${(record.createUser)!}</td>
     			            <td><a href="#updateTeamProduct" data-toggle="modal" onclick="update(${(record.id)!})">修改</a></td>
-    			            <td><a href="#" onclick="del(${(record.id)!})">删除</a></td>
     			        </tr>
     			    </#list>
     			</tbody>
@@ -73,57 +73,55 @@
     		<div id="addTeamProduct" class="modal hide fade" tabindex="-1" data-width="760">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
-                    <h3>新建岗位</h3>
+                    <h3>新建信审取件配置</h3>
                 </div>
                 <div class="modal-body">
                     <div class="row-fluid">
-                        <span class="control-label span2">岗位编号<span class="required">*</span></span>
-                        <input type="text" name="addPositionCode" id="addPositionCode" readonly />
-                    </div>
-                    <div class="row-fluid">
-                        <span class="control-label span2">岗位名称<span class="required">*</span></span>
-                        <input type="text" name="addPositionName" id="addPositionName"/>
-                    </div>
-                    <div class="row-fluid">
-                        <span class="control-label span2">是否管理岗<span class="required">*</span></span>
-                        <select name="addIsManage" id="addIsManage">
-                            <option value="0">否</option>
-                            <option value="1">是</option>
+                        <span class="control-label span3">团队<span class="required">*</span></span>
+                        <select name="addTeam" id="addTeam" class="form-control span6">
+                            <#list teamResult as record>
+                            <option id=${(record.id)!}>${(record.teamName)!}</option>
+                            </#list>
                         </select>
-                    </div>     
+                    </div>
+                    <div class="row-fluid">
+                        <span class="control-label span3" style="margin-right: -13px">取件产品类型<span class="required">*</span></span>
+                        <select name="addProductType" id="addProductType" class="form-control span6" multiple="multiple">
+                            <#list productTypeResult as record>
+                            <option id=${(record.id)!}>${(record.nodeName)!}</option>
+                            </#list>
+                        </select>
+
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <a class="btn blue" data-dismiss="modal" onclick="returnBack();" class="btn">返回</a>
-                    <button type="button" class="btn blue" onclick="addPosition();">提交</button>      
+                    <button type="button" class="btn blue" onclick="addTeamProduct();">提交</button>      
                 </div>
             </div>
             
             <div id="updateTeamProduct" class="modal hide fade" tabindex="-1" data-width="760">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
-                    <h3>修改岗位</h3>
+                    <h3>更新信审取件配置</h3>
                 </div>
                 <div class="modal-body">
-                    <input type="hidden" id="updatePositionId" name="updatePositionId"></input>
                     <div class="row-fluid">
-                        <span class="control-label span2">岗位编号<span class="required">*</span></span>
-                        <input type="text" name="updatePositionCode" id="updatePositionCode" readonly >
+                        <span class="control-label span3">团队<span class="required">*</span></span>
+                        <input type="text" name="updateTeam" id="updateTeam" readonly />
                     </div>
                     <div class="row-fluid">
-                        <span class="control-label span2">岗位名称<span class="required">*</span></span>
-                        <input type="text" name="updatePositionName" id="updatePositionName" >
-                    </div>
-                    <div class="row-fluid">
-                        <span class="control-label span2">是否管理岗<span class="required">*</span></span>
-                        <select name="areaId" name="updateIsManage" id="updateIsManage">
-                            <option value="0">否</option>
-                            <option value="1">是</option>
+                        <span class="control-label span3" style="margin-right: -13px">取件产品类型<span class="required">*</span></span>
+                        <select name="updateProductType" id="updateProductType" class="form-control span6" multiple="multiple">
+                            <#list productTypeResult as record>
+                            <option id=${(record.id)!}>${(record.nodeName)!}</option>
+                            </#list>
                         </select>
-                    </div>     
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <a class="btn blue" data-dismiss="modal" onclick="returnBack();" class="btn">返回</a>
-                    <button type="button" class="btn blue" onclick="updatePosition();">提交</button>
+                    <button type="button" class="btn blue" onclick="addTeamProduct();">提交</button>      
                 </div>
             </div>
             

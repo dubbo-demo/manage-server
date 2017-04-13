@@ -17,12 +17,18 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.myph.common.result.AjaxResult;
 import com.myph.common.result.ServiceResult;
 import com.myph.common.rom.annotation.BasePage;
 import com.myph.common.rom.annotation.Pagination;
+import com.myph.constant.NodeConstant;
+import com.myph.manage.common.shiro.ShiroUtils;
 import com.myph.node.dto.SysNodeDto;
 import com.myph.node.service.NodeService;
+import com.myph.team.dto.SysTeamDto;
+import com.myph.team.service.SysTeamService;
 import com.myph.teamProduct.dto.TeamProductDto;
 import com.myph.teamProduct.service.TeamProductService;
 
@@ -35,6 +41,9 @@ public class TeamProductController {
     
     @Autowired
     private NodeService nodeService;
+    
+    @Autowired
+    private SysTeamService sysTeamService;
 
     @RequestMapping("/queryPageList")
     public String queryPageList(@RequestParam(value = "pageIndex", required = false, defaultValue = "1") int pageIndex,
@@ -64,7 +73,20 @@ public class TeamProductController {
             result.getData().getResult().get(i).setProductTypeNames(productTypeNames);
         }
         model.addAttribute("page", result.getData());
+        //查询基础数据产品类型信息
+        ServiceResult<List<SysNodeDto>> productTypeResult = nodeService.getListByParent(NodeConstant.PRODUCT_PARENT_CODE);
+        model.addAttribute("productTypeResult", productTypeResult.getData());
+        //获取未与产品进行关联的团队信息
+        ServiceResult<List<SysTeamDto>> teamResult = sysTeamService.queryTeamsNoRelationProductType();
+        model.addAttribute("teamResult", teamResult.getData());
         return "/teamProduct/teamProduct";
     }
 
+    @RequestMapping("/addTeamProduct")
+    @ResponseBody
+    public AjaxResult addTeamProduct(TeamProductDto teamProductDto) {
+        teamProductDto.setCreateUser(ShiroUtils.getCurrentUserName());
+        teamProductService.insertSelective(teamProductDto);
+        return AjaxResult.success();
+    }
 }

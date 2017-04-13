@@ -1,5 +1,15 @@
 $(function() {
+	$('#addProductType').select2();
 
+	$('#addTeamProduct').on('hide.bs.modal', function () {
+		  $('.select2-drop').hide();
+		})
+		
+	$('#updateProductType').select2();
+	
+	$('#updateTeamProduct').on('hide.bs.modal', function () {
+		  $('.select2-drop').hide();
+		})		
 });
 
 function checkInput(patrn, obj) {
@@ -15,154 +25,27 @@ function checkInput(patrn, obj) {
 	return true;
 }
 
-function selectMaxPositionId() {
-	var options = {
-		url : serverPath + '/position/selectMaxPositionId.htm',
-		type : 'post',
-		dataType : 'json',
-		data : {
-			"Time" : new Date().getMilliseconds()
-		},
-		success : function(result) {
-			var data = result.data;
-			var param = "";
-			if (data < 9) {
-				param = "GW00" + (data + 1);
-			} else if (data < 99) {
-				param = "GW0" + (data + 1);
-			} else {
-				param = "GW" + (data + 1);
-			}
-			$('#addPositionCode').val(param);
+function addTeamProduct(){
+	var url = serverPath + "/teamProduct/addTeamProduct.htm";
+	var productTypes = "";
+	var productTypeslist=$("#addProductType").select2("data");
+	console.log(productTypeslist);
+	for (var i = 0; i < productTypeslist.length; i++) {
+		
+		if(productTypes == ""){
+			productTypes = productTypeslist[i].element[0].id;
+		}else{
+			productTypes = productTypes + "|" + productTypeslist[i].element[0].id;
 		}
-	};
-	$.ajax(options);
-}
-
-function addPosition() {
-	// 岗位名称不可为空
-	var positionName = $('#addPositionName').val()
-			.replace(/(^\s*)|(\s*$)/g, "");// 删除二边空格
-	if (positionName == "") {
-		BootstrapDialog.alert("岗位名不可为空");
-		return false;
 	}
-	// 岗位名称进行校验，不可与数据库中重复
-	var options = {
-		url : serverPath + '/position/addPosition.htm',
-		type : 'post',
-		dataType : 'json',
-		data : {
-			"Time" : new Date().getMilliseconds(),
-			"positionCode" : $("#addPositionCode").val(),
-			"positionName" : $("#addPositionName").val(),
-			"isManage" : $("#addIsManage").val()
-		},
-		success : function(result) {
-			var data = result.data;
-			if (data > 0) {
-				BootstrapDialog.alert("岗位名已存在");
-				return false;
-			}
-			$('#addPosition').modal('hide');
-			BootstrapDialog.alert('新增岗位成功', function(result) {
-				window.location.reload();
-			});
-		}
+	var data = {
+		"Time" : new Date().getMilliseconds(),
+		"teamId" : $("#addTeam option:selected").attr('id'),
+		"productTypes" : productTypes
 	};
-	$.ajax(options);
-}
-
-function returnBack() {
-	window.location.href = window.location;
-}
-
-function updatePosition() {
-	// 岗位名称不可为空
-	var positionName = $('#updatePositionName').val().replace(/(^\s*)|(\s*$)/g,
-			"");// 删除二边空格
-	if (positionName == "") {
-		BootstrapDialog.alert("岗位名不可为空");
-		return false;
-	}
-	// 岗位名称进行校验，不可与数据库中重复
-	var options = {
-		url : serverPath + '/position/updatePosition.htm',
-		type : 'post',
-		dataType : 'json',
-		data : {
-			"Time" : new Date().getMilliseconds(),
-			"positionCode" : $("#updatePositionCode").val(),
-			"positionName" : $("#updatePositionName").val(),
-			"isManage" : $("#updateIsManage").val(),
-			"id" : $("#updatePositionId").val()
-		},
-		success : function(result) {
-			var data = result.data;
-			if (data > 0) {
-				BootstrapDialog.alert("岗位名已存在");
-				return false;
-			}
-			$('#updatePosition').modal('hide');
-			BootstrapDialog.alert('修改岗位成功', function(result) {
-				window.location.reload();
-			});
-		}
-	};
-	$.ajax(options);
-}
-
-function update(id) {
-	$("#updatePositionId").val(id);
-	var selectId = "#" + id + " td";
-	$("#updatePositionName").val($(selectId).eq(0).text());
-	$("#updatePositionCode").val($(selectId).eq(1).text());
-	if($(selectId).eq(2).text() == "是"){
-		$("#updateIsManage").val(1);
-	}else{
-		$("#updateIsManage").val(0);
-	}
-}
-
-function del(id) {
-	var options = {
-		url : serverPath + '/position/check.htm',
-		type : 'post',
-		dataType : 'json',
-		data : {
-			"id" : id
-		},
-		success : function(result) {
-			var data = result.data;
-			if (data == 1) {
-				BootstrapDialog.alert("岗位已绑定组织，请先解除绑定再删除");
-				return false;
-			}
-			if (data == 2) {
-				BootstrapDialog.alert("岗位已绑定角色，请先解除绑定再删除");
-				return false;
-			}
-			if (data == 0) {
-				BootstrapDialog.confirm('确定删除？',function(result) {
-					if (result) {
-						var options = {
-							url : serverPath+ '/position/delPosition.htm',
-							type : 'post',
-							dataType : 'json',
-							data : {
-								"id" : id
-							},
-							success : function(result) {
-								BootstrapDialog.alert('删除成功', function(result) {
-									window.location.reload();
-								});
-							}
-						};
-						$.ajax(options);
-					}
-				});
-			}
-		}
-	};
-	$.ajax(options);
+	$.getJSON(url, data, function(result) {
+		BootstrapDialog.alert('操作成功', function() {
+			window.location.href = window.location;
+		});
+	});
 }

@@ -129,7 +129,7 @@ to hide search box
     width: 100%;
     margin-top:-1px;
     position: absolute;
-    z-index: 9992;
+    z-index: 99999;
     top: 100%;
 
     background: #ffffff;
