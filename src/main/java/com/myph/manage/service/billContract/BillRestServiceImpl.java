@@ -235,7 +235,7 @@ public class BillRestServiceImpl implements BillRestService {
         } else {
             record.setBillPushedStatu(BillPushEnum.ERROR.getCode());
             excelErrorMsgs.add("合同号:" + successData.getContractNo() + "-账单号:" + successData.getBillId()
-                    + ",接口调用成功，推送失败" + response.getRetinfo());
+                    + ",接口调用成功，推送失败，催收返回内容：" + response.getRetinfo());
             MyphLogger.info("ContractNo:{},BillId:{},接口调用成功，推送失败，催收返回内容：{}", successData.getContractNo(),
                     successData.getBillId(),response.getRetinfo());
         }
