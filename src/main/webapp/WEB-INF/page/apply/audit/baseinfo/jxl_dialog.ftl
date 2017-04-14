@@ -8,7 +8,7 @@
 			<h4></h4>
 
 		</div>
-		<div  style="font-size:18px;text-align:center;font-weight:900;"><span>聚信立</span></div>
+		<div  style="font-size:18px;text-align:center;font-weight:900;"><span>葫芦数据</span></div>
 		<div class="modal-body">
 	
 			<div class="row-fluid">

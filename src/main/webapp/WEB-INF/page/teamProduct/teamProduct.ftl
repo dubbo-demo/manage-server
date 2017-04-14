@@ -109,7 +109,7 @@
                 <div class="modal-body">
                     <div class="row-fluid">
                         <span class="control-label span3">团队<span class="required">*</span></span>
-                        <input type="text" name="updateTeam" id="updateTeam" readonly />
+                        <input type="text" class="span6" name="updateTeam" id="updateTeam" readonly />
                     </div>
                     <div class="row-fluid">
                         <span class="control-label span3" style="margin-right: -13px">取件产品类型<span class="required">*</span></span>

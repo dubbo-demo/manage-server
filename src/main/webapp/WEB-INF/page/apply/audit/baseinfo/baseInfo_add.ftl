@@ -182,7 +182,7 @@
 									<#if apply.clientType??&&apply.clientType==1>
 									<div class="control-group span1 ">
 											<label class="control-label">
-												<a data-toggle="modal" href="#jxl_dialog" class="m-wrap">聚信立</a>
+												<a data-toggle="modal" href="#jxl_dialog" class="m-wrap">葫芦数据</a>
 											</label>
 											<div class="controls">
 												<p style="padding: 6px 6px !important; line-height: 20px;">
