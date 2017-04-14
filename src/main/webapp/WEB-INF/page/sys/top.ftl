@@ -188,7 +188,7 @@
 <div class="header navbar navbar-inverse navbar-fixed-top">
     <div class="navbar-inner">
         <div class="container-fluid">
-            <a class="brand" href=""><img src="${cdnPath}/common/bootstrap/media/image/maiyaphlogo.png" alt="logo"/></a>
+            <a class="brand" href=""><img src="${cdnPath}/common/bootstrap/media/image/maiyaphlogo2.png" alt="logo"/></a>
             <!-- BEGIN RESPONSIVE MENU TOGGLER -->
 
 			<a href="javascript:;" class="btn-navbar collapsed" data-toggle="collapse" data-target=".nav-collapse">

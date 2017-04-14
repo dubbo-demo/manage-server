@@ -43,7 +43,7 @@ import com.myph.employee.dto.EmployeeDetailDto;
 import com.myph.employee.dto.EmployeeInfoDto;
 import com.myph.employee.service.EmployeeInfoService;
 import com.myph.manage.common.shiro.ShiroUtils;
-import com.myph.manage.common.shiro.dto.EmpDetailDto;
+import com.myph.employee.dto.EmpDetailDto;
 import com.myph.manage.common.util.BeanUtils;
 import com.myph.manage.controller.BaseController;
 import com.myph.performance.constant.DecimalFormartConstant;

@@ -115,7 +115,7 @@ public class ThirdBlackController extends BaseController {
             @RequestParam(value = "upFile", required = false) MultipartFile upFile) {
         MyphLogger.info("开始黑名单导入：/thirdBlack/thirdBlack.htm");
         if (null == upFile) {
-            return "/innerBlack/innerBlackImport";
+            return "/thirdBlack/thirdBlackImport";
         }
         int result = AjaxResult.SUCCESS_CODE;
         List<ThirdBlackDto> successData = new ArrayList<ThirdBlackDto>();

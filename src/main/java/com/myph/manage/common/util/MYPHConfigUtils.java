@@ -18,4 +18,10 @@ public class MYPHConfigUtils {
     @Value("${auditReport_url}")
     private String auditReport_url;
 
+    @Value("${rest.contract.bill.url}")
+    private String restContractBillUrl;
+
+    @Value("${rest.repay.plan.url}")
+    private String restRepayPlanUrl;
+
 }

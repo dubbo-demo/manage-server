@@ -1,10 +1,14 @@
 package com.myph.manage.controller.sys;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.myph.manage.po.EmployeeLoginDto;
 import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
@@ -13,13 +17,19 @@ import org.apache.shiro.authc.IncorrectCredentialsException;
 import org.apache.shiro.authc.LockedAccountException;
 import org.apache.shiro.authc.UnknownAccountException;
 import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.session.Session;
 import org.apache.shiro.session.SessionException;
 import org.apache.shiro.subject.Subject;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.client.RestTemplate;
 
 import com.alibaba.dubbo.rpc.RpcException;
 import com.myph.base.common.SmsTemplateEnum;
@@ -28,6 +38,7 @@ import com.myph.base.service.MenuService;
 import com.myph.common.constant.Constants;
 import com.myph.common.exception.SmsException;
 import com.myph.common.log.MyphLogger;
+import com.myph.common.redis.CacheService;
 import com.myph.common.result.AjaxResult;
 import com.myph.common.result.ServiceResult;
 import com.myph.common.util.DateUtils;
@@ -38,8 +49,10 @@ import com.myph.employee.service.EmployeeInfoService;
 import com.myph.log.dto.OperatorLogDto;
 import com.myph.log.service.LogService;
 import com.myph.manage.common.shiro.ShiroUtils;
+import com.myph.manage.common.shiro.session.ShiroRedisSessionDao;
 import com.myph.manage.permission.AuthPermission;
 import com.myph.manage.permission.AuthorityType;
+import com.myph.permission.dto.PermissionDto;
 import com.myph.permission.service.PermissionService;
 import com.myph.role.service.SysRoleService;
 import com.myph.sms.service.SmsService;
@@ -75,11 +88,22 @@ public class LoginController {
 
 	@Autowired
 	private LogService logService;
+	
+	@Autowired
+    private RestTemplate restTemplate;
+	
+	@Autowired
+    private ShiroRedisSessionDao shiroRedisSessionDao;
+	
+	@Value("#{configProperties['mycs_url']}")
+	private String mycsUrl;
 
+	public static final String SHIRO_REDIS_SESSION = "myph:shiro_redis:session";
+	
 	/**
 	 * 麦芽普惠信贷系统登录
 	 *
-	 * @param model
+	 * @param
 	 * @param phone
 	 * @param smsCode
 	 * @return
@@ -200,8 +224,12 @@ public class LoginController {
 				// 记录退出日志
 				// 更新此次登录的退出时间
 				String userName = ShiroUtils.getCurrentUserName();
+				String phone = ShiroUtils.getCurrentUser().getMobilePhone();
 				MyphLogger.info("用户{}退出登录", userName);
 				subject.logout();
+				//调用催收登录退出接口
+				String url = mycsUrl + "/loginOut.htm";
+				restTemplate.postForObject(url, phone, Object.class);
 			}
 		} catch (Exception e) {
 			MyphLogger.error(e, "用户退出登录异常");
@@ -247,4 +275,48 @@ public class LoginController {
 			MyphLogger.access("{}发送登录短信", phone);
 		}
 	}
+	
+	@RequestMapping(value = "/checkLogin", method = RequestMethod.GET)
+    @ResponseBody
+	public ServiceResult<EmployeeLoginDto> checkLogin(String token) {
+        MyphLogger.info("checkLogin :{}",token);
+        final String redisKey = SHIRO_REDIS_SESSION + ":" + token;
+        // 验证是否存在redis缓存，存在表示已登录
+        if (!CacheService.KeyBase.isExistsKey(redisKey)) {
+            return ServiceResult.newFailure();
+        }
+        // 抽取员工、菜单、按钮权限信息给催收系统
+        EmployeeLoginDto employeeLoginDto = new EmployeeLoginDto();
+        Session session = (Session) CacheService.StringKey.getCached(redisKey.getBytes());
+       // Session session = shiroRedisSessionDao.readSession(redisKey.getBytes());
+        EmployeeInfoDto employeeInfoDto = (EmployeeInfoDto) session.getAttribute("currentUser");
+        ServiceResult<List<String>> roleResult = sysRoleService
+                .getRolesByPositionId(employeeInfoDto.getPositionId());// 获取岗位对应的角色ID
+        ServiceResult<List<Long>> permissionResult = permissionService
+                .getPermissionsByRoleId(roleResult.getData());// 根据角色获取对应的权限ID
+        ServiceResult<List<Long>> menuResult = permissionService
+                .getMenuIdsByPerId(permissionResult.getData());// 根据权限ID获取菜单ID
+        Map<String, List<String>> menuUrlPermissionCode = new HashMap<String, List<String>>();
+        if(menuResult.getData() != null){
+            for(int i=0;i<menuResult.getData().size();i++){
+                ServiceResult<MenuDto> menuDtoResult = menuService.getMenuById(menuResult.getData().get(i));
+                ServiceResult<List<PermissionDto>> permissionDtoListResult = permissionService.getPermissionByMenuId(menuResult.getData().get(i));
+                List<PermissionDto> permissionDtoList = permissionDtoListResult.getData();
+                List<String> permissionCodeList = new ArrayList<String>();
+                for(int j=0;j<permissionDtoList.size();j++){
+                    permissionCodeList.add(permissionDtoList.get(j).getPermissionCode());
+                }
+                menuUrlPermissionCode.put(menuDtoResult.getData().getMenuUrl(), permissionCodeList);
+            }
+			ServiceResult<List<MenuDto>> menuDtoResult = menuService.getMenuListByIds(menuResult.getData());// 根据菜单ID获取所有菜单
+			if(menuDtoResult.getData() != null){
+				employeeLoginDto.setMenuDtos(menuDtoResult.getData());
+			}
+        }
+        BeanUtils.copyProperties(employeeInfoDto, employeeLoginDto);
+        ServiceResult<EmployeePositionInfoDto> employeePositionResult = employeeInfoService.queryPositionInfoByEmployeeId(employeeInfoDto.getId());
+        employeeLoginDto.setPositionName(employeePositionResult.getData().getPositionName());
+        employeeLoginDto.setMenuUrlPermissionCode(menuUrlPermissionCode);
+        return ServiceResult.newSuccess(employeeLoginDto);
+    }
 }

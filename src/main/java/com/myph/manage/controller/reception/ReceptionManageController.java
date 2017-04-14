@@ -17,7 +17,7 @@ import com.myph.common.util.SensitiveInfoUtils;
 import com.myph.employee.constants.EmployeeMsg.ORGANIZATION_TYPE;
 import com.myph.employee.dto.EmployeeInfoDto;
 import com.myph.manage.common.shiro.ShiroUtils;
-import com.myph.manage.common.shiro.dto.EmpDetailDto;
+import com.myph.employee.dto.EmpDetailDto;
 import com.myph.organization.dto.OrganizationDto;
 import com.myph.organization.service.OrganizationService;
 import com.myph.reception.dto.ApplyReceptionDto;
