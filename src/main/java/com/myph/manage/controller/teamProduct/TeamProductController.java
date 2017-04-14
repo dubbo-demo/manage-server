@@ -89,4 +89,18 @@ public class TeamProductController {
         teamProductService.insertSelective(teamProductDto);
         return AjaxResult.success();
     }
+    
+    @RequestMapping("/queryteamProductById")
+    @ResponseBody
+    public AjaxResult queryteamProductById(Long id) {
+        ServiceResult<TeamProductDto> result = teamProductService.selectByPrimaryKey(id);
+        return AjaxResult.success(result.getData());
+    }
+    
+    @RequestMapping("/updateTeamProduct")
+    @ResponseBody
+    public AjaxResult updateTeamProduct(TeamProductDto teamProductDto) {
+        teamProductService.updateByPrimaryKeySelective(teamProductDto);
+        return AjaxResult.success();
+    }
 }

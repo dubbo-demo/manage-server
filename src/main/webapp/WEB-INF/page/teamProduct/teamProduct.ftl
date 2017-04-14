@@ -57,9 +57,9 @@
     			</thead>
     			<tbody>
     			    <#list page.result as record>
-    			        <tr id=${(record.id)!}>
+    			        <tr>
     			            <td>${record_index+1}</td>
-    			            <td>${(record.teamName)!}</td>
+    			            <td id=${(record.id)!}>${(record.teamName)!}</td>
     			            <td>${(record.productTypeNames)!}</td>
     			            <td>${record.createTime?string('yyyy-MM-dd HH:mm:ss')}</td>
     			            <td>${(record.createUser)!}</td>
@@ -100,6 +100,7 @@
                 </div>
             </div>
             
+            <input type="hidden" id="id" name="id"></input>
             <div id="updateTeamProduct" class="modal hide fade" tabindex="-1" data-width="760">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
@@ -113,15 +114,12 @@
                     <div class="row-fluid">
                         <span class="control-label span3" style="margin-right: -13px">取件产品类型<span class="required">*</span></span>
                         <select name="updateProductType" id="updateProductType" class="form-control span6" multiple="multiple">
-                            <#list productTypeResult as record>
-                            <option id=${(record.id)!}>${(record.nodeName)!}</option>
-                            </#list>
                         </select>
                     </div>
                 </div>
                 <div class="modal-footer">
                     <a class="btn blue" data-dismiss="modal" onclick="returnBack();" class="btn">返回</a>
-                    <button type="button" class="btn blue" onclick="addTeamProduct();">提交</button>      
+                    <button type="button" class="btn blue" onclick="updateTeamProduct();">提交</button>      
                 </div>
             </div>
             
