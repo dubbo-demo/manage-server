@@ -299,12 +299,17 @@ public class LoginController {
         Map<String, List<String>> menuUrlPermissionCode = new HashMap<String, List<String>>();
         if(menuResult.getData() != null){
             for(int i=0;i<menuResult.getData().size();i++){
+                //获取菜单信息
                 ServiceResult<MenuDto> menuDtoResult = menuService.getMenuById(menuResult.getData().get(i));
+                //获取权限信息
                 ServiceResult<List<PermissionDto>> permissionDtoListResult = permissionService.getPermissionByMenuId(menuResult.getData().get(i));
                 List<PermissionDto> permissionDtoList = permissionDtoListResult.getData();
                 List<String> permissionCodeList = new ArrayList<String>();
+                //将角色拥有的权限信息放在菜单下
                 for(int j=0;j<permissionDtoList.size();j++){
-                    permissionCodeList.add(permissionDtoList.get(j).getPermissionCode());
+                    if(permissionResult.getData().contains(permissionDtoList.get(j).getId())){
+                        permissionCodeList.add(permissionDtoList.get(j).getPermissionCode()); 
+                    }
                 }
                 menuUrlPermissionCode.put(menuDtoResult.getData().getMenuUrl(), permissionCodeList);
             }
