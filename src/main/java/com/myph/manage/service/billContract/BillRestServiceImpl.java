@@ -109,6 +109,9 @@ public class BillRestServiceImpl implements BillRestService {
                     + ",不存在该账单的合同基本信息");
             return null;
         }
+        if(!StringUtils.isEmpty(eFristDto.getLoanDate())) {
+            eFristDto.setLoanDate(DateUtils.dateParseString(DateUtils.convertToDateTime(eFristDto.getLoanDate())));
+        }
         BeanUtils.copyProperties(eFristDto, fristDto);
         // TODO 备用电话，memeberInfo表里，逗号分隔
         ServiceResult<MemberInfoDto> memberDto = memberInfoService
@@ -165,17 +168,7 @@ public class BillRestServiceImpl implements BillRestService {
             // TODO 通过合同号查询推送合同账单推送执行结果表，是否有成功发送的数据
             PushContarctAndBillTaskDto record = new PushContarctAndBillTaskDto();
             record.setContractId(successData.getContractNo());
-            record.setBillId(successData.getBillId());
             PushContarctAndBillTaskDto resultPush = pushContarctAndBillTaskService.selectSuccessInfo(record);
-//            // 获取记录数据状态为发送成功,该账单已经推送
-            if (null != resultPush && BillPushEnum.SUCCESS.getCode().equals(resultPush.getBillPushedStatu())) {
-                excelErrorMsgs.add("该账单已经成功推送过，合同号:" + successData.getContractNo() + "-账单号:" + successData.getBillId()
-                        + "-发送时间:"
-                        + DateUtils.dateParseString(resultPush.getLastPushedTime())
-                );
-                MyphLogger.info("ContractNo:{},BillId:{},已经推送", successData.getContractNo(), successData.getBillId());
-                return excelErrorMsgs;
-            }
             // 查询是否有合同内账单已经推送
             record.setBillPushedStatu(BillPushEnum.SUCCESS.getCode());
             record.setContractId(successData.getContractNo());
@@ -239,14 +232,17 @@ public class BillRestServiceImpl implements BillRestService {
             MyphLogger.info("ContractNo:{},BillId:{},接口调用成功，推送失败，催收返回内容：{}", successData.getContractNo(),
                     successData.getBillId(),response.getRetinfo());
         }
-        // 已经插入该账单记录，修改状态
-        if (null != resultPush) {
-            record.setPushTimes(resultPush.getPushTimes() + 1);
-            // TODO update记录表为成功标记
-            pushContarctAndBillTaskService.updateByStatuToSuc(record);
-        } else {
-            // TODO 插入记录表
-            pushContarctAndBillTaskService.insert(record);
+        // 第一次发送，维护记录表
+        if(null != fristVo) {
+            // 已经插入该账单记录，修改状态
+            if (null != resultPush) {
+                record.setPushTimes(resultPush.getPushTimes() + 1);
+                // TODO update记录表为成功标记
+                pushContarctAndBillTaskService.updateByStatuToSuc(record);
+            } else {
+                // TODO 插入记录表
+                pushContarctAndBillTaskService.insert(record);
+            }
         }
     }
 

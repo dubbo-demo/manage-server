@@ -1,5 +1,6 @@
 package com.myph.manage.service.billContract;
 
+import com.alibaba.dubbo.common.utils.StringUtils;
 import com.myph.manage.common.util.ExcelRowToObj;
 import com.myph.manage.common.util.ExcelUtil;
 import com.myph.manage.service.billContract.dto.RepayPlanRequestVo;
@@ -144,19 +145,19 @@ public class ExcelRowBillPush implements ExcelRowToObj<RepayPlanRequestVo> {
         dto.setRepayDate(repayDate);
         dto.setStartPrinBalance(new BigDecimal(startPrinBalance));
         dto.setDueFromDate(dueFromDate);
-        dto.setDueFromPrin(new BigDecimal(dueFromPrin));
-        dto.setDueFromItr(new BigDecimal(dueFromItr));
-        dto.setDueFromAmt(new BigDecimal(dueFromAmt));
-        dto.setEndPrinBalance(new BigDecimal(endPrinBalance));
-        dto.setClrRetServiceAmt(new BigDecimal(clrRetServiceAmt));
-        dto.setAdvanceClrAmt(new BigDecimal(advanceClrAmt));
-        dto.setInterst(new BigDecimal(interst));
-        dto.setLateFees(new BigDecimal(lateFee));
-        dto.setFee(new BigDecimal(fee));
+        dto.setDueFromPrin(StringUtils.isEmpty(dueFromPrin)?null:new BigDecimal(dueFromPrin));
+        dto.setDueFromItr(StringUtils.isEmpty(dueFromItr)?null:new BigDecimal(dueFromItr));
+        dto.setDueFromAmt(StringUtils.isEmpty(dueFromAmt)?null:new BigDecimal(dueFromAmt));
+        dto.setEndPrinBalance(StringUtils.isEmpty(endPrinBalance)?null:new BigDecimal(endPrinBalance));
+        dto.setClrRetServiceAmt(StringUtils.isEmpty(clrRetServiceAmt)?null:new BigDecimal(clrRetServiceAmt));
+        dto.setAdvanceClrAmt(StringUtils.isEmpty(advanceClrAmt)?null:new BigDecimal(advanceClrAmt));
+        dto.setInterst(StringUtils.isEmpty(interst)?null:new BigDecimal(interst));
+        dto.setLateFees(StringUtils.isEmpty(lateFee)?null:new BigDecimal(lateFee));
+        dto.setFee(StringUtils.isEmpty(fee)?null:new BigDecimal(fee));
         dto.setRepayMode(repayMode);
-        dto.setRepayAmt(new BigDecimal(RepayAmt));
-        dto.setPaidAmt(new BigDecimal(paidAmt));
-        dto.setRestDueFrom(new BigDecimal(restDueFrom));
+        dto.setRepayAmt(StringUtils.isEmpty(RepayAmt)?null:new BigDecimal(RepayAmt));
+        dto.setPaidAmt(StringUtils.isEmpty(paidAmt)?null:new BigDecimal(paidAmt));
+        dto.setRestDueFrom(StringUtils.isEmpty(restDueFrom)?null:new BigDecimal(restDueFrom));
         dto.setPushType(pushType);
         if (null != overDueDays) {
             dto.setOverDueDays(Integer.parseInt(overDueDays));
