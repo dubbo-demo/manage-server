@@ -142,14 +142,24 @@ public class FileUploadController {
                     model.addAttribute("taskStateFlag", taskStateFlag);
                 }
             }
+            // 10、针对APP查询文件目录、文件信息
+            List<ProductFiletypeDto> appFileDir = this.queryAppFileDir();
+            List<ProductFiletypeDto> productFiletypeDtoList = new ArrayList<ProductFiletypeDto>();
+            productFiletypeDtoList.addAll(productFiletypeDtoListResult.getData());
+            productFiletypeDtoList.addAll(appFileDir);
             model.addAttribute("fileUpSysNodeList", fileUpSysNodeListResult.getData());
-            model.addAttribute("productFiletypeDtoList", productFiletypeDtoListResult.getData());
+            model.addAttribute("productFiletypeDtoList", productFiletypeDtoList);
             model.addAttribute("fileUploadDto", fileUploadDto);
             return "productFile/fileUpload";
         } catch (Exception e) {
             MyphLogger.error(e, "文件上传异常");
             return "error/500";
         }
+    }
+
+    private List<ProductFiletypeDto> queryAppFileDir() {
+        
+        return null;
     }
 
     private Boolean setTaskStateFlag(FileUploadDto fileUploadDto) {

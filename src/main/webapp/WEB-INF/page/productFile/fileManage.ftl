@@ -34,7 +34,7 @@
     			<div class="control-group span4 ">
     				<label class="help-inline text-left">申请单编号：</label>
     				<input type="text" name="applyLoanNo" id="applyLoanNo"
-                        class="m-wrap text-left span5" onblur="checkInput('^[\a-\z\A-\Z0-9]*$',this)" maxlength="50" />
+                        class="m-wrap text-left span5" onblur="checkInput('^[\a-\z\A-\Z\_0-9]*$',this)" maxlength="50" />
     			    <input type="button" class="btn blue" value="查询" onclick="return search()"></input>
     			</div>
     		</div>
