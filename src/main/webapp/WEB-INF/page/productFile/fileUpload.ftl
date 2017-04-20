@@ -53,7 +53,7 @@
                  <input type="text" name="productName" class="m-wrap medium" readonly id="productName" style="margin-right:30px;" value="${(fileUploadDto.productName)!""}"></input>
                  <span class="control-label">&nbsp;&nbsp;附件阶段：</span>
                  <select class="m-wrap span8" id="uploadStateName" name="uploadStateName" onchange="changeUploadState(); return false;">
-                 <!--管理员可以查看、管理四种附件上传阶段-->
+                 <!--管理员可以查看、管理五种附件上传阶段-->
                  <#if fileUploadDto.isManage?? && (fileUploadDto.isManage==1)>
                     <#list fileUpSysNodeList as fileUpSysNode>
                         <option value =${fileUpSysNode.id}>${fileUpSysNode.nodeName}</option>
