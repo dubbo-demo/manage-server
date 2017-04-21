@@ -19,6 +19,8 @@ import com.myph.apply.dto.AuditServiceDto;
 import com.myph.common.constant.NumberConstants;
 import com.myph.common.hbase.HbaseUtils;
 import com.myph.constant.ReqAuditEnum;
+import com.myph.member.base.dto.MemberInfoDto;
+import com.myph.member.base.service.MemberInfoService;
 import com.myph.member.blacklist.dto.ThirdBlackDto;
 import com.myph.member.blacklist.service.ThirdBlackService;
 import com.myph.reqAuditTask.dto.ReqAuditTaskDto;
@@ -96,6 +98,8 @@ public class DealApplyController {
     private AuditLogService auditLogService;
     @Autowired
     ThirdBlackService thirdBlackService;
+    @Autowired
+    MemberInfoService memberInfoService;
 
     @Autowired
     private SysParamConfigService sysParamConfigService;
@@ -419,12 +423,15 @@ public class DealApplyController {
     private AjaxResult jieAnAuditModel(ServiceResult<ApplyInfoDto> applyrs,ApproveTaskDto taskInfo) {
         // 是否进入continue流程机制进入签约
         boolean isNext = true;
+
+        ServiceResult<MemberInfoDto> member = memberInfoService.queryInfoByIdCard(applyrs.getData().getIdCard());
         AuditServiceDto serviceDto = new AuditServiceDto();
-        serviceDto.setIdcard("652323198203021718");
-        serviceDto.setName("赵佺");
-        serviceDto.setPhone("18599051528");
-        //TODO 捷安？？？？？？？？？？
-        serviceDto.setUserid("123");
+        if (member.success()) {
+            serviceDto.setUserid(member.getData().getId().toString());
+        }
+        serviceDto.setIdcard(applyrs.getData().getIdCard());
+        serviceDto.setName(applyrs.getData().getMemberName());
+        serviceDto.setPhone(applyrs.getData().getPhone());
         ServiceResult<Map<String, Object>> reqJieAnResult = reqAuditTaskService.
                 getAuditInfo(serviceDto,sysParamConfigService.getConfigValueByName(SysConfigEnum.JIA_AN_URL));
         String retinfo = (!reqJieAnResult.success()
