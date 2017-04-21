@@ -336,8 +336,8 @@ public class ReceptionController {
                 data = applyReceptionService.subMitInfo(applyReceptionDto);
                 if (StateOperateEnum.ADOPT.getCode().equals(applyReceptionDto.getState())) {
                     ApplyUserDto applyUserDto = new ApplyUserDto();
-                    applyUserDto.setIdCarNo(applyReceptionDto.getIdCard());
                     BeanUtils.copyProperties(applyReceptionDto, applyUserDto);
+                    applyUserDto.setIdCarNo(applyReceptionDto.getIdCard());
                     updateMemberInfo(applyUserDto);
                 }
             } else {
