@@ -19,6 +19,10 @@ import com.myph.apply.dto.AuditServiceDto;
 import com.myph.common.constant.NumberConstants;
 import com.myph.common.hbase.HbaseUtils;
 import com.myph.constant.ReqAuditEnum;
+import com.myph.manage.common.handler.AuditHandler;
+import com.myph.manage.common.handler.HandlerParmDto;
+import com.myph.manage.common.handler.HandlerResultDto;
+import com.myph.manage.common.handler.impl.JieAnHandler;
 import com.myph.member.base.dto.MemberInfoDto;
 import com.myph.member.base.service.MemberInfoService;
 import com.myph.member.blacklist.dto.ThirdBlackDto;
@@ -196,6 +200,9 @@ public class DealApplyController {
         return PATH + "/approve_deal";
     }
 
+    @Autowired
+    JieAnHandler jieAnHandler;
+
     /**
      * [提交初审]
      * <p>
@@ -331,7 +338,9 @@ public class DealApplyController {
         }
         MyphLogger.info("操作人ID【" + ShiroUtils.getCurrentUserId() + "】操作人【" + ShiroUtils.getCurrentUserName()
                 + "】 更新主表子状态成功！：" + taskInfo);
-
+        BaseActionDto baseActionDto = null;
+        HandlerResultDto result = new HandlerResultDto();
+        boolean continueState = false;
         if (getRefuseToSubState(applyrs.getData().getState()).equals(taskInfo.getAuditState())) {
             MyphLogger.info("操作人ID【" + ShiroUtils.getCurrentUserId() + "】操作人【" + ShiroUtils.getCurrentUserName()
                     + "】 进入主流程状态设置为【拒绝】！");
@@ -340,15 +349,7 @@ public class DealApplyController {
             applyNotifyDto.setOperateUser(ShiroUtils.getCurrentUserName());
             applyNotifyDto.setRejectDays(taskInfo.getConfinementTime());
             applyNotifyDto.setFlowStateEnum(FlowStateEnum.getEnum(applyrs.getData().getState()));
-            ServiceResult<?> serviceResult = facadeFlowStateExchangeService.doAction(applyNotifyDto);
-            if (!serviceResult.success()) {
-                MyphLogger.error("操作人ID【" + ShiroUtils.getCurrentUserId() + "】操作人【" + ShiroUtils.getCurrentUserName()
-                        + "】 调用更新主流程失败！param【{}】,MESSAGE:{}", applyNotifyDto, serviceResult.getMessage());
-                return AjaxResult.formatFromServiceResult(serviceResult);
-            } else {
-                MyphLogger.info("操作人ID【" + ShiroUtils.getCurrentUserId() + "】操作人【" + ShiroUtils.getCurrentUserName()
-                        + "】 进入主流程状态设置为【拒绝】成功");
-            }
+            baseActionDto = applyNotifyDto;
         } else {
             // 更新信审审批金额与产品
             MyphLogger.info("操作人ID【" + ShiroUtils.getCurrentUserId() + "】操作人【" + ShiroUtils.getCurrentUserName()
@@ -377,122 +378,42 @@ public class DealApplyController {
             applyNotifyDto.setApplyLoanNo(taskInfo.getApplyLoanNo());
             applyNotifyDto.setOperateUser(ShiroUtils.getCurrentUserName());
             applyNotifyDto.setFlowStateEnum(FlowStateEnum.getEnum(applyrs.getData().getState()));
-            //TODO ++++++++++++++++++++++捷安数据接入调整+++++++++++++++++++++++++++++++
-            boolean isNext = true;
+            // ++++++++++++++++++++++捷安数据接入调整+++++++++++++++++++++++++++++++
             //TODO 是否调捷安征信
+            baseActionDto = applyNotifyDto;
             if(isJieAnAuditState(applyNotifyDto)) {
-                AjaxResult jieAnResult = jieAnAuditModel(applyrs,taskInfo);
-                if(jieAnResult.isSuccess()) {
-                    isNext = (boolean)jieAnResult.getData();
-                } else {
-                    return AjaxResult.success(jieAnResult.getMessage());
+                HandlerParmDto dto = new HandlerParmDto();
+                dto.setApplyInfoDto(applyrs.getData());
+                result = jieAnHandler.audit(dto);
+                if(null != result.getBaseActionDto()) {
+                    baseActionDto = result.getBaseActionDto();
                 }
             }
-            // 判断是否进入下一步
-            // true:1.终审不满足金额配置，默认进入高级终审
-            // true:2.捷安征信通过进入签约
-            if(isNext) {
-                // 走状态机更新主流程
-                ServiceResult<?> serviceResult = facadeFlowStateExchangeService.doAction(applyNotifyDto);
-                if (!serviceResult.success()) {
-                    MyphLogger
-                            .error("操作人ID【" + ShiroUtils.getCurrentUserId() + "】操作人【" + ShiroUtils.getCurrentUserName()
-                                    + "】 调用更新主流程失败！param【{}】,MESSAGE:{}", applyNotifyDto, serviceResult.getMessage());
-                    return AjaxResult.formatFromServiceResult(serviceResult);
-                } else {
+        }
+        // 判断是否进入下一步
+        // true:1.终审不满足金额配置，默认进入高级终审
+        // true:2.捷安征信通过进入签约
+        // true:3.拒绝
+        if(result.getIsAuditSuccess()) {
+            ServiceResult<?> serviceResult = facadeFlowStateExchangeService.doAction(baseActionDto);
+            if (!serviceResult.success()) {
+                MyphLogger.error("操作人ID【" + ShiroUtils.getCurrentUserId() + "】操作人【" + ShiroUtils.getCurrentUserName()
+                        + "】 调用更新主流程失败！param【{}】,MESSAGE:{}", baseActionDto, serviceResult.getMessage());
+                return AjaxResult.formatFromServiceResult(serviceResult);
+            } else {
+                if(continueState) {
                     ApproveTaskDto taskInfoDto = new ApproveTaskDto();
                     taskInfoDto.setApplyLoanNo(taskInfo.getApplyLoanNo());
                     taskInfoDto.setPassTime(DateUtils.getCurrentDateTime());
                     approveService.updateFisrtData(taskInfoDto);
                     MyphLogger.info("更新信审通过时间,入参" + taskInfoDto.toString());
-                    MyphLogger.info("操作人ID【" + ShiroUtils.getCurrentUserId() + "】操作人【" + ShiroUtils.getCurrentUserName()
-                            + "】 主流程状态设置为【通过】成功！");
                 }
-            }
-        }
-        return AjaxResult.success();
-
-    }
-
-    /**
-     * @Description: 捷安征信处理逻辑
-     * @author heyx
-     * @date 2017/4/19
-     * @version V1.0
-     */
-    private AjaxResult jieAnAuditModel(ServiceResult<ApplyInfoDto> applyrs,ApproveTaskDto taskInfo) {
-        // 是否进入continue流程机制进入签约
-        boolean isNext = true;
-
-        ServiceResult<MemberInfoDto> member = memberInfoService.queryInfoByIdCard(applyrs.getData().getIdCard());
-        AuditServiceDto serviceDto = new AuditServiceDto();
-        if (member.success()) {
-            serviceDto.setUserid(member.getData().getId().toString());
-        }
-        serviceDto.setIdcard(applyrs.getData().getIdCard());
-        serviceDto.setName(applyrs.getData().getMemberName());
-        serviceDto.setPhone(applyrs.getData().getPhone());
-        ServiceResult<Map<String, Object>> reqJieAnResult = reqAuditTaskService.
-                getAuditInfo(serviceDto,sysParamConfigService.getConfigValueByName(SysConfigEnum.JIA_AN_URL));
-        String retinfo = (!reqJieAnResult.success()
-                || reqJieAnResult.getData().get(ReqAuditEnum.NAME_RETINFO) == null) ?
-                "" :
-                reqJieAnResult.getData().get(ReqAuditEnum.NAME_RETINFO).toString();
-        if(ReqAuditEnum.SUCCESS_CODE.getCode().equals(retinfo)){
-            isNext = true;
-        }else if (ReqAuditEnum.FAIL_CODE.getCode().equals(retinfo)) {
-            MyphLogger.info("操作人ID【" + ShiroUtils.getCurrentUserId() + "】操作人【" + ShiroUtils.getCurrentUserName()
-                    + "】捷安征信拒绝，"+reqJieAnResult.getData());
-            //TODO 失败，申请单系统拒绝
-            RejectActionDto rejectActionDto = new RejectActionDto();
-            rejectActionDto.setApplyLoanNo(taskInfo.getApplyLoanNo());
-            rejectActionDto.setOperateUser(ShiroUtils.getCurrentUserName());
-            rejectActionDto.setFlowStateEnum(FlowStateEnum.getEnum(applyrs.getData().getState()));
-            ServiceResult<?> rejectResult = facadeFlowStateExchangeService.doActionG(rejectActionDto);
-            if (!rejectResult.success()) {
-                MyphLogger.error("操作人ID【" + ShiroUtils.getCurrentUserId() + "】操作人【" + ShiroUtils.getCurrentUserName()
-                        + "】 调用更新主流程失败！param【{}】,MESSAGE:{}", rejectActionDto, rejectResult.getMessage());
-                return AjaxResult.formatFromServiceResult(rejectResult);
-            } else {
                 MyphLogger.info("操作人ID【" + ShiroUtils.getCurrentUserId() + "】操作人【" + ShiroUtils.getCurrentUserName()
-                        + "】 进入主流程状态设置为【拒绝】成功");
+                        + "】 进入主流程状态设置为【"+baseActionDto.getFlowStateEnum().getDesc()+"】成功");
             }
-            isNext = false;
-            String content = reqJieAnResult.getData().get(ReqAuditEnum.NAME_CONTENT) == null
-                    ? null:reqJieAnResult.getData().get(ReqAuditEnum.NAME_CONTENT).toString();
-            //TODO 记录第三方黑名单
-            ThirdBlackDto ThirdBlackDto = new ThirdBlackDto();
-            ThirdBlackDto.setMemberName(applyrs.getData().getMemberName());
-            ThirdBlackDto.setIdCard(applyrs.getData().getApplyLoanNo());
-            ThirdBlackDto.setSrcOrg(ReqAuditEnum.NAME_ORGSTR);
-            ThirdBlackDto.setRejectReason(content);
-            ThirdBlackDto.setChannel(ReqAuditEnum.NAME_CHANNL);
-            ThirdBlackDto.setIsReject(NumberConstants.NUM_ONE);
-            boolean b = thirdBlackService.isIdCardExist(applyrs.getData().getApplyLoanNo(),ReqAuditEnum.NAME_CHANNL,ReqAuditEnum.NAME_ORGSTR);
-            if(!b){
-                thirdBlackService.insert(ThirdBlackDto);
-            }
-            return AjaxResult.failed(content);
-        } else {
-            ReqAuditTaskDto taskDto = new ReqAuditTaskDto();
-            taskDto.setReqStatu(applyrs.getData().getState() == null?null:applyrs.getData().getState().toString());
-            taskDto.setIdNo(applyrs.getData().getApplyLoanNo());
-            taskDto.setIdCard(applyrs.getData().getIdCard());
-            isNext = false;
-            //TODO 生成定时任务，异常走continue流程机制，进入签约
-            try {
-                ServiceResult<Integer> taskResult = reqAuditTaskService.saveInfo(taskDto);
-                if(!taskResult.success()) {
-                        isNext = true;
-                }
-            } catch (Exception e) {
-                // 出现异常，进入签约阶段
-                isNext = true;
-                MyphLogger.error(e,"生成捷安定时任务异常，parm:{}",taskDto.toString());
-            }
-
         }
-        return AjaxResult.success(isNext);
+        return AjaxResult.success(result.getMessage());
+
     }
 
     /**
@@ -530,7 +451,7 @@ public class DealApplyController {
             case AUDIT_DIRECTOR:
                 return true;
             default:
-                return true;
+                return false;
         }
 
     }
