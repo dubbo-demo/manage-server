@@ -12,6 +12,7 @@ import com.myph.constant.FlowStateEnum;
 import com.myph.constant.ReqAuditEnum;
 import com.myph.flow.dto.RejectActionDto;
 import com.myph.manage.common.handler.AuditHandler;
+import com.myph.manage.common.handler.AuditHandlerEnum;
 import com.myph.manage.common.handler.HandlerParmDto;
 import com.myph.manage.common.handler.HandlerResultDto;
 import com.myph.manage.common.shiro.ShiroUtils;
@@ -24,6 +25,7 @@ import com.myph.reqAuditTask.service.ReqAuditTaskService;
 import com.myph.sysParamConfig.service.SysParamConfigService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.NumberUtils;
 
 import java.util.Map;
 
@@ -93,8 +95,10 @@ public class JieAnHandler extends AuditHandler{
             result.setMessage(content);
         } else {
             ReqAuditTaskDto taskDto = new ReqAuditTaskDto();
-            taskDto.setReqStatu(applyrs.getState() == null?null:applyrs.getState().toString());
+            taskDto.setYwState(applyrs.getState() == null?null:applyrs.getState());
             taskDto.setIdNo(applyrs.getApplyLoanNo());
+            taskDto.setReqTime(NumberConstants.NUM_ZERO);
+            taskDto.setReqType(AuditHandlerEnum.JIEAN.getCode());
             taskDto.setIdCard(applyrs.getIdCard());
             //TODO 生成定时任务，异常走continue流程机制，进入签约
             try {
