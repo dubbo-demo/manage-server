@@ -17,7 +17,6 @@ import com.myph.constant.FileUpSysNodeEnum;
 import com.myph.constant.FlowStateEnum;
 import com.myph.constant.NodeConstant;
 import com.myph.constant.ProductNodeEnum;
-import com.myph.employee.constants.EmployeeMsg.POSITION;
 import com.myph.employee.dto.EmployeePositionInfoDto;
 import com.myph.fileInfo.dto.JkAppFileInfoDto;
 import com.myph.fileInfo.service.JkAppFileInfoService;
