@@ -56,7 +56,7 @@
     			    <#list result as record>
     			        <tr>
     			            <td id='${(record.id)!}pageName'>${(record.pageName)!}</td>
-    			            <td id='${(record.id)!}pageCode'>${(record.infoNames)!}</td>
+    			            <td id='${(record.id)!}infoName'>${(record.infoNames)!}</td>
     			            <td><a href="#updateDataDetailRelation" data-toggle="modal" onclick="update(${(record.id)!})">修改</a></td>
     			        </tr>
     			    </#list>
@@ -99,10 +99,6 @@
                     <div class="row-fluid">
                         <span class="control-label span3">资料项名称<span class="required">*</span></span>
                         <input type="text" name="updatePageName" id="updatePageName" class="form-control span6" />
-                    </div>
-                    <div class="row-fluid">
-                        <span class="control-label span3">资料项编码<span class="required">*</span></span>
-                        <input type="text" name="updatePageCode" id="updatePageCode" class="form-control span6" />
                     </div>
                     <div class="row-fluid">
                         <span class="control-label span3" style="margin-right: -13px">资料信息<span class="required">*</span></span>

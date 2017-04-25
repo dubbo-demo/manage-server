@@ -57,7 +57,7 @@ public class DataDetailRelationController {
         ServiceResult<List<DataDetailRelationDto>> dataDetailRelationList = dataDetailRelationService.selectAllDataDetailRelation();
         List<String> infoCodes = new ArrayList<String>();
         for(int i=0;i<dataDetailRelationList.getData().size();i++){
-            String infoCode = dataDetailRelationList.getData().get(i).getPageCode();
+            String infoCode = dataDetailRelationList.getData().get(i).getInfoCode();
             String[] infoCodeArray = infoCode.split("\\|");
             List<String> infoCodeList = Arrays.asList(infoCodeArray);
             infoCodes.addAll(infoCodeList);
@@ -72,6 +72,24 @@ public class DataDetailRelationController {
         return AjaxResult.success(dataDetailList);
     }
 
+    
+    /**
+     * 
+     * @名称 selectDataDetailByPageId 
+     * @描述 根据大资料项id查询小资料项详细信息
+     * @返回类型 AjaxResult     
+     * @日期 2017年4月25日 下午3:03:05
+     * @创建人  吴阳春
+     * @更新人  吴阳春
+     *
+     */
+    @RequestMapping("/selectDataDetailByPageId")
+    @ResponseBody
+    public AjaxResult selectDataDetailByPageId(Long id) {
+        ServiceResult<List<DataDetailDto>> result = dataDetailRelationService.selectDataDetailByPageId(id);
+        return AjaxResult.success(result.getData());
+    }
+    
     @RequestMapping("/addDataDetailRelation")
     @ResponseBody
     public AjaxResult addDataDetailRelation(DataDetailRelationDto dataDetailRelationDto) {

@@ -26,6 +26,7 @@ function checkInput(patrn, obj) {
 }
 
 function add(){
+	var data = new Array();
 	$.ajax({
 		url : serverPath + "/dataDetailRelation/queryDataDetails.htm",
 		type : "post",
@@ -34,8 +35,10 @@ function add(){
 		},
 		dataType : "json",
 		success : function(result) {
-			for(var i=0;i<result.length;i++){
-				$("#addInfoNames").append("<option value='"+result[i].id+"'>"+result[i].name+"</option>");
+			$("#addInfoNames").empty();
+			var datas = result.data;
+			for(var i=0;i<datas.length;i++){
+				$("#addInfoNames").append("<option value='"+datas[i].code+"'>"+datas[i].name+"</option>");
 			}
 			$("#addInfoNames").val(data).trigger('change');
 			$("#addInfoNames").change();//告诉select2代码已经更新，需要重载
@@ -54,9 +57,9 @@ function addDataDetailRelation(){
 	for (var i = 0; i < infoNamelist.length; i++) {
 		
 		if(infoNames == ""){
-			infoNames = infoNamelist[i].element[0].id;
+			infoNames = infoNamelist[i].id;
 		}else{
-			infoNames = infoNames + "|" + infoNamelist[i].element[0].id;
+			infoNames = infoNames + "|" + infoNamelist[i].id;
 		}
 	}
 	
@@ -64,8 +67,8 @@ function addDataDetailRelation(){
 		url : serverPath + "/dataDetailRelation/addDataDetailRelation.htm",
 		type : "post",
 		data : {
-			addPageName:$("#addPageName").val(),
-			addPageCode:$("#addCode").val(),
+			pageName:$("#addPageName").val(),
+			pageCode:$("#addPageCode").val(),
 			infoCode:infoNames,
 			"Time" : new Date().getMilliseconds()
 		},
@@ -96,15 +99,12 @@ function addDataDetailRelation(){
 
 function update(id){
 	var pageNameId = "#" + id + 'pageName';
-	var pageCodeId = "#" + id + 'pageCode';
+	var infoNameId = "#" + id + 'infoName';
 	$("#updatePageName").val($(pageNameId).html());
-	$("#updatePageCode").val($(pageCodeId).html());
 	$("#id").val(id);
-	
 	//获取已选中的产品
-	var pageCodeArray= new Array();
 	$.ajax({
-		url : serverPath + "/dataDetailRelation/queryDataDetailRelationById.htm",
+		url : serverPath + "/dataDetailRelation/selectDataDetailByPageId.htm",
 		async:false, 
 		type : "post",
 		data : {
@@ -113,9 +113,15 @@ function update(id){
 		},
 		dataType : "json",
 		success : function(result) {
-			var data = result.data;
-			var pageCodes = data.pageCode;
-			pageCodeArray = pageCodes.split("|");
+			var data = new Array();
+			var datas = result.data;
+			$("#updateInfoNames").empty();
+			for(var i=0;i<datas.length;i++){
+				$("#updateInfoNames").append("<option value='"+datas[i].code+"'>"+datas[i].name+"</option>");
+				data.push(datas[i].code);	
+			}
+			$("#updateInfoNames").val(data).trigger('change');
+			$("#updateInfoNames").change();//告诉select2代码已经更新，需要重载
 		},
 		error : function() {
 			BootstrapDialog.alert("操作失败");
@@ -132,17 +138,10 @@ function update(id){
 		},
 		dataType : "json",
 		success : function(result) {
-			var data = new Array();
-			$("#updateProductType").empty();
-			for(var i=0;i<result.length;i++){
-				$("#updateProductType").append("<option value='"+result[i].id+"'>"+result[i].nodeName+"</option>");
-				for(var j=0;j<pageCodeArray.length;j++){
-					if(result[i].id == pageCodeArray[j] ){	
-						data.push(result[i].id);
-					}
-				}	
+			var datas = result.data;
+			for(var i=0;i<datas.length;i++){
+				$("#updateInfoNames").append("<option value='"+datas[i].code+"'>"+datas[i].name+"</option>");
 			}
-			$("#updateInfoNames").val(data).trigger('change');
 			$("#updateInfoNames").change();//告诉select2代码已经更新，需要重载
 		},
 		error : function() {
@@ -178,13 +177,9 @@ function updateDataDetailRelation(){
 		dataType : "json",
 		success : function(result) {
 			updateDataDetailReceptionResult = result.data;
-			if(addDataDetailResult == 1){
+			if(updateDataDetailReceptionResult != 0){
 				BootstrapDialog.alert("大资料项名称重复");
-			}
-			if(updateDataDetailReceptionResult == 2){
-				BootstrapDialog.alert("大资料项编码重复");
-			}
-			if(updateDataDetailReceptionResult == 0){
+			}else{
 				BootstrapDialog.alert('操作成功', function() {
 					window.location.href = window.location;
 				});
