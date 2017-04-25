@@ -184,7 +184,7 @@ function goSave() {
 		type : 'post',
 		data :jsonStr,
 		dataType : 'json',
-		contentType : "application/json",
+		contentType : "text/html",
 		success : function(res) {
 			if (res.code == 0) {
 				BootstrapDialog.alert('操作成功!');
