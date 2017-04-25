@@ -47,6 +47,7 @@ public class JieAnHandler extends AuditHandler{
 
     @Override
     public HandlerResultDto audit(HandlerParmDto t) {
+        MyphLogger.info("捷安征信handler");
         ApplyInfoDto applyrs = t.getApplyInfoDto();
         // 是否进入continue流程机制进入签约
         HandlerResultDto result = new HandlerResultDto();
