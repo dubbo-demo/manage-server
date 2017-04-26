@@ -220,9 +220,6 @@ function showJXLView(e) {
 				"<tr ><td><span class='control-label'>贷款类号码联系情况</span></td><td><span class='control-label'>" 
 				+ jxlData.fincall +"</span></td></tr>");
 		jxlTable.append(
-				"<tr ><td><span class='control-label'>出行数据</span></td><td><span class='control-label'>" 
-				+ jxlData.trip +"</span></td></tr>");
-		jxlTable.append(
 				"<tr ><td><span class='control-label'>有无直系亲属通话记录</span></td><td><span class='control-label'>" 
 				+ jxlData.contact +"</span></td></tr>");
 	}
