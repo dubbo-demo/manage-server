@@ -271,7 +271,7 @@
 				<center>
 					<a class="btn blue" href="#visitExternal" data-toggle="modal"> 发起外访</a>
 					<a class="btn blue" href="#" onclick="abandonMain('${(applyLoanInfo.applyLoanNo)!}')" data-toggle="modal"> 客户放弃</a>
-					<#if applyLoanInfo.productType != 242>
+					<#if allowBack == 'allowBack'>
 					<a class="btn blue" href="#rollBack" data-toggle="modal"> 回退</a>
 					</#if>
 					<input type="button" class="btn blue"
