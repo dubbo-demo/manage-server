@@ -116,7 +116,7 @@ public class ApplyInfoController {
     /**
      * 根据团队ID加载团队信息服务
      * 
-     * @param storeId
+     * @param idCard
      * @return
      */
     @RequestMapping("/applyInfoQueryById/{idCard}")
@@ -302,6 +302,12 @@ public class ApplyInfoController {
     public AjaxResult personassetsSave(@RequestBody ApplyPersonassetsDto record) {
         MyphLogger.info("操作人ID【" + ShiroUtils.getCurrentUserId() + "】操作人【" + ShiroUtils.getCurrentUserName()
                 + "】 ApplyInfoInputController.personassetsSave 输入参数[" + record + "]");
+
+        //+++++++加入回源状态判断
+        ServiceResult<Boolean> isContinue = applyInfoService.isContinueByApplyState(record.getApplyLoanNo());
+        if(null != isContinue && !isContinue.getData()) {
+            return AjaxResult.failed(record.getApplyLoanNo() + "已经不在申请单阶段，不能修改数据");
+        }
 
         applyPersonassetsService.insert(record);
         MyphLogger.info(
