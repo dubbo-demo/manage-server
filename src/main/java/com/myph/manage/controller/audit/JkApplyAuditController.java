@@ -102,6 +102,9 @@ public class JkApplyAuditController extends BaseController {
 	
 	@Autowired
     private TeamProductService teamProductService;
+	
+	@Autowired
+    private ProductService productService;
 
 	/**
 	 * 初审入口
@@ -489,7 +492,7 @@ public class JkApplyAuditController extends BaseController {
 	/**
 	 * 
 	 * @名称 getproductIdByteamId 
-	 * @描述 获取当前用户可以取件的产品类型
+	 * @描述 获取当前用户可以取件的产品id
 	 * @返回类型 AjaxResult     
 	 * @日期 2017年4月17日 下午4:00:33
 	 * @创建人  吴阳春
@@ -508,12 +511,12 @@ public class JkApplyAuditController extends BaseController {
         if(productTypeList.size() <= 0){
             return AjaxResult.failed("当前员工不在团队中，不能取件");
         }
-        List<Integer> result = new ArrayList<Integer>();
+        List<Long> result = new ArrayList<Long>();
         for(String str : productTypeList) {
-            int i = Integer.parseInt(str);
-            result.add(i);
+            result.add(Long.valueOf(str));
           }
-        return AjaxResult.success(result);
+        ServiceResult<List<Long>> productIds = productService.selectIdByTypes(result);
+        return AjaxResult.success(productIds.getData());
 	}
 	/**
 	 * 经理/总监信审列表(待办)
