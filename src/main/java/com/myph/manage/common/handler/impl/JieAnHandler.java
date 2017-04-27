@@ -98,7 +98,7 @@ public class JieAnHandler extends AuditHandler{
             // 记录第三方黑名单
             ThirdBlackDto ThirdBlackDto = new ThirdBlackDto();
             ThirdBlackDto.setMemberName(applyrs.getMemberName());
-            ThirdBlackDto.setIdCard(applyrs.getApplyLoanNo());
+            ThirdBlackDto.setIdCard(applyrs.getIdCard());
             ThirdBlackDto.setSrcOrg(ReqAuditEnum.NAME_ORGSTR);
             ThirdBlackDto.setRejectReason(content);
             ThirdBlackDto.setChannel(ReqAuditEnum.NAME_CHANNL);
