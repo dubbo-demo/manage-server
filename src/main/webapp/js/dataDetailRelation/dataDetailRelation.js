@@ -62,7 +62,10 @@ function addDataDetailRelation(){
 			infoNames = infoNames + "|" + infoNamelist[i].id;
 		}
 	}
-	
+	if($("#addPageName").val() == '' || $("#addPageCode").val() == '' || infoNames == ''){
+		BootstrapDialog.alert("请选择必选项");
+		return false;
+	}
 	$.ajax({
 		url : serverPath + "/dataDetailRelation/addDataDetailRelation.htm",
 		type : "post",
@@ -163,6 +166,10 @@ function updateDataDetailRelation(){
 		}else{
 			infoCodes = infoCodes + "|" + infoCodeslist[i].id;
 		}
+	}
+	if($("#updatePageName").val() == ''){
+		BootstrapDialog.alert("请选择必选项");
+		return false;
 	}
 	$.ajax({
 		url : serverPath + "/dataDetailRelation/updateDataDetailRelation.htm",

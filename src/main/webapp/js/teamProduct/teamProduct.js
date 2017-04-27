@@ -38,6 +38,12 @@ function addTeamProduct(){
 			productTypes = productTypes + "|" + productTypeslist[i].element[0].id;
 		}
 	}
+	var teamId = $("#addTeam option:selected").attr('id');
+	if(teamId == '' || productTypes == ''){
+		BootstrapDialog.alert("请选择必选项");
+		return false;
+	}
+	
 	var data = {
 		"Time" : new Date().getMilliseconds(),
 		"teamId" : $("#addTeam option:selected").attr('id'),
