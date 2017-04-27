@@ -379,15 +379,15 @@ public class DealApplyController {
             applyNotifyDto.setOperateUser(ShiroUtils.getCurrentUserName());
             applyNotifyDto.setFlowStateEnum(FlowStateEnum.getEnum(applyrs.getData().getState()));
             // ++++++++++++++++++++++捷安数据接入调整+++++++++++++++++++++++++++++++
+            continueState = true;
             //TODO 是否调捷安征信
             baseActionDto = applyNotifyDto;
             if(isJieAnAuditState(applyNotifyDto)) {
+                result.setIsAuditSuccess(false);
                 HandlerParmDto dto = new HandlerParmDto();
+                dto.setContinueActionDto(applyNotifyDto);
                 dto.setApplyInfoDto(applyrs.getData());
-                result = jieAnHandler.audit(dto);
-                if(null != result.getBaseActionDto()) {
-                    baseActionDto = result.getBaseActionDto();
-                }
+                jieAnHandler.audit(dto);
             }
         }
         // 判断是否进入下一步

@@ -2,6 +2,7 @@ package com.myph.manage.common.handler;
 
 import com.myph.apply.dto.ApplyInfoDto;
 import com.myph.common.bean.BaseInfo;
+import com.myph.flow.dto.ContinueActionDto;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -22,4 +23,6 @@ public class HandlerParmDto extends BaseInfo {
     private static final long serialVersionUID = -3119601470259499861L;
 
     private ApplyInfoDto applyInfoDto;
+
+    private ContinueActionDto continueActionDto;
 }
