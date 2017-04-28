@@ -150,6 +150,7 @@
                 if(!$.isEmptyObject(crime.OUTPUT)) {
                     $("#jieAnRemark").html(getJieAnStr(crime.OUTPUT));
                 }
+                return;
             }
         }
         if(!$.isEmptyObject(jsonData.unhealthy)) {
@@ -157,7 +158,12 @@
             var unhealthy = $.parseJSON(jsonData.unhealthy);
             if(!$.isEmptyObject(unhealthy)) {
                 $("#titleType").html("不良记录检查");
-                $("#jieAnRemark").html(unhealthy.RISK_SORT);
+                if(!$.isEmptyObject(unhealthy.RISK_SORT)) {
+                    $("#jieAnRemark").html(unhealthy.RISK_SORT);
+                }else{
+                    $("#jieAnRemark").html(unhealthy);
+				}
+
             }
         }
         $("#jieAnDiv").css("display","block");
