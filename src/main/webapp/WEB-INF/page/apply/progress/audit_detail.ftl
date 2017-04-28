@@ -147,7 +147,9 @@
             var crime = $.parseJSON(jsonData.crime);
             if(!$.isEmptyObject(crime)) {
                 $("#titleType").html("犯罪记录检查");
-                $("#jieAnRemark").html(getJieAnStr(crime));
+                if(!$.isEmptyObject(crime.OUTPUT)) {
+                    $("#jieAnRemark").html(getJieAnStr(crime.OUTPUT));
+                }
             }
         }
         if(!$.isEmptyObject(jsonData.unhealthy)) {
@@ -162,25 +164,35 @@
     }
 
     function getJieAnStr(crime) {
-        var jieanStr = "";
+        var descStr = "";
         if(!$.isEmptyObject(crime.checkDesc)) {
-            jieanStr = "刑事描述:"+crime.checkDesc;
+            descStr = "刑事描述:"+crime.checkDesc;
         }
-        if(!$.isEmptyObject(crime.caseTime) && "" != jieanStr) {
-            jieanStr = jieanStr + "/案发时间:" + crime.caseTime;
-        } else if(!$.isEmptyObject(crime.caseTime)) {
-            jieanStr = crime.caseTime;
-        }
-        if(!$.isEmptyObject(crime.caseType) && "" != jieanStr) {
-            jieanStr = jieanStr + "/案件类别:" + crime.caseType;
-        } else if(!$.isEmptyObject(crime.caseType)) {
-            jieanStr = crime.caseType;
-        }
-        if(!$.isEmptyObject(crime.caseSource) && "" != jieanStr) {
-            jieanStr = jieanStr + "/涉案类型:" + crime.caseSource;
-        } else if(!$.isEmptyObject(crime.caseSource)) {
-            jieanStr = crime.caseSource;
-        }
-        return jieanStr;
+
+		var jieanStr = "";
+		if(!$.isEmptyObject(crime.checkDetail)) {
+            $.each(crime.checkDetail,function(i,idata)
+            {
+                descStr = descStr + "\n";
+                if(!$.isEmptyObject(idata.caseTime) && "" != jieanStr) {
+                    jieanStr = jieanStr + "/案发时间:" + idata.caseTime;
+                } else if(!$.isEmptyObject(idata.caseTime)) {
+                    jieanStr = "案发时间:" +idata.caseTime;
+                }
+                if(!$.isEmptyObject(idata.caseType) && "" != jieanStr) {
+                    jieanStr = jieanStr + "/案件类别:" + idata.caseType;
+                } else if(!$.isEmptyObject(idata.caseType)) {
+                    jieanStr = "案件类别:" +idata.caseType;
+                }
+                if(!$.isEmptyObject(idata.caseSource) && "" != jieanStr) {
+                    jieanStr = jieanStr + "/涉案类型:" + idata.caseSource;
+                } else if(!$.isEmptyObject(idata.caseSource)) {
+                    jieanStr = "涉案类型:" +idata.caseSource;
+                }
+                descStr = descStr + jieanStr;
+                jieanStr = "";
+            });
+		}
+        return descStr;
     }
 </script>	
