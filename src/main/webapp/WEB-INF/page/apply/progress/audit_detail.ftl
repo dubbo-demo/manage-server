@@ -163,7 +163,9 @@
                 $("#jieAnRemark").html(jsonData.unhealthy);
 			}
         }
-        $("#jieAnDiv").css("display","block");
+		if($("#jieAnRemark").html() != "") {
+            $("#jieAnDiv").css("display","block");
+		}
     }
 
     function getJieAnStr(crime) {
