@@ -161,7 +161,7 @@
 									<div class="controls">
 									<input type="hidden" name="prodType2" id="prodType2" value="${dto.prodType!}">
 										<select name="prodType" id="prodType"
-										data-value="${dto.prodType!}" onchange="getProduct(this)" class="m-wrap span6">
+										data-value="${dto.prodType!}" onchange="getProduct(this)" <#if dto.clientType?? && dto.clientType == 1>disabled</#if> class="m-wrap span6 selectApp">
 										</select>
 									</div>
 								</div>
@@ -172,7 +172,7 @@
 									<div class="controls">
 									<input type="hidden" name="productId2" id="productId2" value="${dto.productId!}">
 										<input type="hidden" name="loanPeriods" id="loanPeriods" value="${dto.loanPeriods!}"/>
-										<select name="productId" id="productId" class="m-wrap span6">
+										<select name="productId" id="productId" <#if dto.clientType?? && dto.clientType == 1>disabled</#if> class="m-wrap span6 selectApp">
 											<option value="">请选择</option>
 										</select>
 									</div>
