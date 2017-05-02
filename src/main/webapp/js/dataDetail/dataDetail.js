@@ -15,6 +15,10 @@ function checkInput(patrn, obj) {
 	return true;
 }
 
+function cleanAdd(){
+	("input").empty();
+}
+
 function addDataDetail(){
 	var addDataDetailResult = '';
 	if($("#addNum").val() == '' || $("#addCode").val() == '' || $("#addName").val() == ''){

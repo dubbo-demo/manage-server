@@ -36,7 +36,7 @@
     	<div class="portlet-body">
     		<div class="row-fluid">
         		<p>
-        		  <a class="btn blue" href="#addDataDetail" data-toggle="modal">新增</a>
+        		  <a class="btn blue" href="#addDataDetail" onclick='cleanAdd()' data-toggle="modal">新增</a>
         		</p>
     		</div>
     	</div>
