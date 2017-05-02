@@ -352,7 +352,7 @@ public class BillRestServiceImpl implements BillRestService {
             }
             // 备用电话
             if (!StringUtils.isEmpty(memberInfo.getAlternatePhone())) {
-                String[] phones = memberInfo.getAlternatePhone().split(",");
+                String[] phones = memberInfo.getAlternatePhone().split("\\|");
                 fristDto.setStandbyNumList(Arrays.asList(phones));
             }
             fristDto.setAddrList(list);
