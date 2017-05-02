@@ -71,7 +71,7 @@
 					<button type="button" class="close" data-dismiss="modal"
 						aria-hidden="true"></button>
 
-					<h3>导入第三方黑名单</h3>
+					<h3>导入逾期账单</h3>
 
 				</div>
 				<form id="frm" method="post" action="" enctype="multipart/form-data">
