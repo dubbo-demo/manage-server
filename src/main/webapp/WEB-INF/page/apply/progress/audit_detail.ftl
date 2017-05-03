@@ -150,7 +150,6 @@
                 if(!$.isEmptyObject(crime.OUTPUT)) {
                     $("#jieAnRemark").html(getJieAnStr(crime.OUTPUT));
                 }
-                return;
             }
         }
         if(!$.isEmptyObject(jsonData.unhealthy)) {
