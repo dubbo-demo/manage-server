@@ -154,13 +154,11 @@
         }
         if(!$.isEmptyObject(jsonData.unhealthy)) {
             $("#titleType").html("不良记录检查");
-            if(!$.isEmptyObject(jsonData.unhealthy.RISK_SORT)) {
+            var unhealthy = $.parseJSON(jsonData.unhealthy);
+            if(!$.isEmptyObject(unhealthy)) {
                 // 拼接不良记录
-                var unhealthy = $.parseJSON(jsonData.unhealthy);
                 $("#jieAnRemark").html(unhealthy.RISK_SORT);
-            } else {
-                $("#jieAnRemark").html(jsonData.unhealthy);
-			}
+            }
         }
 		if($("#jieAnRemark").html() != "") {
             $("#jieAnDiv").css("display","block");
