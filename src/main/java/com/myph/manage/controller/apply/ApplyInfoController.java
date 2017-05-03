@@ -383,10 +383,10 @@ public class ApplyInfoController {
             return AjaxResult.failed("申请件信息查询失败，未查询到相关申请件！");
         }
         if (!FlowStateEnum.APPLY.getCode().equals(applyInfo.getState())) {
-            return AjaxResult.success("当前阶段已经不允许提交了");
+            return AjaxResult.failed("当前阶段已经不允许提交了");
         }
         if (ApplyBisStateEnum.FINISH.getCode().equals(applyInfo.getSubState())) {
-            return AjaxResult.success("申请件已提交过了！");
+            return AjaxResult.failed("申请件已提交过了！");
         }
         if (ApplyBisStateEnum.BACK_INIT.getCode().equals(applyInfo.getSubState())) {
             MyphLogger.info("操作人[" + ShiroUtils.getCurrentUserName() + "]重新提交订单[" + applyInfo + "]");
