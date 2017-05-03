@@ -204,11 +204,17 @@ public class FileUploadController {
         
         for(JkAppFileRelationDto jkAppFileRelationDto : jkAppFileRelationResult.getData()) {
             String fileStrs = jkAppFileRelationDto.getFileStrs();
+            if(StringUtils.isBlank(fileStrs)){
+                continue;
+            }
             String[] fileStrsArray = fileStrs.split("\\|");
             List<String> fileStrsList = Arrays.asList(fileStrsArray);
             //根据大数据ID查文件信息
             ServiceResult<List<JkAppFileDto>> jkAppFileInfoResult = jkAppFileInfoService.selectByFileStrs(fileStrsList);
             for(JkAppFileDto jkAppFileDto : jkAppFileInfoResult.getData()){
+                if(jkAppFileRelationDto.getUploadId() == null){
+                    continue;
+                }
                 FileDto fileDto = new FileDto();
                 BeanUtils.copyProperties(jkAppFileDto, fileDto);
                 fileDto.setUploadState(ProductNodeEnum.APP.getCode());
