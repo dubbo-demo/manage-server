@@ -114,6 +114,10 @@ function updateTeamProduct(){
 	var url = serverPath + "/teamProduct/updateTeamProduct.htm";
 	var productTypes = "";
 	var productTypeslist=$("#updateProductType").select2("data");
+	if(productTypeslist.length <= 0){
+		BootstrapDialog.alert("请选择必选项");
+		return false;
+	}
 	console.log(productTypeslist);
 	for (var i = 0; i < productTypeslist.length; i++) {
 		
