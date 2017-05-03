@@ -10,7 +10,7 @@
 					<li><i class="icon-home"></i> <a href="${ctx}/index.htm">首页</a> <i
 						class="icon-angle-right"></i></li>
 					<li><a href="#">风险管理</a><i class="icon-angle-right"></i></li>
-					<li><a href="#">第三方黑名单</a></li>
+					<li><a href="#">催收账单导入</a></li>
 				</ul>
 			</div>
 		</div>
