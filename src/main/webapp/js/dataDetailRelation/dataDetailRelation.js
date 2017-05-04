@@ -63,7 +63,7 @@ function addDataDetailRelation(){
 		}
 	}
 	if($("#addPageName").val() == '' || $("#addPageCode").val() == '' || infoNames == ''){
-		BootstrapDialog.alert("请选择必选项");
+		BootstrapDialog.alert("请输入必填项");
 		return false;
 	}
 	$.ajax({
@@ -168,7 +168,7 @@ function updateDataDetailRelation(){
 		}
 	}
 	if($("#updatePageName").val() == ''){
-		BootstrapDialog.alert("请选择必选项");
+		BootstrapDialog.alert("请输入必填项");
 		return false;
 	}
 	$.ajax({

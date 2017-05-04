@@ -22,7 +22,7 @@ function cleanAdd(){
 function addDataDetail(){
 	var addDataDetailResult = '';
 	if($("#addNum").val() == '' || $("#addCode").val() == '' || $("#addName").val() == ''){
-		BootstrapDialog.alert("请选择必选项");
+		BootstrapDialog.alert("请输入必填项");
 		return false;
 	}
 	//校验重复
@@ -96,7 +96,7 @@ function update(id){
 function updateDataDetail(){
 	var updateDataDetailResult = '';
 	if($("#updateName").val() == ''){
-		BootstrapDialog.alert("请选择必选项");
+		BootstrapDialog.alert("请输入必填项");
 		return false;
 	}
 	$.ajax({
