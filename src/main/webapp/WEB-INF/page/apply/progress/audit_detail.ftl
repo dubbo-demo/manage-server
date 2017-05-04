@@ -160,7 +160,7 @@
                 $("#jieAnRemark").html(unhealthy.RISK_SORT);
             }
         }
-		if($("#jieAnRemark").html() != "") {
+		if($("#jieAnRemark").html() != "" && $("#jieAnRemark").html() != "无") {
             $("#jieAnDiv").css("display","block");
 		}
     }

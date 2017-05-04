@@ -286,6 +286,25 @@ public class ApplyInfoController {
 
     }
 
+    /**\
+     * 回源状态判断
+     * @param applyLoanNo
+     * @return
+     */
+    @RequestMapping("/check/applyInfoGo")
+    @ResponseBody
+    public AjaxResult personassetsSave(String applyLoanNo) {
+        MyphLogger.info("加入回源状态判断,applyLoanNo:{}",applyLoanNo);
+        //+++++++加入回源状态判断
+        ServiceResult<Boolean> isContinue = applyInfoService.isContinueByApplyState(applyLoanNo);
+        if(null != isContinue && !isContinue.getData()) {
+            MyphLogger.info(applyLoanNo + "已经不在申请单阶段，不能修改数据");
+            return AjaxResult.failed(applyLoanNo + "已经不在申请单阶段，不能修改数据");
+        }
+        return AjaxResult.success();
+
+    }
+
     /**
      * 
      * @名称 personassetsSave

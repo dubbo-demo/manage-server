@@ -380,7 +380,7 @@ public class DealApplyController {
             applyNotifyDto.setFlowStateEnum(FlowStateEnum.getEnum(applyrs.getData().getState()));
             // ++++++++++++++++++++++捷安数据接入调整+++++++++++++++++++++++++++++++
             continueState = true;
-            //TODO 是否调捷安征信
+            // 是否调捷安征信
             baseActionDto = applyNotifyDto;
             if(isJieAnAuditState(applyNotifyDto)) {
                 result.setIsAuditSuccess(false);

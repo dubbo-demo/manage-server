@@ -42,8 +42,8 @@ function submitUserInfo() {
 	}
 //	if($("#s2id_customerServiceId .select2-choice span").html() == "请选择") {
 	if($("#customerSName").val() == "请选择" || $("#customerSName").val() == "") {
-//		BootstrapDialog.alert("请根据员工姓名首字母选择客服!", function() {
-		BootstrapDialog.alert("2016-10-18需求调整，客服在接待表阶段插入录入者!", function() {
+		BootstrapDialog.alert("请根据员工姓名首字母选择客服!", function() {
+//		BootstrapDialog.alert("2016-10-18需求调整，客服在接待表阶段插入录入者!", function() {
 			setTimeout(function() {
 				$('#form_wizard_1').find(
 				'.button-previous').hide();
@@ -61,7 +61,7 @@ function submitUserInfo() {
 
 function userinfo_addInfo() {
 	if(ChkUtil.isNull($("#idCard").val())) {
-		alert("请输入身份证!");
+		BootstrapDialog.alert("请输入身份证!");
 		return false;
 	}
 	if($("#s2id_bmId .select2-choice span").html() != ChkUtil.select2Name) {
