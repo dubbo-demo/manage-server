@@ -13,12 +13,20 @@ import com.myph.flow.dto.BaseActionDto;
 public interface FacadeFlowStateExchangeService<T extends BaseActionDto> {
 
     /**
+     * 继续：流程会调整到下一阶段<br><br/>
+     * update member_info
+     * @param obj obj里面需要包含FlowStateExchangeEnum，枚举量会区分是不同动作类型
+     * @return
+     */
+    ServiceResult<Integer> doAction(T obj);
+
+    /**
      * 继续：流程会调整到下一阶段
      *
      * @param obj obj里面需要包含FlowStateExchangeEnum，枚举量会区分是不同动作类型
      * @return
      */
-    ServiceResult<Integer> doAction(T obj);
+    ServiceResult<Integer> doActionG(T obj);
 
 
 }

@@ -30,4 +30,7 @@
     <context:component-scan base-package="com.myph">
         <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
     </context:component-scan>
+
+    <task:annotation-driven executor="myexecutor" />
+    <task:executor id="myexecutor" pool-size="20-150" queue-capacity="100" keep-alive="20"/>
 </beans>

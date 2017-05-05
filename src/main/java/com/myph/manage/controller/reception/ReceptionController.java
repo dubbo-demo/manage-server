@@ -333,13 +333,13 @@ public class ReceptionController {
             // 新增提交
             if (null != submitType
                     && submitType.equals(String.valueOf(ApplyOperateEnum.RECEPTION_SUBMIT_ADD.getCode()))) {
-                data = applyReceptionService.subMitInfo(applyReceptionDto);
                 if (StateOperateEnum.ADOPT.getCode().equals(applyReceptionDto.getState())) {
                     ApplyUserDto applyUserDto = new ApplyUserDto();
-                    applyUserDto.setIdCarNo(applyReceptionDto.getIdCard());
                     BeanUtils.copyProperties(applyReceptionDto, applyUserDto);
+                    applyUserDto.setIdCarNo(applyReceptionDto.getIdCard());
                     updateMemberInfo(applyUserDto);
                 }
+                data = applyReceptionService.subMitInfo(applyReceptionDto);
             } else {
                 applyReceptionDto.setState(0);
                 // 保存提交
@@ -395,13 +395,13 @@ public class ReceptionController {
             if (null != submitType
                     && submitType.equals(String.valueOf(ApplyOperateEnum.RECEPTION_SUBMIT_UPDATE.getCode()))) {
                 applyReceptionDto.setUpdateTime(new Date());
-                data = applyReceptionService.updateSubmitInfo(applyReceptionDto);
                 if (StateOperateEnum.ADOPT.getCode().equals(applyReceptionDto.getState())) {
                     ApplyUserDto applyUserDto = new ApplyUserDto();
                     applyUserDto.setIdCarNo(applyReceptionDto.getIdCard());
                     BeanUtils.copyProperties(applyReceptionDto, applyUserDto);
                     updateMemberInfo(applyUserDto);
                 }
+                data = applyReceptionService.updateSubmitInfo(applyReceptionDto);
             } else {
                 // 修改保存
                 applyReceptionDto.setState(0);

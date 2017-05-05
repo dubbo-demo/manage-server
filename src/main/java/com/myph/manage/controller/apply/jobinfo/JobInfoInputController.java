@@ -116,6 +116,11 @@ public class JobInfoInputController {
 			String applyLoanNo = record.getApplyLoanNo();
 
 			ApplyInfoDto appInfo = applyInfoService.queryInfoByAppNo(applyLoanNo).getData();
+			//+++++++加入回源状态判断
+			ServiceResult<Boolean> isContinue = applyInfoService.isContinueByApplyState(appInfo);
+			if(null != isContinue && !isContinue.getData()) {
+				return AjaxResult.failed(appInfo.getApplyLoanNo() + "已经不在申请单阶段，不能修改数据");
+			}
 			String idCardNo = appInfo.getIdCard();
 
 			MemberInfoDto memberInfo = memberInfoService.queryInfoByIdCard(idCardNo).getData();// 查询客户信息

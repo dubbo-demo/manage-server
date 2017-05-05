@@ -116,7 +116,7 @@ public class ApplyInfoController {
     /**
      * 根据团队ID加载团队信息服务
      * 
-     * @param storeId
+     * @param idCard
      * @return
      */
     @RequestMapping("/applyInfoQueryById/{idCard}")
@@ -286,6 +286,25 @@ public class ApplyInfoController {
 
     }
 
+    /**\
+     * 回源状态判断
+     * @param applyLoanNo
+     * @return
+     */
+    @RequestMapping("/check/applyInfoGo")
+    @ResponseBody
+    public AjaxResult personassetsSave(String applyLoanNo) {
+        MyphLogger.info("加入回源状态判断,applyLoanNo:{}",applyLoanNo);
+        //+++++++加入回源状态判断
+        ServiceResult<Boolean> isContinue = applyInfoService.isContinueByApplyState(applyLoanNo);
+        if(null != isContinue && !isContinue.getData()) {
+            MyphLogger.info(applyLoanNo + "已经不在申请单阶段，不能修改数据");
+            return AjaxResult.failed(applyLoanNo + "已经不在申请单阶段，不能修改数据");
+        }
+        return AjaxResult.success();
+
+    }
+
     /**
      * 
      * @名称 personassetsSave
@@ -302,6 +321,12 @@ public class ApplyInfoController {
     public AjaxResult personassetsSave(@RequestBody ApplyPersonassetsDto record) {
         MyphLogger.info("操作人ID【" + ShiroUtils.getCurrentUserId() + "】操作人【" + ShiroUtils.getCurrentUserName()
                 + "】 ApplyInfoInputController.personassetsSave 输入参数[" + record + "]");
+
+        //+++++++加入回源状态判断
+        ServiceResult<Boolean> isContinue = applyInfoService.isContinueByApplyState(record.getApplyLoanNo());
+        if(null != isContinue && !isContinue.getData()) {
+            return AjaxResult.failed(record.getApplyLoanNo() + "已经不在申请单阶段，不能修改数据");
+        }
 
         applyPersonassetsService.insert(record);
         MyphLogger.info(
@@ -377,10 +402,10 @@ public class ApplyInfoController {
             return AjaxResult.failed("申请件信息查询失败，未查询到相关申请件！");
         }
         if (!FlowStateEnum.APPLY.getCode().equals(applyInfo.getState())) {
-            return AjaxResult.success("当前阶段已经不允许提交了");
+            return AjaxResult.failed("当前阶段已经不允许提交了");
         }
         if (ApplyBisStateEnum.FINISH.getCode().equals(applyInfo.getSubState())) {
-            return AjaxResult.success("申请件已提交过了！");
+            return AjaxResult.failed("申请件已提交过了！");
         }
         if (ApplyBisStateEnum.BACK_INIT.getCode().equals(applyInfo.getSubState())) {
             MyphLogger.info("操作人[" + ShiroUtils.getCurrentUserName() + "]重新提交订单[" + applyInfo + "]");
