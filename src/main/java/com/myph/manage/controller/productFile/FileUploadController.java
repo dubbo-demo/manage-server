@@ -548,10 +548,18 @@ public class FileUploadController {
             stream = resp.getOutputStream();
             stream.write(data);
             stream.flush();
-            stream.close();
         } catch (Exception e) {
             MyphLogger.error(e, "下载文件异常,入参:{}", fileIdListString);
+        } finally {
+            if (null != stream) {
+                try {
+                    stream.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
         }
+        
     }
 
     /**
@@ -566,6 +574,7 @@ public class FileUploadController {
      *
      */
     private void downOneFile(HttpServletRequest req, HttpServletResponse resp, List<Long> fileIdList,Integer clientType) throws Exception {
+        OutputStream stream = null;
         try {
             String fileStr = "";
             String fileName = "";
@@ -584,12 +593,19 @@ public class FileUploadController {
             // 设置Content-Disposition
             resp.setHeader("Content-Disposition",
                     "attachment;filename=" + URLEncoder.encode(fileName, "UTF-8"));
-            OutputStream stream = resp.getOutputStream();
+            stream = resp.getOutputStream();
             stream.write(data);
             stream.flush();
-            stream.close();
         } catch (Exception e) {
             MyphLogger.error(e, "下载文件异常,入参:{}", fileIdList);
+        } finally {
+            if (null != stream) {
+                try {
+                    stream.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 
@@ -605,6 +621,8 @@ public class FileUploadController {
      *
      */
     private void downListFile(HttpServletRequest req, HttpServletResponse resp, List<Long> fileIdList,Integer clientType) {
+        OutputStream stream = null;
+        FileInputStream fis = null;
         try {
             Long timeInMillis = Calendar.getInstance().getTimeInMillis();
             // 压缩文件默认文件名
@@ -647,15 +665,28 @@ public class FileUploadController {
             resp.reset();
             resp.setContentType("application/zip");
             resp.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(downZIPFileName, "UTF-8"));
-            OutputStream stream = resp.getOutputStream();
-            FileInputStream fis = new FileInputStream(zipFile);
+            stream = resp.getOutputStream();
+            fis = new FileInputStream(zipFile);
             IOUtils.copy(fis, stream);
             stream.flush();
-            stream.close();
-            fis.close();
             FileUtils.deleteQuietly(new File(tempDirName));
         } catch (Exception e) {
             MyphLogger.error(e, "下载文件异常,入参:{}", fileIdList);
+        } finally {
+            if (null != fis) {
+                try {
+                    fis.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            if (null != stream) {
+                try {
+                    stream.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
     
@@ -678,16 +709,23 @@ public class FileUploadController {
     public void loadFile(@RequestParam("id") Long fileIdListString, HttpServletRequest req,
             HttpServletResponse response) {
         byte[] data = null;
+        OutputStream stream = null;
         try {
             ServiceResult<FileDto> fileDtoResult = fileInfoService.selectByPrimaryKey(fileIdListString);
             data = HbaseUtils.getByBytes(fileDtoResult.getData().getFileStr());
-            OutputStream stream = response.getOutputStream();
+            stream = response.getOutputStream();
             stream.write(data);
             stream.flush();
-            stream.close();
-
         } catch (Exception e) {
             MyphLogger.error(e, "下载文件异常,入参:{}", fileIdListString);
+        } finally {
+            if (null != stream) {
+                try {
+                    stream.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 
@@ -740,15 +778,23 @@ public class FileUploadController {
     public void loadAppFile(@RequestParam("id") Long id, HttpServletRequest req,
             HttpServletResponse response) {
         byte[] data = null;
+        OutputStream stream = null;
         try {
             ServiceResult<JkAppFileInfoDto> fileDtoResult = jkAppFileInfoService.selectByPrimaryKey(id);
             data = HbaseUtils.getByBytes(fileDtoResult.getData().getFileStr());
-            OutputStream stream = response.getOutputStream();
+            stream = response.getOutputStream();
             stream.write(data);
             stream.flush();
-            stream.close();
         } catch (Exception e) {
             MyphLogger.error(e, "下载文件异常,入参:{}", id);
+        } finally {
+            if (null != stream) {
+                try {
+                    stream.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 }
