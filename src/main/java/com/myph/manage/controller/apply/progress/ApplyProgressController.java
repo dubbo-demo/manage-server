@@ -160,11 +160,19 @@ public class ApplyProgressController extends BaseController {
         EmpDetailDto empDetail = ShiroUtils.getEmpDetail();
         model.addAttribute("user", user);
         model.addAttribute("empDetail", empDetail);
-        if (null == queryDto.getAreaId()) {
-            queryDto.setAreaId(empDetail.getRegionId());
-        }
+
         if (null == queryDto.getStoreId()) {
-            queryDto.setStoreId(empDetail.getStoreId());
+            if(empDetail.getRegionId() != null){
+                ServiceResult<List<OrganizationDto>> orgResult = organizationService.selectOrgByParentId(empDetail.getRegionId());
+                List<Long> storeIdList = new ArrayList<Long>();
+                for(int i=0;i<orgResult.getData().size();i++){
+                    storeIdList.add(orgResult.getData().get(i).getId());
+                }
+                queryDto.setStoreIdList(StringUtils.join(storeIdList, ","));
+            }
+            if(empDetail.getStoreId() != null){
+                queryDto.setStoreId(empDetail.getStoreId());
+            }
         }
         if (null == basePage.getSortField()) {
             basePage.setSortField("createTime");
