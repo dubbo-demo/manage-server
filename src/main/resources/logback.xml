@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
 
-    <property name="LOG_PATH" value="${catalina.home}/../tomcat_log/manage-server"/>
+    <property name="LOG_PATH" value="/usr/local/tomcat/tomcat_log/manage-server"/>
 
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <Target>System.out</Target>
