@@ -152,11 +152,9 @@ public class DealApplyController {
 
         // 申请件的借款用途
         rs = nodeService.selectByPrimaryKey(applyInfo.getLoanPurpose());
-        if (!rs.success() || rs.getData() == null) {
-            MyphLogger.error("查询申请件的借款用途名称【" + applyInfo.getLoanPurpose() + "】异常");
-            return error;
-        }
-        applyInfo.setLoanPurposeName(rs.getData().getNodeName());
+        if (rs.success() && rs.getData() != null) {
+            applyInfo.setLoanPurposeName(rs.getData().getNodeName());
+        }  
 
         // 设置状态名称
         // 状态名称先获取初审，然后再获取终审，有初审，才能有终审

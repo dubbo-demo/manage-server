@@ -9,6 +9,7 @@
 package com.myph.manage.controller.audit;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -52,6 +53,8 @@ import com.myph.node.service.NodeService;
 import com.myph.organization.dto.OrganizationDto;
 import com.myph.organization.service.OrganizationService;
 import com.myph.product.service.ProductService;
+import com.myph.teamProduct.dto.TeamProductDto;
+import com.myph.teamProduct.service.TeamProductService;
 
 /**
  * 信审业务管理
@@ -96,6 +99,12 @@ public class JkApplyAuditController extends BaseController {
 
 	@Autowired
 	private FacadeFlowStateExchangeService facadeFlowStateExchangeService;
+	
+	@Autowired
+    private TeamProductService teamProductService;
+	
+	@Autowired
+    private ProductService productService;
 
 	/**
 	 * 初审入口
@@ -188,8 +197,13 @@ public class JkApplyAuditController extends BaseController {
 			Integer auditResult = 0;
 			if (Auditor.FIRSTAUDITOR.name.equals(auditor)) {
 				initFirstTodoAuditParams(model, queryDto, accountType, auditor);
-				auditResult = jkApplyAuditService
-						.getAudits(Auditor.FIRSTAUDITOR.name, AuditFirstBisStateEnum.INIT.getCode()).getData();// 获取待初审的未取件数据
+				AjaxResult getproductIdResult = getproductIdByteamId();
+	            if(!getproductIdResult.isSuccess()){
+	                auditResult = 0;
+	            }else{
+	                auditResult = jkApplyAuditService
+	                        .getAudits(Auditor.FIRSTAUDITOR.name, AuditFirstBisStateEnum.INIT.getCode(),(List<Integer>)getproductIdResult.getData()).getData();// 获取待初审的未取件数据
+	            }
 			} else if (Auditor.LASTAUDITOR.name.equals(auditor)) {// 复审无需取件
 				initLastTodoAuditParams(model, queryDto, accountType, auditor);
 				// auditResult =
@@ -405,8 +419,13 @@ public class JkApplyAuditController extends BaseController {
 			List<JkAuditTaskDto> audits = null;
 			String auditor = (String) ShiroUtils.getSessionAttribute(Auditor.AUDIT.name);
 			if (Auditor.FIRSTAUDITOR.name.equals(auditor)) {
+			    //获取当前用户可以取件的产品类型
+			    AjaxResult getproductIdResult = getproductIdByteamId();
+			    if(!getproductIdResult.isSuccess()){
+			        return getproductIdResult;
+			    }
 				audits = jkApplyAuditService
-						.getAuditResult(Auditor.FIRSTAUDITOR.name, AuditFirstBisStateEnum.INIT.getCode()).getData();
+						.getAuditResult(Auditor.FIRSTAUDITOR.name, AuditFirstBisStateEnum.INIT.getCode(),(List<Integer>)getproductIdResult.getData()).getData();
 				if (CollectionUtils.isEmpty(audits)) {
 					return AjaxResult.failed("无待审批申请单");
 				}
@@ -418,7 +437,7 @@ public class JkApplyAuditController extends BaseController {
 				result = jkApplyAuditService.pickup(param);
 			} else if (Auditor.LASTAUDITOR.name.equals(auditor)) {
 				audits = jkApplyAuditService
-						.getAuditResult(Auditor.LASTAUDITOR.name, AuditLastBisStateEnum.INIT.getCode()).getData();
+						.getAuditResult(Auditor.LASTAUDITOR.name, AuditLastBisStateEnum.INIT.getCode(),null).getData();
 				if (CollectionUtils.isEmpty(audits)) {
 					return AjaxResult.failed("无待审批申请单");
 				}
@@ -429,8 +448,12 @@ public class JkApplyAuditController extends BaseController {
 				param.setReviewAuditor(employeeId);
 				result = jkApplyAuditService.pickup(param);
 			} else if (Auditor.MANAGERAUDITOR.name.equals(auditor)) {
+			    AjaxResult getproductIdResult = getproductIdByteamId();
+                if(!getproductIdResult.isSuccess()){
+                    return getproductIdResult;
+                }
 				audits = jkApplyAuditService
-						.getAuditResult(Auditor.MANAGERAUDITOR.name, AuditManagerBisStateEnum.INIT.getCode()).getData();
+						.getAuditResult(Auditor.MANAGERAUDITOR.name, AuditManagerBisStateEnum.INIT.getCode(),(List<Integer>)getproductIdResult.getData()).getData();
 				if (CollectionUtils.isEmpty(audits)) {
 					return AjaxResult.failed("无待审批申请单");
 				}
@@ -441,8 +464,12 @@ public class JkApplyAuditController extends BaseController {
 				param.setLastAuditor(employeeId);
 				result = jkApplyAuditService.pickup(param);
 			} else if (Auditor.DIRECTORAUDITOR.name.equals(auditor)) {
+			    AjaxResult getproductIdResult = getproductIdByteamId();
+                if(!getproductIdResult.isSuccess()){
+                    return getproductIdResult;
+                }
 				audits = jkApplyAuditService
-						.getAuditResult(Auditor.DIRECTORAUDITOR.name, AuditDirectorBisStateEnum.INIT.getCode())
+						.getAuditResult(Auditor.DIRECTORAUDITOR.name, AuditDirectorBisStateEnum.INIT.getCode(),(List<Integer>)getproductIdResult.getData())
 						.getData();
 				if (CollectionUtils.isEmpty(audits)) {
 					return AjaxResult.failed("无待审批申请单");
@@ -463,6 +490,35 @@ public class JkApplyAuditController extends BaseController {
 	}
 
 	/**
+	 * 
+	 * @名称 getproductIdByteamId 
+	 * @描述 获取当前用户可以取件的产品id
+	 * @返回类型 AjaxResult     
+	 * @日期 2017年4月17日 下午4:00:33
+	 * @创建人  吴阳春
+	 * @更新人  吴阳春
+	 *
+	 */
+	private AjaxResult getproductIdByteamId(){
+	    Long teamId = ShiroUtils.getCurrentUser().getTeamId();
+        if(teamId == null){
+            return AjaxResult.failed("当前员工不在团队中，不能取件");
+        }
+        ServiceResult<TeamProductDto> teamProductResult = teamProductService.selectByTeamId(teamId);
+        String productTypes = teamProductResult.getData().getProductTypes();
+        String[] productTypeArray = productTypes.split("\\|");
+        List<String> productTypeList = Arrays.asList(productTypeArray);
+        if(productTypeList.size() <= 0){
+            return AjaxResult.failed("当前员工不在团队中，不能取件");
+        }
+        List<Long> result = new ArrayList<Long>();
+        for(String str : productTypeList) {
+            result.add(Long.valueOf(str));
+          }
+        ServiceResult<List<Long>> productIds = productService.selectIdByTypes(result);
+        return AjaxResult.success(productIds.getData());
+	}
+	/**
 	 * 经理/总监信审列表(待办)
 	 * 
 	 * @名称 list
@@ -482,15 +538,19 @@ public class JkApplyAuditController extends BaseController {
 			model.addAttribute("progress", ApplyAuditType.MANAGETODO.name);
 			MyphLogger.debug("当前用户的账户类型是:{},角色是:{}", accountType, auditor);
 			Integer auditResult = 0;
-			if (Auditor.MANAGERAUDITOR.name.equals(auditor)) {
-				initManagerTodoAuditParams(model, queryDto, accountType, auditor);
-				auditResult = jkApplyAuditService
-						.getAudits(Auditor.MANAGERAUDITOR.name, AuditManagerBisStateEnum.INIT.getCode()).getData();
-			} else if (Auditor.DIRECTORAUDITOR.name.equals(auditor)) {
-				initDirectorTodoAuditParams(model, queryDto, accountType, auditor);
-				auditResult = jkApplyAuditService
-						.getAudits(Auditor.DIRECTORAUDITOR.name, AuditDirectorBisStateEnum.INIT.getCode()).getData();
-			}
+			AjaxResult getproductIdResult = getproductIdByteamId();
+            initManagerTodoAuditParams(model, queryDto, accountType, auditor);
+            if(!getproductIdResult.isSuccess()){
+                auditResult = 0;
+            }else{
+    			if (Auditor.MANAGERAUDITOR.name.equals(auditor)) {
+    				auditResult = jkApplyAuditService
+    						.getAudits(Auditor.MANAGERAUDITOR.name, AuditManagerBisStateEnum.INIT.getCode(),(List<Integer>)getproductIdResult.getData()).getData();
+    			} else if (Auditor.DIRECTORAUDITOR.name.equals(auditor)) {
+    				auditResult = jkApplyAuditService
+    						.getAudits(Auditor.DIRECTORAUDITOR.name, AuditDirectorBisStateEnum.INIT.getCode(),(List<Integer>)getproductIdResult.getData()).getData();
+    			}
+            }
 			ServiceResult<Pagination<JkAuditDto>> result = null;
 			Pagination<JkAuditDto> page = null;
 			List<JkAuditDto> audits = null;

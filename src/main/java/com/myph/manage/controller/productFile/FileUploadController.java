@@ -16,9 +16,17 @@ import com.myph.constant.ApplyUtils;
 import com.myph.constant.FileUpSysNodeEnum;
 import com.myph.constant.FlowStateEnum;
 import com.myph.constant.NodeConstant;
-import com.myph.employee.constants.EmployeeMsg.POSITION;
+import com.myph.constant.ProductNodeEnum;
 import com.myph.employee.dto.EmployeePositionInfoDto;
+import com.myph.fileInfo.dto.JkAppFileInfoDto;
+import com.myph.fileInfo.service.JkAppFileInfoService;
+import com.myph.fileRelation.dto.JkAppFileDto;
+import com.myph.fileRelation.dto.JkAppFileRelationDto;
+import com.myph.fileRelation.service.JkAppFileRelationService;
+import com.myph.manage.common.constant.ClientType;
 import com.myph.manage.common.shiro.ShiroUtils;
+import com.myph.member.base.dto.MemberInfoDto;
+import com.myph.member.base.service.MemberInfoService;
 import com.myph.node.dto.SysNodeDto;
 import com.myph.node.service.NodeService;
 import com.myph.position.dto.PositionDto;
@@ -32,6 +40,7 @@ import com.myph.reception.service.ApplyReceptionService;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -80,6 +89,15 @@ public class FileUploadController {
     
     @Autowired
     private ApplyReceptionService applyReceptionService;
+    
+    @Autowired
+    private MemberInfoService memberInfoService;
+    
+    @Autowired
+    private JkAppFileRelationService jkAppFileRelationService;
+    
+    @Autowired
+    private JkAppFileInfoService jkAppFileInfoService;
 
     @RequestMapping("/fileUpload")
     public String fileUpload(Model model, FileUploadDto fileUploadDto) {
@@ -142,14 +160,93 @@ public class FileUploadController {
                     model.addAttribute("taskStateFlag", taskStateFlag);
                 }
             }
+            List<ProductFiletypeDto> productFiletypeDtoList = new ArrayList<ProductFiletypeDto>();
+            productFiletypeDtoList.addAll(productFiletypeDtoListResult.getData());
+            if(ClientType.APP.getCode().equals(result.getData().getClientType())){
+                // 10、针对APP查询文件目录
+                List<ProductFiletypeDto> appFileDir = this.queryAppFileDir();
+                productFiletypeDtoList.addAll(appFileDir);
+                // 11、针对APP查询文件信息
+                String idCard = result.getData().getIdCard();
+                ServiceResult<MemberInfoDto> memberInfoResult = memberInfoService.queryInfoByIdCard(idCard);
+                List<FileDto> appfileDtoList = this.queryAppFileInfo(memberInfoResult.getData().getId());
+                List<FileDto> fileDtoResult = fileUploadDto.getFileDtoList();
+                fileDtoResult.addAll(appfileDtoList);
+                fileUploadDto.setFileDtoList(fileDtoResult);
+            }            
             model.addAttribute("fileUpSysNodeList", fileUpSysNodeListResult.getData());
-            model.addAttribute("productFiletypeDtoList", productFiletypeDtoListResult.getData());
+            model.addAttribute("productFiletypeDtoList", productFiletypeDtoList);
             model.addAttribute("fileUploadDto", fileUploadDto);
             return "productFile/fileUpload";
         } catch (Exception e) {
             MyphLogger.error(e, "文件上传异常");
             return "error/500";
         }
+    }
+
+    /**
+     * 
+     * @名称 queryAppFileInfo 
+     * @描述 针对APP查询文件信息
+     * 由于APP文件目录通过sys_node管理，为避免与zd_product_filetype表中id相同造成解析混乱，查出sys_node中id做  * 1000处理
+     * @返回类型 List<FileDto>     
+     * @日期 2017年4月19日 下午2:32:00
+     * @创建人  吴阳春
+     * @更新人  吴阳春
+     *
+     */
+    private List<FileDto> queryAppFileInfo(Long memberId) {
+        List<FileDto> result = new ArrayList<FileDto>();
+        ServiceResult<List<JkAppFileRelationDto>> jkAppFileRelationResult = jkAppFileRelationService.selectByMemberId(memberId);
+        if(jkAppFileRelationResult.getData() == null){
+            return result;
+        }
+        
+        for(JkAppFileRelationDto jkAppFileRelationDto : jkAppFileRelationResult.getData()) {
+            String fileStrs = jkAppFileRelationDto.getFileStrs();
+            if(StringUtils.isBlank(fileStrs)){
+                continue;
+            }
+            String[] fileStrsArray = fileStrs.split("\\|");
+            List<String> fileStrsList = Arrays.asList(fileStrsArray);
+            //根据大数据ID查文件信息
+            ServiceResult<List<JkAppFileDto>> jkAppFileInfoResult = jkAppFileInfoService.selectByFileStrs(fileStrsList);
+            for(JkAppFileDto jkAppFileDto : jkAppFileInfoResult.getData()){
+                if(jkAppFileRelationDto.getUploadId() == null){
+                    continue;
+                }
+                FileDto fileDto = new FileDto();
+                BeanUtils.copyProperties(jkAppFileDto, fileDto);
+                fileDto.setUploadState(ProductNodeEnum.APP.getCode());
+                fileDto.setUploadId(jkAppFileRelationDto.getUploadId() * 1000);
+                result.add(fileDto);
+            }
+        }
+        return result;
+    }
+
+    /**
+     * 
+     * @名称 queryAppFileDir 
+     * @描述   针对APP查询文件目录
+     * 由于APP文件目录通过sys_node管理，为避免与zd_product_filetype表中id相同造成解析混乱，查出sys_node中id做  * 1000处理
+     * @返回类型 List<ProductFiletypeDto>     
+     * @日期 2017年4月19日 下午2:17:58
+     * @创建人  吴阳春
+     * @更新人  吴阳春
+     *
+     */
+    private List<ProductFiletypeDto> queryAppFileDir() {
+        List<ProductFiletypeDto> result = new ArrayList<ProductFiletypeDto>();
+        ServiceResult<List<SysNodeDto>> sysNodeDtoResult = nodeService.getListByParent(NodeConstant.APP_UPLOAD_FILE_DIR);
+        for(int i=0;i<sysNodeDtoResult.getData().size();i++){
+            ProductFiletypeDto productFiletypeDto = new ProductFiletypeDto();
+            productFiletypeDto.setId(sysNodeDtoResult.getData().get(i).getId() * 1000);
+            productFiletypeDto.setFileUpState(ProductNodeEnum.APP.getCode());
+            productFiletypeDto.setDirectoryName(sysNodeDtoResult.getData().get(i).getNodeName());
+            result.add(productFiletypeDto);
+        }
+        return result;
     }
 
     private Boolean setTaskStateFlag(FileUploadDto fileUploadDto) {
@@ -408,15 +505,35 @@ public class FileUploadController {
                 fileIdList.add(Long.valueOf(stringList[i]));
             }
             if (fileIdList.size() == 1) {
-                downOneFile(req, resp, fileIdList);
+                downOneFile(req, resp, fileIdList,ClientType.WEB.getCode());
             } else {
-                downListFile(req, resp, fileIdList);
+                downListFile(req, resp, fileIdList,ClientType.WEB.getCode());
             }
         } catch (Exception e) {
             MyphLogger.error(e, "下载文件异常,入参:{}", fileIdListString);
         }
     }
 
+    @RequestMapping("/downLoadAppFile")
+    @ResponseBody
+    public void downLoadAppFile(HttpServletRequest req, HttpServletResponse resp,
+            @RequestParam("fileIdListString") String fileIdListString) {
+        try {
+            List<Long> fileIdList = new ArrayList<Long>();
+            String[] stringList = fileIdListString.split(",");
+            for (int i = 0; i < stringList.length; i++) {
+                fileIdList.add(Long.valueOf(stringList[i]));
+            }
+            if (fileIdList.size() == 1) {
+                downOneFile(req, resp, fileIdList,ClientType.APP.getCode());
+            } else {
+                downListFile(req, resp, fileIdList,ClientType.APP.getCode());
+            }
+        } catch (Exception e) {
+            MyphLogger.error(e, "下载文件异常,入参:{}", fileIdListString);
+        }
+    }
+    
     @RequestMapping("/downOneFile")
     @ResponseBody
     public void downOneFile(HttpServletRequest req, HttpServletResponse resp,
@@ -431,30 +548,148 @@ public class FileUploadController {
             stream = resp.getOutputStream();
             stream.write(data);
             stream.flush();
-            stream.close();
         } catch (Exception e) {
             MyphLogger.error(e, "下载文件异常,入参:{}", fileIdListString);
+        } finally {
+            if (null != stream) {
+                try {
+                    stream.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
         }
+        
     }
 
-    private void downOneFile(HttpServletRequest req, HttpServletResponse resp, List<Long> fileIdList) throws Exception {
+    /**
+     * 
+     * @名称 downOneFile 
+     * @描述 下载单个文件 
+     * clientType：图片来源0web,1app
+     * @返回类型 void     
+     * @日期 2017年4月20日 下午2:56:03
+     * @创建人  吴阳春
+     * @更新人  吴阳春
+     *
+     */
+    private void downOneFile(HttpServletRequest req, HttpServletResponse resp, List<Long> fileIdList,Integer clientType) throws Exception {
+        OutputStream stream = null;
         try {
-            ServiceResult<FileDto> fileDtoResult = fileInfoService.selectByPrimaryKey(fileIdList.get(0));
-            byte[] data = HbaseUtils.getByBytes(fileDtoResult.getData().getFileStr());
+            String fileStr = "";
+            String fileName = "";
+            if(ClientType.WEB.getCode().equals(clientType)){
+                ServiceResult<FileDto> fileDtoResult = fileInfoService.selectByPrimaryKey(fileIdList.get(0));
+                fileStr = fileDtoResult.getData().getFileStr();
+                fileName = fileDtoResult.getData().getFileName();
+            }else{
+                ServiceResult<JkAppFileInfoDto> jkAppFileInfoDtoResult = jkAppFileInfoService.selectByPrimaryKey(fileIdList.get(0));
+                fileStr = jkAppFileInfoDtoResult.getData().getFileStr();
+                fileName = jkAppFileInfoDtoResult.getData().getFileName();
+            }
+            byte[] data = HbaseUtils.getByBytes(fileStr);
             resp.reset();
             resp.setContentType("application/octet-stream; charset=utf-8");
             // 设置Content-Disposition
             resp.setHeader("Content-Disposition",
-                    "attachment;filename=" + URLEncoder.encode(fileDtoResult.getData().getFileName(), "UTF-8"));
-            OutputStream stream = resp.getOutputStream();
+                    "attachment;filename=" + URLEncoder.encode(fileName, "UTF-8"));
+            stream = resp.getOutputStream();
             stream.write(data);
             stream.flush();
-            stream.close();
         } catch (Exception e) {
             MyphLogger.error(e, "下载文件异常,入参:{}", fileIdList);
+        } finally {
+            if (null != stream) {
+                try {
+                    stream.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 
+    /**
+     * 
+     * @名称 downListFile 
+     * @描述 下载多个文件
+     * clientType：图片来源0web,1app
+     * @返回类型 void     
+     * @日期 2017年4月20日 下午2:58:24
+     * @创建人  吴阳春
+     * @更新人  吴阳春
+     *
+     */
+    private void downListFile(HttpServletRequest req, HttpServletResponse resp, List<Long> fileIdList,Integer clientType) {
+        OutputStream stream = null;
+        FileInputStream fis = null;
+        try {
+            Long timeInMillis = Calendar.getInstance().getTimeInMillis();
+            // 压缩文件默认文件名
+            String downZIPFileName = timeInMillis + ".zip";
+            // 下载文件临时目录
+            String tempDirName = req.getSession().getServletContext().getRealPath("/") + "temp" + "/" + timeInMillis;
+            // 压缩文件路径+文件名
+            String zipFile = tempDirName + "/" + downZIPFileName;
+
+            File downDir = new File(tempDirName);
+            if (!downDir.exists() && !downDir.isDirectory()) {
+                downDir.mkdirs();
+            }
+            Map<String, Integer> fileNameMap = new HashMap<String, Integer>();
+
+            for (int i = 0; i < fileIdList.size(); i++) {
+                String fileStr = "";
+                String fileName = "";
+                if(ClientType.WEB.getCode().equals(clientType)){
+                    ServiceResult<FileDto> fileDtoResult = fileInfoService.selectByPrimaryKey(fileIdList.get(i));
+                    fileStr = fileDtoResult.getData().getFileStr();
+                    fileName = fileDtoResult.getData().getFileName();
+                }else{
+                    ServiceResult<JkAppFileInfoDto> jkAppFileInfoDtoResult = jkAppFileInfoService.selectByPrimaryKey(fileIdList.get(i));
+                    fileStr = jkAppFileInfoDtoResult.getData().getFileStr();
+                    fileName = jkAppFileInfoDtoResult.getData().getFileName();
+                }
+                byte[] data = HbaseUtils.getByBytes(fileStr);
+                // 防重名处理
+                String prefix = fileName.substring(0, fileName.lastIndexOf("."));
+                String suffix = fileName.substring(fileName.lastIndexOf(".") + 1);
+                fileNameMap.put(prefix, fileNameMap.containsKey(prefix) ? fileNameMap.get(prefix) + 1 : 0);
+                if (!fileNameMap.get(prefix).equals(0)) {
+                    fileName = prefix + fileNameMap.get(prefix) + "." + suffix;
+                }
+                FileCopyUtils.copy(data, new File(tempDirName + "/" + fileName));
+            }
+
+            ZipCompress.zip(new File(tempDirName), zipFile);
+            resp.reset();
+            resp.setContentType("application/zip");
+            resp.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(downZIPFileName, "UTF-8"));
+            stream = resp.getOutputStream();
+            fis = new FileInputStream(zipFile);
+            IOUtils.copy(fis, stream);
+            stream.flush();
+            FileUtils.deleteQuietly(new File(tempDirName));
+        } catch (Exception e) {
+            MyphLogger.error(e, "下载文件异常,入参:{}", fileIdList);
+        } finally {
+            if (null != fis) {
+                try {
+                    fis.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            if (null != stream) {
+                try {
+                    stream.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+    
     @RequestMapping("/getFile")
     @ResponseBody
     public AjaxResult getFile(@RequestParam("fileIdListString") Long fileIdListString, HttpServletRequest req,
@@ -474,62 +709,23 @@ public class FileUploadController {
     public void loadFile(@RequestParam("id") Long fileIdListString, HttpServletRequest req,
             HttpServletResponse response) {
         byte[] data = null;
+        OutputStream stream = null;
         try {
             ServiceResult<FileDto> fileDtoResult = fileInfoService.selectByPrimaryKey(fileIdListString);
             data = HbaseUtils.getByBytes(fileDtoResult.getData().getFileStr());
-            OutputStream stream = response.getOutputStream();
+            stream = response.getOutputStream();
             stream.write(data);
             stream.flush();
-            stream.close();
-
         } catch (Exception e) {
             MyphLogger.error(e, "下载文件异常,入参:{}", fileIdListString);
-        }
-    }
-
-    private void downListFile(HttpServletRequest req, HttpServletResponse resp, List<Long> fileIdList) {
-        try {
-            Long timeInMillis = Calendar.getInstance().getTimeInMillis();
-            // 压缩文件默认文件名
-            String downZIPFileName = timeInMillis + ".zip";
-            // 下载文件临时目录
-            String tempDirName = req.getSession().getServletContext().getRealPath("/") + "temp" + "/" + timeInMillis;
-            // 压缩文件路径+文件名
-            String zipFile = tempDirName + "/" + downZIPFileName;
-
-            File downDir = new File(tempDirName);
-            if (!downDir.exists() && !downDir.isDirectory()) {
-                downDir.mkdirs();
-            }
-            Map<String, Integer> fileNameMap = new HashMap<String, Integer>();
-
-            for (int i = 0; i < fileIdList.size(); i++) {
-                ServiceResult<FileDto> fileDtoResult = fileInfoService.selectByPrimaryKey(fileIdList.get(i));
-                byte[] data = HbaseUtils.getByBytes(fileDtoResult.getData().getFileStr());
-                String fileName = fileDtoResult.getData().getFileName();
-                // 防重名处理
-                String prefix = fileName.substring(0, fileName.lastIndexOf("."));
-                String suffix = fileName.substring(fileName.lastIndexOf(".") + 1);
-                fileNameMap.put(prefix, fileNameMap.containsKey(prefix) ? fileNameMap.get(prefix) + 1 : 0);
-                if (!fileNameMap.get(prefix).equals(0)) {
-                    fileName = prefix + fileNameMap.get(prefix) + "." + suffix;
+        } finally {
+            if (null != stream) {
+                try {
+                    stream.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-                FileCopyUtils.copy(data, new File(tempDirName + "/" + fileName));
             }
-
-            ZipCompress.zip(new File(tempDirName), zipFile);
-            resp.reset();
-            resp.setContentType("application/zip");
-            resp.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(downZIPFileName, "UTF-8"));
-            OutputStream stream = resp.getOutputStream();
-            FileInputStream fis = new FileInputStream(zipFile);
-            IOUtils.copy(fis, stream);
-            stream.flush();
-            stream.close();
-            fis.close();
-            FileUtils.deleteQuietly(new File(tempDirName));
-        } catch (Exception e) {
-            MyphLogger.error(e, "下载文件异常,入参:{}", fileIdList);
         }
     }
 
@@ -560,6 +756,45 @@ public class FileUploadController {
         } catch (Exception e) {
             MyphLogger.error(e, "删除文件关联信息异常,入参:{}", fileIdListString);
             return AjaxResult.failed("删除文件关联信息异常");
+        }
+    }
+    
+    @RequestMapping("/getAppFile")
+    @ResponseBody
+    public AjaxResult getAppFile(@RequestParam("fileIdListString") Long id, HttpServletRequest req,
+            HttpServletResponse response) {
+        try {
+            StringBuffer requestURL = req.getRequestURL();
+            requestURL.delete(requestURL.length() - 15, requestURL.length());
+            requestURL.insert(requestURL.length(), "/loadAppFile.htm?id=" + id);
+            return AjaxResult.success(requestURL);
+        } catch (Exception e) {
+            MyphLogger.error(e, "下载文件异常,入参:{}", id);
+            return AjaxResult.failed("下载文件异常");
+        }
+    }
+
+    @RequestMapping("/loadAppFile")
+    public void loadAppFile(@RequestParam("id") Long id, HttpServletRequest req,
+            HttpServletResponse response) {
+        byte[] data = null;
+        OutputStream stream = null;
+        try {
+            ServiceResult<JkAppFileInfoDto> fileDtoResult = jkAppFileInfoService.selectByPrimaryKey(id);
+            data = HbaseUtils.getByBytes(fileDtoResult.getData().getFileStr());
+            stream = response.getOutputStream();
+            stream.write(data);
+            stream.flush();
+        } catch (Exception e) {
+            MyphLogger.error(e, "下载文件异常,入参:{}", id);
+        } finally {
+            if (null != stream) {
+                try {
+                    stream.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 }

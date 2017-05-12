@@ -54,10 +54,15 @@ $(function() {
 									&& src.indexOf("fileImg") >= 0) {
 								// 文件类型为图片且不为默认图片时，重新获取图片
 								var id = $(this).attr('id');
+								var url = '';
+								if(getQueryUrlParam('fileUpState') != 242){
+									url = serverPath + "/productFile/getFile.htm";
+								}else{
+									url = serverPath + "/productFile/getAppFile.htm";
+								}
 								// 文件src属性填二进制字符串
 								var options = {
-									url : serverPath
-											+ "/productFile/getFile.htm",
+									url : url,
 									type : 'post',
 									dataType : 'json',
 									data : {
@@ -82,7 +87,12 @@ function smartMenu() {
 				[ {
 					text : "下载",
 					func : function() {
-						var url = serverPath + "/productFile/downLoadFile.htm";
+						var url = '';
+						if(getQueryUrlParam('fileUpState') != 242){
+							url = serverPath + "/productFile/downLoadFile.htm";
+						}else{
+							url = serverPath + "/productFile/downLoadAppFile.htm";
+						}
 						window.open(url + '?fileIdListString='
 								+ $("#smartMenuId").val());
 					}
@@ -115,7 +125,12 @@ function smartMenu() {
 		imageMenuData = [ [ {
 			text : "下载",
 			func : function() {
-				var url = serverPath + "/productFile/downLoadFile.htm";
+				var url = '';
+				if(getQueryUrlParam('fileUpState') != 242){
+					url = serverPath + "/productFile/downLoadFile.htm";
+				}else{
+					url = serverPath + "/productFile/downLoadAppFile.htm";
+				}
 				window.open(url + '?fileIdListString='
 						+ $("#smartMenuId").val());
 			}
@@ -232,7 +247,12 @@ function down() {
 		BootstrapDialog.alert("请选择要下载的文件");
 		return;
 	}
-	var url = serverPath + "/productFile/downLoadFile.htm";
+	var url = '';
+	if(getQueryUrlParam('fileUpState') != 242){
+		url = serverPath + "/productFile/downLoadFile.htm";
+	}else{
+		url = serverPath + "/productFile/downLoadAppFile.htm";
+	}
 	window.open(url + '?fileIdListString=' + fileIdListString);
 }
 
@@ -272,3 +292,9 @@ function del() {
 	});
 
 }
+
+function getQueryUrlParam(name) { 
+	var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i"); 
+	var r = window.location.search.substr(1).match(reg); 
+	if (r != null) return unescape(r[2]); return null; 
+	} 

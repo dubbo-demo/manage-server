@@ -92,7 +92,9 @@ public class FirstApproveController {
     private SysTeamService teamService;
 
     public final static String PATH = "/apply/firstApprove";
-
+    
+    public final static String HJFA = "APP|HJFA";
+    
     public final static String error = "error/500";
 
     @RequestMapping("/approveDeal")
@@ -135,12 +137,10 @@ public class FirstApproveController {
         applyInfo.setProductName(rs.getData().getNodeName());
         
         // 申请件的借款用途
-        rs = nodeService.selectByPrimaryKey(applyInfo.getLoanPurpose());
-        if (!rs.success() || rs.getData() == null) {
-            MyphLogger.error("操作人ID【"+ShiroUtils.getCurrentUserId()+"】操作人【"+ShiroUtils.getCurrentUserName()+"】 查询申请件的借款用途名称【" + applyInfo.getLoanPurpose() + "】异常");
-            return error;
+        ServiceResult<SysNodeDto> loanPurposeResult = nodeService.selectByPrimaryKey(applyInfo.getLoanPurpose());
+        if (loanPurposeResult.success() && loanPurposeResult.getData() != null) {
+            applyInfo.setLoanPurposeName(loanPurposeResult.getData().getNodeName());
         }
-        applyInfo.setLoanPurposeName(rs.getData().getNodeName());
         // 设置状态名称
 
         // 状态名称先获取初审，然后再获取终审，有初审，才能有终审
@@ -169,6 +169,12 @@ public class FirstApproveController {
         if (!sr.success()) {
             MyphLogger.error("LastApproveController.approveDeal  查询日志记录失败【" + applyLoanNo + "】");
             return error;
+        }
+        //产品类型为户籍方案时，初审页面无回退按钮
+        if(rs.getData().getNodeCode().equals(HJFA)){
+            model.addAttribute("allowBack","noAllowBack");
+        }else{
+            model.addAttribute("allowBack", "allowBack");
         }
         approveDto.setAuditStateName(stateName);
         model.addAttribute("applyLoanInfo", applyInfo);

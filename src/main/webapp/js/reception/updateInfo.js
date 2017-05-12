@@ -139,6 +139,7 @@ $(function() {
 });
 
 function addInfo(saveOfsubmit) {
+	$('.selectApp').removeAttr("disabled");
 	if(typeof(saveOfsubmit) != "undefined"){
 		$("#submitType").val(saveOfsubmit);
 	}
@@ -178,6 +179,7 @@ function addInfo(saveOfsubmit) {
 	return false;
 }
 function save(event, e) {
+	$('.selectApp').removeAttr("disabled");
 	// 阻止冒泡
 	ChkUtil.stopBubbleEvent(event);
 	$("#submitType").val($(e).data("type"));
