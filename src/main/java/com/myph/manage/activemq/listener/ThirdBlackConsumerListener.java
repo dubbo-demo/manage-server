@@ -140,7 +140,6 @@ public class ThirdBlackConsumerListener extends BaseActivemqListener {
             thirdBlack.setChannel("系统准入结果存档");
             thirdBlack.setCreateTime(new Date());
             thirdBlack.setCreateUser("MQ_CALLBACK");
-            thirdBlack.setDelFlag(Constants.NO_INT);
             thirdBlack.setIsReject(Constants.YES_INT);
             thirdBlack.setModifyUser("MQ_CALLBACK");
             thirdBlack.setMemberName(obj.getName());

@@ -21,6 +21,13 @@
 						</list>
 					</property>
 				</bean>
+				<bean id="csConsumerListener" class="com.myph.manage.activemq.listener.CSBlackConsumerListener">
+					<property name="topics">
+						<list>
+							<value>${csBlackCallback}</value>
+						</list>
+					</property>
+				</bean>
 			</list>
 		</constructor-arg>
 	</bean>

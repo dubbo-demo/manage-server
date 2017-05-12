@@ -28,7 +28,7 @@ import com.myph.flow.dto.ContinueActionDto;
 import com.myph.flow.dto.RejectActionDto;
 import com.myph.manage.common.constant.Constant;
 import com.myph.manage.common.shiro.ShiroUtils;
-import com.myph.manage.common.shiro.dto.EmpDetailDto;
+import com.myph.employee.dto.EmpDetailDto;
 import com.myph.manage.controller.BaseController;
 import com.myph.manage.facadeService.FacadeFlowStateExchangeService;
 import com.myph.organization.dto.OrganizationDto;

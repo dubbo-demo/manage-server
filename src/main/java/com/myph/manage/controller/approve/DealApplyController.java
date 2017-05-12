@@ -1,11 +1,11 @@
-/**   
- * @Title: ApproveController.java 
- * @Package: com.myph.manage.controller.approve 
+/**
+ * @Title: ApproveController.java
+ * @Package: com.myph.manage.controller.approve
  * @company: 麦芽金服
- * @Description: 审批管理(用一句话描述该文件做什么) 
- * @author 罗荣   
- * @date 2016年9月18日 下午5:20:53 
- * @version V1.0   
+ * @Description: 审批管理(用一句话描述该文件做什么)
+ * @author 罗荣
+ * @date 2016年9月18日 下午5:20:53
+ * @version V1.0
  */
 package com.myph.manage.controller.approve;
 
@@ -15,6 +15,21 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.myph.apply.dto.AuditServiceDto;
+import com.myph.common.constant.NumberConstants;
+import com.myph.common.hbase.HbaseUtils;
+import com.myph.constant.ReqAuditEnum;
+import com.myph.manage.common.handler.AuditHandler;
+import com.myph.manage.common.handler.HandlerParmDto;
+import com.myph.manage.common.handler.HandlerResultDto;
+import com.myph.manage.common.handler.impl.JieAnHandler;
+import com.myph.member.base.dto.MemberInfoDto;
+import com.myph.member.base.service.MemberInfoService;
+import com.myph.member.blacklist.dto.ThirdBlackDto;
+import com.myph.member.blacklist.service.ThirdBlackService;
+import com.myph.reqAuditTask.dto.ReqAuditTaskDto;
+import com.myph.reqAuditTask.service.ReqAuditTaskService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -56,7 +71,7 @@ import com.myph.refusereason.service.SysRefuseReasonService;
 import com.myph.sysParamConfig.service.SysParamConfigService;
 
 /**
- * 
+ *
  * @ClassName: DealApplyController
  * @Description: 处理信审单子(这里用一句话描述这个类的作用)
  * @author 罗荣
@@ -80,9 +95,15 @@ public class DealApplyController {
     private SysRefuseReasonService refuseReasonService;
     @Autowired
     FacadeFlowStateExchangeService<BaseActionDto> facadeFlowStateExchangeService;
+    @Autowired
+    ReqAuditTaskService reqAuditTaskService;
 
     @Autowired
     private AuditLogService auditLogService;
+    @Autowired
+    ThirdBlackService thirdBlackService;
+    @Autowired
+    MemberInfoService memberInfoService;
 
     @Autowired
     private SysParamConfigService sysParamConfigService;
@@ -177,6 +198,9 @@ public class DealApplyController {
         return PATH + "/approve_deal";
     }
 
+    @Autowired
+    JieAnHandler jieAnHandler;
+
     /**
      * [提交初审]
      * <p>
@@ -191,7 +215,7 @@ public class DealApplyController {
      * <p>
      * 调用主流程更新主流程状态
      * </p>
-     * 
+     *
      * @名称 submitTaskInfo
      * @描述 提交信审(这里用一句话描述这个方法的作用)
      * @返回类型 AjaxResult
@@ -205,10 +229,10 @@ public class DealApplyController {
     public AjaxResult submitTaskInfo(ApproveTaskDto taskInfo, Model model, AuditLogDto record) {
         MyphLogger.info("操作人ID【" + ShiroUtils.getCurrentUserId() + "】操作人【" + ShiroUtils.getCurrentUserName()
                 + "】 FirstApproveController.submitTaskInfo 输入参数[{}]", taskInfo);
-        
+
         //现在没有内或者外部意见了
         taskInfo.setInternalRemark(taskInfo.getExternalRemark());
-        
+
         ServiceResult<ApplyInfoDto> applyrs = applyInfoService.queryInfoByAppNo(taskInfo.getApplyLoanNo());
         if (!applyrs.success() && null == applyrs.getData()) {
             return AjaxResult.failed("无法查询到此单号信息");
@@ -239,7 +263,8 @@ public class DealApplyController {
                 }
             }
             record.setAuditResult(getFinishToSubState(applyrs.getData().getState()));
-            taskInfo.setAuditState(getNextInitToSubState(applyrs.getData().getState()));
+            //TODO 信审任务子状态设置为征信中
+            taskInfo.setAuditState(getAuditToSubState(applyrs.getData().getState()));
             taskInfo.setAuditResult(FlowStateEnum.AUDIT_DIRECTOR.getCode());
         }
         String mainCause = null;
@@ -311,7 +336,9 @@ public class DealApplyController {
         }
         MyphLogger.info("操作人ID【" + ShiroUtils.getCurrentUserId() + "】操作人【" + ShiroUtils.getCurrentUserName()
                 + "】 更新主表子状态成功！：" + taskInfo);
-
+        BaseActionDto baseActionDto = null;
+        HandlerResultDto result = new HandlerResultDto();
+        boolean continueState = false;
         if (getRefuseToSubState(applyrs.getData().getState()).equals(taskInfo.getAuditState())) {
             MyphLogger.info("操作人ID【" + ShiroUtils.getCurrentUserId() + "】操作人【" + ShiroUtils.getCurrentUserName()
                     + "】 进入主流程状态设置为【拒绝】！");
@@ -320,15 +347,7 @@ public class DealApplyController {
             applyNotifyDto.setOperateUser(ShiroUtils.getCurrentUserName());
             applyNotifyDto.setRejectDays(taskInfo.getConfinementTime());
             applyNotifyDto.setFlowStateEnum(FlowStateEnum.getEnum(applyrs.getData().getState()));
-            ServiceResult<?> serviceResult = facadeFlowStateExchangeService.doAction(applyNotifyDto);
-            if (!serviceResult.success()) {
-                MyphLogger.error("操作人ID【" + ShiroUtils.getCurrentUserId() + "】操作人【" + ShiroUtils.getCurrentUserName()
-                        + "】 调用更新主流程失败！param【{}】,MESSAGE:{}", applyNotifyDto, serviceResult.getMessage());
-                return AjaxResult.formatFromServiceResult(serviceResult);
-            } else {
-                MyphLogger.info("操作人ID【" + ShiroUtils.getCurrentUserId() + "】操作人【" + ShiroUtils.getCurrentUserName()
-                        + "】 进入主流程状态设置为【拒绝】成功");
-            }
+            baseActionDto = applyNotifyDto;
         } else {
             // 更新信审审批金额与产品
             MyphLogger.info("操作人ID【" + ShiroUtils.getCurrentUserId() + "】操作人【" + ShiroUtils.getCurrentUserName()
@@ -346,34 +365,92 @@ public class DealApplyController {
                     + "】 进入主流程状态设置为【通过】！");
             // 调用状态机进入主流程DTO
             ContinueActionDto applyNotifyDto = new ContinueActionDto();
-            
+
             //金额小于配置值 时，直接进入签约
             String value = sysParamConfigService.getConfigValueByName(SysConfigEnum.AUDIT_DIRECTORAUDITMONEY);
             if (taskInfo.getCreditMoney().compareTo(new BigDecimal(value)) == -1
                     && applyrs.getData().getState().equals(FlowStateEnum.AUDIT_MANAGER.getCode())) {
                 applyNotifyDto.setToSign(true);
             }
-            
+
             applyNotifyDto.setApplyLoanNo(taskInfo.getApplyLoanNo());
             applyNotifyDto.setOperateUser(ShiroUtils.getCurrentUserName());
             applyNotifyDto.setFlowStateEnum(FlowStateEnum.getEnum(applyrs.getData().getState()));
-            // 走状态机更新主流程
-            ServiceResult<?> serviceResult = facadeFlowStateExchangeService.doAction(applyNotifyDto);
-            if (!serviceResult.success()) {
-                MyphLogger.error("操作人ID【" + ShiroUtils.getCurrentUserId() + "】操作人【" + ShiroUtils.getCurrentUserName()
-                        + "】 调用更新主流程失败！param【{}】,MESSAGE:{}", applyNotifyDto, serviceResult.getMessage());
-                return AjaxResult.formatFromServiceResult(serviceResult);
-            } else {
-            	ApproveTaskDto taskInfoDto = new ApproveTaskDto();
-                taskInfoDto.setApplyLoanNo(taskInfo.getApplyLoanNo());
-                taskInfoDto.setPassTime(DateUtils.getCurrentDateTime());
-                approveService.updateFisrtData(taskInfoDto);
-                MyphLogger.info("更新信审通过时间,入参"+taskInfoDto.toString());
-                MyphLogger.info("操作人ID【" + ShiroUtils.getCurrentUserId() + "】操作人【" + ShiroUtils.getCurrentUserName()
-                        + "】 主流程状态设置为【通过】成功！");
+            // ++++++++++++++++++++++捷安数据接入调整+++++++++++++++++++++++++++++++
+            continueState = true;
+            // 是否调捷安征信
+            baseActionDto = applyNotifyDto;
+            if(isJieAnAuditState(applyNotifyDto)) {
+                result.setIsAuditSuccess(false);
+                HandlerParmDto dto = new HandlerParmDto();
+                dto.setContinueActionDto(applyNotifyDto);
+                dto.setApplyInfoDto(applyrs.getData());
+                jieAnHandler.audit(dto);
             }
         }
-        return AjaxResult.success();
+        // 判断是否进入下一步
+        // true:1.终审不满足金额配置，默认进入高级终审
+        // true:2.捷安征信通过进入签约
+        // true:3.拒绝
+        if(result.getIsAuditSuccess()) {
+            ServiceResult<?> serviceResult = facadeFlowStateExchangeService.doAction(baseActionDto);
+            if (!serviceResult.success()) {
+                MyphLogger.error("操作人ID【" + ShiroUtils.getCurrentUserId() + "】操作人【" + ShiroUtils.getCurrentUserName()
+                        + "】 调用更新主流程失败！param【{}】,MESSAGE:{}", baseActionDto, serviceResult.getMessage());
+                return AjaxResult.formatFromServiceResult(serviceResult);
+            } else {
+                if(continueState) {
+                    ApproveTaskDto taskInfoDto = new ApproveTaskDto();
+                    taskInfoDto.setApplyLoanNo(taskInfo.getApplyLoanNo());
+                    taskInfoDto.setPassTime(DateUtils.getCurrentDateTime());
+                    approveService.updateFisrtData(taskInfoDto);
+                    MyphLogger.info("更新信审通过时间,入参" + taskInfoDto.toString());
+                }
+                MyphLogger.info("操作人ID【" + ShiroUtils.getCurrentUserId() + "】操作人【" + ShiroUtils.getCurrentUserName()
+                        + "】 进入主流程状态设置为【"+baseActionDto.getFlowStateEnum().getDesc()+"】成功");
+            }
+        }
+        return AjaxResult.success(result.getMessage());
+
+    }
+
+    /**
+     * 获取捷安报告
+     *
+     * @return
+     */
+    @RequestMapping("/queryJieAnData")
+    @ResponseBody
+    public AjaxResult queryJieAnData(String userid) {
+        MyphLogger.info("获取捷安报告", userid);
+        try {
+            ServiceResult<String> data = reqAuditTaskService.queryCrimecredit(userid);
+            return AjaxResult.success(data.getData());
+        } catch (Exception e) {
+            MyphLogger.error(e, "获取捷安报告失败,ID:{}", userid);
+        }
+        return AjaxResult.failed("获取捷安报告失败");
+    }
+
+    /**
+     * 是否进入捷安征信<br/>
+     * true:1.终审满足金额配置，sign标志位true
+     * true:2.高级终审提交
+     * @param dto
+     * @return
+     */
+    private Boolean isJieAnAuditState(ContinueActionDto dto) {
+        switch (dto.getFlowStateEnum()) {
+            case AUDIT_MANAGER :
+                if(dto.getToSign()) {
+                    return true;
+                }
+                return false;
+            case AUDIT_DIRECTOR:
+                return true;
+            default:
+                return false;
+        }
 
     }
 
@@ -381,7 +458,7 @@ public class DealApplyController {
      * <p>
      * 调用流程状态机， 然后添加任务日志记录表
      * </p>
-     * 
+     *
      * @名称 rollBack
      * @描述 初审回退(这里用一句话描述这个方法的作用)
      * @返回类型 AjaxResult
@@ -500,6 +577,18 @@ public class DealApplyController {
                 return AuditDirectorBisStateEnum.INIT.getCode();
             case AUDIT_DIRECTOR:
                 return AuditDirectorBisStateEnum.FINISH.getCode();
+            default:
+                break;
+        }
+        return null;
+    }
+
+    private Integer getAuditToSubState(Integer currentState) {
+        switch (FlowStateEnum.getEnum(currentState)) {
+            case AUDIT_MANAGER:
+                return AuditManagerBisStateEnum.AUDIT.getCode();
+            case AUDIT_DIRECTOR:
+                return AuditDirectorBisStateEnum.AUDIT.getCode();
             default:
                 break;
         }

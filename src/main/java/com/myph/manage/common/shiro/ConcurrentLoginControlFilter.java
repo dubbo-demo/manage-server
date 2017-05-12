@@ -8,6 +8,9 @@ import org.apache.shiro.session.mgt.SessionManager;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.web.filter.AccessControlFilter;
 import org.apache.shiro.web.util.WebUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -26,6 +29,12 @@ public class ConcurrentLoginControlFilter extends AccessControlFilter {
 
     private SessionManager sessionManager;
     private Cache<String, Deque<Serializable>> cache;
+    
+    @Autowired
+    private RestTemplate restTemplate;  
+    
+    @Value("${mycs_url}")
+    private String mycsUrl;
 
     public void setKickoutUrl(String kickoutUrl) {
         this.kickoutUrl = kickoutUrl;
@@ -109,10 +118,14 @@ public class ConcurrentLoginControlFilter extends AccessControlFilter {
 //        }
         // 如果被踢出了，直接退出，重定向到踢出后的地址
         if (session.getAttribute("kickout") != null) {
+            String phone = ShiroUtils.getCurrentUser().getMobilePhone();
             saveRequest(request);
             request.setAttribute("kickout", "true");
             WebUtils.issueRedirect(request, response, kickoutUrl);
             session.setTimeout(2000);
+            //调用催收登录退出接口
+            String url = mycsUrl + "/loginOut.htm";
+            restTemplate.postForObject(url, phone, Object.class);
             return false;
         }
         return true;

@@ -204,7 +204,15 @@ var FormWizard = function() {
 				}
 
 			});
+			// 回源判断，不在申请单状态，不给操作
+			var apply_message ="";
+			$.get(serverPath+'/apply/check/applyInfoGo.htm',{applyLoanNo:applyLoanNo} , function(res) {
+				if (res.code == '0') {
 
+				} else {
+					apply_message = res.message;
+				}
+			}, "json");
 			// default form wizard
 			$('#form_wizard_1')
 					.bootstrapWizard(
@@ -216,6 +224,10 @@ var FormWizard = function() {
 									return false;
 								},
 								onNext : function(tab, navigation, index) {
+									if(apply_message != "") {
+										BootstrapDialog.alert(apply_message);
+										return false;
+									}
 									var returnBoolean = true;
 									success.hide();
 									error.hide();

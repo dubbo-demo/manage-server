@@ -13,6 +13,8 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.myph.member.base.dto.MemberInfoDto;
+import com.myph.member.base.service.MemberInfoService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,7 +55,7 @@ import com.myph.constant.bis.FinishBisStateEnum;
 import com.myph.constant.bis.SignBisStateEnum;
 import com.myph.employee.dto.EmployeeInfoDto;
 import com.myph.manage.common.shiro.ShiroUtils;
-import com.myph.manage.common.shiro.dto.EmpDetailDto;
+import com.myph.employee.dto.EmpDetailDto;
 import com.myph.manage.common.util.BeanUtils;
 import com.myph.manage.controller.BaseController;
 import com.myph.organization.dto.OrganizationDto;
@@ -100,6 +102,8 @@ public class ApplyProgressController extends BaseController {
     private JkComplianceLogService jkComplianceLogService;
     @Autowired
     private SysParamConfigService sysParamConfigService;
+    @Autowired
+    private MemberInfoService memberInfoService;
 
     /**
      * 初始化状态条件
@@ -351,6 +355,10 @@ public class ApplyProgressController extends BaseController {
         for (FlowStateEnum e : FlowStateEnum.values()) {
             states.put("Flow_" + e.name(), e.getCode());
         }
+        ServiceResult<MemberInfoDto> member = memberInfoService.queryInfoByIdCard(applyInfo.getIdCard());
+        if(member.success()) {
+            model.addAttribute("member", member.getData());
+        }
         states.put(ApplyBisStateEnum.BACK_INIT.name(), ApplyBisStateEnum.BACK_INIT.getCode());
         model.addAttribute("states", states);
         model.addAttribute("applyInfo", applyInfo);
@@ -435,8 +443,7 @@ public class ApplyProgressController extends BaseController {
     /**
      * 
      * @param srcList
-     * @param destList
-     * @param keys需转化的属性
+     * @param srcList
      * @Description:dto转化为ExcelMap
      */
     private List<Map<String, Object>> getExcelMapList(List<ApplyProgressDto> srcList) {

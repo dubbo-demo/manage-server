@@ -130,6 +130,11 @@ public class ContactsInputController {
 			if (StringUtils.isEmpty(applyLoanNo)) {
 				return AjaxResult.failed("申请单号不能为空");
 			}
+			//+++++++加入回源状态判断
+			ServiceResult<Boolean> isContinue = applyInfoService.isContinueByApplyState(applyLoanNo);
+			if(null != isContinue && !isContinue.getData()) {
+				return AjaxResult.failed(applyLoanNo + "已经不在申请单阶段，不能修改数据");
+			}
 			ApplyUserDto applyUser = applyUserService.queryInfoByLoanNo(applyLoanNo).getData();
 			MemberInfoDto memberInfo = memberInfoService.queryInfoByIdCard(applyUser.getIdCarNo()).getData();
 			ServiceResult<MemberLinkmanDto> result = memberLinkmanService.selectSingleMemberLinkman(memberInfo.getId(),

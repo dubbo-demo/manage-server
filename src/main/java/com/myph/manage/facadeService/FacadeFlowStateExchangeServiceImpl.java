@@ -73,6 +73,16 @@ public class FacadeFlowStateExchangeServiceImpl<T extends BaseActionDto> impleme
         return ServiceResult.newSuccess();
     }
 
+    @Override
+    public ServiceResult<Integer> doActionG(T obj) {
+        try {
+            ServiceResult<ProcessResultDto>  serviceResult = flowStateExchangeService.doAction(obj);
+        } catch (DataValidateException e) {
+            return ServiceResult.newFailure(e.getMessage());
+        }
+        return ServiceResult.newSuccess();
+    }
+
     /**
      * 
      * @名称 savaConfineLog

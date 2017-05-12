@@ -2,6 +2,8 @@ package com.myph.manage.controller.apply;
 
 import java.util.Date;
 
+import com.myph.constant.FlowStateEnum;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -93,6 +95,11 @@ public class ApplyMemberController {
     public AjaxResult addInfo(ApplyUserDto applyUserDto, Integer type) {
         MyphLogger.info("录入个人信息 updateInfoBack 输入参数{}", applyUserDto.toString());
         try {
+            ServiceResult<ApplyUserDto> userDto = applyUserService.queryInfoByLoanNo(applyUserDto.getApplyLoanNo());
+            // web端修改入口
+            if (null != userDto.getData()) {
+                return AjaxResult.failed(applyUserDto.getApplyLoanNo()+"已经新增成功，修改请关闭当前界面，从申请单管理界面重新进入！");
+            }
             ServiceResult<Integer> data = null;
             if (null != applyUserDto && null != applyUserDto.getEmail()) {
                 applyUserDto.setEmail(applyUserDto.getEmail().toLowerCase());
@@ -127,8 +134,20 @@ public class ApplyMemberController {
     @RequestMapping("/updateInfo")
     @ResponseBody
     public AjaxResult updateInfo(ApplyUserDto applyUserDto, Integer type) {
+        if (null == applyUserDto) {
+            return AjaxResult.failed("申请件个人信息不能为空");
+        }
+        String applyLoanNo = applyUserDto.getApplyLoanNo();
+        if (StringUtils.isEmpty(applyLoanNo)) {
+            return AjaxResult.failed("申请单号不能为空");
+        }
         MyphLogger.info("修改个人信息 updateInfoBack 输入参数{}", applyUserDto.toString());
         try {
+            //+++++++加入回源状态判断
+            ServiceResult<Boolean> isContinue = applyInfoService.isContinueByApplyState(applyLoanNo);
+            if(null != isContinue && !isContinue.getData()) {
+                return AjaxResult.failed(applyLoanNo + "已经不在申请单阶段，不能修改数据");
+            }
             ServiceResult<Integer> data = null;
             if (null != applyUserDto && null != applyUserDto.getEmail()) {
                 applyUserDto.setEmail(applyUserDto.getEmail().toLowerCase());

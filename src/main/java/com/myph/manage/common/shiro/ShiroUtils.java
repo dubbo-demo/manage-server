@@ -9,7 +9,7 @@ import org.apache.shiro.subject.Subject;
 
 import com.myph.common.log.MyphLogger;
 import com.myph.employee.dto.EmployeeInfoDto;
-import com.myph.manage.common.shiro.dto.EmpDetailDto;
+import com.myph.employee.dto.EmpDetailDto;
 
 /**
  * @author Administrator
