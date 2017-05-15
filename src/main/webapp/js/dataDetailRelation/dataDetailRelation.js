@@ -2,14 +2,22 @@ $(function() {
 	$('#addInfoNames').select2();
 
 	$('#addDataDetailRelation').on('hide.bs.modal', function () {
-		  $('.select2-drop').hide();
+		$('#addInfoNames').select2("close");
+		  $("#error").html('');
 		})
 		
 	$('#updateInfoNames').select2();
 	
 	$('#updateDataDetailRelation').on('hide.bs.modal', function () {
-		  $('.select2-drop').hide();
-		})		
+		  $('#updateInfoNames').select2("close");
+		  $("#errorUpdate").html('');
+		})
+	$('#updateDataDetailRelation').on('shown.bs.modal', function () {
+		  $("#errorUpdate").html('');
+		})	
+	$('#addDataDetailRelation').on('shown.bs.modal', function () {
+		  $("#error").html('');
+		})			
 });
 
 function checkInput(patrn, obj) {
@@ -51,6 +59,7 @@ function add(){
 
 
 function addDataDetailRelation(){
+	$("#error").html('');
 	var infoNames = "";
 	var infoNamelist=$("#addInfoNames").select2("data");
 	console.log(infoNamelist);
@@ -63,7 +72,8 @@ function addDataDetailRelation(){
 		}
 	}
 	if($("#addPageName").val() == '' || $("#addPageCode").val() == '' || infoNames == ''){
-		BootstrapDialog.alert("请输入必填项");
+		$("#error").html('<font color="red">请输入必选项</font>');
+		$("#error").css("display", "block");
 		return false;
 	}
 	$.ajax({
@@ -85,13 +95,19 @@ function addDataDetailRelation(){
 				});
 			}
 			if(addDataDetailResult == 1){
-				BootstrapDialog.alert("大资料项名称重复");
+				$("#error").html('<font color="red">大资料项名称重复</font>');
+				$("#error").css("display", "block");
+				return false;
 			}
 			if(addDataDetailResult == 2){
-				BootstrapDialog.alert("大资料项编码重复");
+				$("#error").html('<font color="red">大资料项编码重复</font>');
+				$("#error").css("display", "block");
+				return false;
 			}
 			if(addDataDetailResult == 3){
-				BootstrapDialog.alert("大资料项名称和编码重复");
+				$("#error").html('<font color="red">大资料项名称和编码重复</font>');
+				$("#error").css("display", "block");
+				return false;
 			}
 		},
 		error : function() {
@@ -155,6 +171,7 @@ function update(id){
 }
 
 function updateDataDetailRelation(){
+	$("#errorUpdate").html('');
 	var updateDataDetailReceptionResult = '';
 	var infoCodes = "";
 	var infoCodeslist=$("#updateInfoNames").select2("data");
@@ -168,7 +185,8 @@ function updateDataDetailRelation(){
 		}
 	}
 	if($("#updatePageName").val() == ''){
-		BootstrapDialog.alert("请输入必填项");
+		$("#errorUpdate").html('<font color="red">请输入必选项</font>');
+		$("#errorUpdate").css("display", "block");
 		return false;
 	}
 	$.ajax({
@@ -185,7 +203,9 @@ function updateDataDetailRelation(){
 		success : function(result) {
 			updateDataDetailReceptionResult = result.data;
 			if(updateDataDetailReceptionResult != 0){
-				BootstrapDialog.alert("大资料项名称重复");
+				$("#errorUpdate").html('<font color="red">大资料项名称重复</font>');
+				$("#errorUpdate").css("display", "block");
+				return false;
 			}else{
 				BootstrapDialog.alert('操作成功', function() {
 					window.location.href = window.location;

@@ -1,5 +1,11 @@
 $(function() {
-	
+	$('#addDataDetail').on('hide.bs.modal', function () {
+		  $("#error").html('');
+		})
+		
+	$('#updateDataDetail').on('hide.bs.modal', function () {
+		  $("#errorUpdate").html('');
+		})	
 });
 
 function checkInput(patrn, obj) {
@@ -22,7 +28,8 @@ function cleanAdd(){
 function addDataDetail(){
 	var addDataDetailResult = '';
 	if($("#addNum").val() == '' || $("#addCode").val() == '' || $("#addName").val() == ''){
-		BootstrapDialog.alert("请输入必填项");
+		$("#error").html('<font color="red">请输入必选项</font>');
+		$("#error").css("display", "block");
 		return false;
 	}
 	//校验重复
@@ -46,25 +53,39 @@ function addDataDetail(){
 				});
 			}
 			if(addDataDetailResult == 1){
-				BootstrapDialog.alert("名称重复");
+				$("#error").html('<font color="red">名称重复</font>');
+				$("#error").css("display", "block");
+				return false;
 			}
 			if(addDataDetailResult == 2){
-				BootstrapDialog.alert("编号重复");
+				$("#error").html('<font color="red">编号重复</font>');
+				$("#error").css("display", "block");
+				return false;
 			}
 			if(addDataDetailResult == 3){
-				BootstrapDialog.alert("名称和编号重复");
+				$("#error").html('<font color="red">名称和编号重复</font>');
+				$("#error").css("display", "block");
+				return false;
 			}
 			if(addDataDetailResult == 4){
-				BootstrapDialog.alert("位号重复");
+				$("#error").html('<font color="red">位号重复</font>');
+				$("#error").css("display", "block");
+				return false;
 			}
 			if(addDataDetailResult == 5){
-				BootstrapDialog.alert("名称和位号重复");
+				$("#error").html('<font color="red">名称和位号重复</font>');
+				$("#error").css("display", "block");
+				return false;
 			}
 			if(addDataDetailResult == 6){
-				BootstrapDialog.alert("编号和位号重复");
+				$("#error").html('<font color="red">编号和位号重复</font>');
+				$("#error").css("display", "block");
+				return false;
 			}
 			if(addDataDetailResult == 7){
-				BootstrapDialog.alert("名称和编号和位号重复");
+				$("#error").html('<font color="red">名称和编号和位号重复</font>');
+				$("#error").css("display", "block");
+				return false;
 			}
 		},
 		error : function() {
@@ -96,7 +117,8 @@ function update(id){
 function updateDataDetail(){
 	var updateDataDetailResult = '';
 	if($("#updateName").val() == ''){
-		BootstrapDialog.alert("请输入必填项");
+		$("#errorUpdate").html('<font color="red">请输入必选项</font>');
+		$("#errorUpdate").css("display", "block");
 		return false;
 	}
 	$.ajax({
@@ -112,7 +134,9 @@ function updateDataDetail(){
 		success : function(result) {
 			updateDataDetailResult = result.data;
 			if(updateDataDetailResult != 0){
-				BootstrapDialog.alert("名称重复");
+				$("#errorUpdate").html('<font color="red">名称重复</font>');
+				$("#errorUpdate").css("display", "block");
+				return false;
 			}else{
 				BootstrapDialog.alert('操作成功', function() {
 					window.location.href = window.location;

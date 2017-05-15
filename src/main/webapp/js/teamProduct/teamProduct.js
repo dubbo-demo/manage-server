@@ -2,13 +2,16 @@ $(function() {
 	$('#addProductType').select2();
 
 	$('#addTeamProduct').on('hide.bs.modal', function () {
-		  $('.select2-drop').hide();
+		  $('#addProductType').select2("close");
+		  $("#error").html('');
 		})
 		
 	$('#updateProductType').select2();
 	
 	$('#updateTeamProduct').on('hide.bs.modal', function () {
+		  $('#updateProductType').select2("close");
 		  $('.select2-drop').hide();
+		  $("#errorUpdate").html('');
 		})		
 });
 
@@ -26,6 +29,7 @@ function checkInput(patrn, obj) {
 }
 
 function addTeamProduct(){
+	$("#error").html("");
 	var url = serverPath + "/teamProduct/addTeamProduct.htm";
 	var productTypes = "";
 	var productTypeslist=$("#addProductType").select2("data");
@@ -40,7 +44,8 @@ function addTeamProduct(){
 	}
 	var teamId = $("#addTeam option:selected").attr('id');
 	if(teamId == '' || productTypes == ''){
-		BootstrapDialog.alert("请选择必选项");
+		$("#error").html('<font color="red">请输入必选项</font>');
+		$("#error").css("display", "block");
 		return false;
 	}
 	
@@ -111,11 +116,13 @@ function update(id){
 }
 
 function updateTeamProduct(){
+	$("#errorUpdate").html("");
 	var url = serverPath + "/teamProduct/updateTeamProduct.htm";
 	var productTypes = "";
 	var productTypeslist=$("#updateProductType").select2("data");
 	if(productTypeslist.length <= 0){
-		BootstrapDialog.alert("请选择必选项");
+		$("#errorUpdate").html('<font color="red">请输入必选项</font>');
+		$("#errorUpdate").css("display", "block");
 		return false;
 	}
 	console.log(productTypeslist);

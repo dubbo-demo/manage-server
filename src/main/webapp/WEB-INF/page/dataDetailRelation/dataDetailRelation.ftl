@@ -82,6 +82,9 @@
                         <select name="addInfoNames" id="addInfoNames" class="form-control span6" multiple="multiple">
                         </select>
                     </div>
+                    <div class="row-fluid">
+                        <span class="control-label span3" id="error" ></span>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <a class="btn blue" data-dismiss="modal" onclick="returnBack();" class="btn">返回</a>
@@ -104,6 +107,9 @@
                         <span class="control-label span3" style="margin-right: -13px">资料信息<span class="required">*</span></span>
                         <select name="updateInfoNames" id="updateInfoNames" class="form-control span6" multiple="multiple">
                         </select>
+                    </div>
+                    <div class="row-fluid">
+                        <span class="control-label span3" id="errorUpdate" ></span>
                     </div>
                 </div>
                 <div class="modal-footer">
