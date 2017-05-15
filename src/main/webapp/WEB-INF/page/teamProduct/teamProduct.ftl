@@ -41,6 +41,9 @@
     		</div>
     	</div>
 	
+	    <form id="searchForm" class="form-horizontal" method="post">
+            <@p.pageForm value=page />
+        </form>
     	<!--显示查询结果-->
     	<div class="tabbable tabbable-custom tabbable-custom-profile">
     		<!-- table -->

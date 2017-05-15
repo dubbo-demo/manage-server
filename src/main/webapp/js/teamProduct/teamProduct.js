@@ -55,9 +55,7 @@ function addTeamProduct(){
 		"productTypes" : productTypes
 	};
 	$.getJSON(url, data, function(result) {
-		BootstrapDialog.alert('操作成功', function() {
-			window.location.href = window.location;
-		});
+		window.location.href = window.location;
 	});
 }
 
@@ -140,8 +138,6 @@ function updateTeamProduct(){
 		"productTypes" : productTypes
 	};
 	$.getJSON(url, data, function(result) {
-		BootstrapDialog.alert('操作成功', function() {
-			window.location.href = window.location;
-		});
+		window.location.href = window.location;
 	});
 }
