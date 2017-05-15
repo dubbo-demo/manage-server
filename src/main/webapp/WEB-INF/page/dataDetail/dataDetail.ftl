@@ -96,6 +96,9 @@
                             </label>
                         </div>
                     </div>
+                    <div class="row-fluid">
+                        <span class="control-label span3" id="error" ></span>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <a class="btn blue" data-dismiss="modal" onclick="returnBack();" class="btn">返回</a>
@@ -132,6 +135,9 @@
                                 <input type="radio" value = 0 name="updateIsMust" />非必填
                             </label>
                         </div>
+                    </div>
+                    <div class="row-fluid">
+                        <span class="control-label span3" id="errorUpdate" ></span>
                     </div>
                 </div>
                 <div class="modal-footer">

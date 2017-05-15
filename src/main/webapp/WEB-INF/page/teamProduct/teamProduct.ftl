@@ -91,7 +91,9 @@
                             <option id=${(record.id)!}>${(record.nodeName)!}</option>
                             </#list>
                         </select>
-
+                    </div>
+                    <div class="row-fluid">
+                        <span class="control-label span3" id="error" ></span>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -116,10 +118,13 @@
                         <select name="updateProductType" id="updateProductType" class="form-control span6" multiple="multiple">
                         </select>
                     </div>
+                    <div class="row-fluid">
+                        <span class="control-label span3" id="errorUpdate" ></span>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <a class="btn blue" data-dismiss="modal" onclick="returnBack();" class="btn">返回</a>
-                    <button type="button" class="btn blue" onclick="updateTeamProduct();">提交</button>      
+                    <button type="button" class="btn blue" onclick="updateTeamProduct();">提交</button>
                 </div>
             </div>
             
