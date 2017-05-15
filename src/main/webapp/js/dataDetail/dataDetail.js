@@ -47,10 +47,8 @@ function addDataDetail(){
 		success : function(result) {
 			addDataDetailResult = result.data;
 			if(addDataDetailResult == 0){
-				BootstrapDialog.alert('操作成功', function() {
-					window.location.href = window.location;
-					return true;
-				});
+				window.location.href = window.location;
+				return true;
 			}
 			if(addDataDetailResult == 1){
 				$("#error").html('<font color="red">名称重复</font>');
@@ -138,9 +136,7 @@ function updateDataDetail(){
 				$("#errorUpdate").css("display", "block");
 				return false;
 			}else{
-				BootstrapDialog.alert('操作成功', function() {
-					window.location.href = window.location;
-				});
+				window.location.href = window.location;
 			}
 		},
 		error : function() {

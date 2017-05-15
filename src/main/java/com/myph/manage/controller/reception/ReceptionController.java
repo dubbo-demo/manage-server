@@ -233,7 +233,10 @@ public class ReceptionController {
     @RequestMapping("/showProductName")
     @ResponseBody
     public AjaxResult showProductName(String id) {
-        ServiceResult<SysNodeDto> result = nodeService.selectByPrimaryKey(Long.valueOf(id));
+        ServiceResult<SysNodeDto> result = new ServiceResult<SysNodeDto>();
+        if(StringUtils.isNotBlank(id)){
+            result = nodeService.selectByPrimaryKey(Long.valueOf(id));
+        }
         return AjaxResult.success(result.getData());
     }
 
