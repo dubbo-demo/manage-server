@@ -75,15 +75,15 @@
                 <div class="modal-body">
                     <div class="row-fluid">
                         <span class="control-label span3">位号<span class="required">*</span></span>
-                        <input type="text" name="addNum" id="addNum" class="form-control span6" />
+                        <input type="text" name="addNum" id="addNum" maxlength="10" onblur="checkInput('^[0-9]*$',this)" class="form-control span6" />
                     </div>
                     <div class="row-fluid">
                         <span class="control-label span3">编号<span class="required">*</span></span>
-                        <input type="text" name="addCode" id="addCode" class="form-control span6" />
+                        <input type="text" name="addCode" id="addCode" maxlength="10" class="form-control span6" />
                     </div>
                     <div class="row-fluid">
                         <span class="control-label span3">名称<span class="required">*</span></span>
-                        <input type="text" name="addName" id="addName" class="form-control span6" />
+                        <input type="text" name="addName" id="addName" maxlength="70" class="form-control span6" />
                     </div>
                     <div class="row-fluid">
                         <div class="control-group span11 ">
@@ -97,7 +97,7 @@
                         </div>
                     </div>
                     <div class="row-fluid">
-                        <span class="control-label span3" id="error" ></span>
+                        <span class="control-label span4" id="error" ></span>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -123,7 +123,7 @@
                     </div>
                     <div class="row-fluid">
                         <span class="control-label span3">名称<span class="required">*</span></span>
-                        <input type="text" name="updateName" id="updateName" class="form-control span6" />
+                        <input type="text" name="updateName" id="updateName" maxlength="70" class="form-control span6" />
                     </div>
                     <div class="row-fluid">
                         <div class="control-group span11 ">

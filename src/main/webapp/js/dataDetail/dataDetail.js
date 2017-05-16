@@ -9,14 +9,13 @@ $(function() {
 });
 
 function checkInput(patrn, obj) {
+	$("#error").html('');
 	obj.value = obj.value.replace(/(^\s*)|(\s*$)/g, "");// 删除二边空格
 	var objExp = new RegExp(patrn);
 	if (!objExp.test(obj.value)) {
-		BootstrapDialog.alert("输入格式错误,请重新输入", function() {
-			setTimeout(function() {
-				obj.focus();
-			}, 0);
-		});
+		$("#error").html('<font color="red">输入格式错误,请重新输入</font>');
+		$("#error").css("display", "block");
+		return false;
 	}
 	return true;
 }

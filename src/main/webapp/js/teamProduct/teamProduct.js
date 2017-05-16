@@ -43,7 +43,7 @@ function addTeamProduct(){
 		}
 	}
 	var teamId = $("#addTeam option:selected").attr('id');
-	if(teamId == '' || productTypes == ''){
+	if(typeof(teamId) == 'undefined' || teamId == '' || productTypes == ''){
 		$("#error").html('<font color="red">请输入必选项</font>');
 		$("#error").css("display", "block");
 		return false;
