@@ -71,11 +71,11 @@
                 <div class="modal-body">
                     <div class="row-fluid">
                         <span class="control-label span3">资料项名称<span class="required">*</span></span>
-                        <input type="text" name="addPageName" id="addPageName" class="form-control span6" />
+                        <input type="text" name="addPageName" id="addPageName" maxlength="70" class="form-control span6" />
                     </div>
                     <div class="row-fluid">
                         <span class="control-label span3">资料项编码<span class="required">*</span></span>
-                        <input type="text" name="addPageCode" id="addPageCode" class="form-control span6" />
+                        <input type="text" name="addPageCode" id="addPageCode" maxlength="10" class="form-control span6" />
                     </div>
                     <div class="row-fluid">
                         <span class="control-label span3" style="margin-right: -13px">资料信息<span class="required">*</span></span>
@@ -101,7 +101,7 @@
                 <div class="modal-body">
                     <div class="row-fluid">
                         <span class="control-label span3">资料项名称<span class="required">*</span></span>
-                        <input type="text" name="updatePageName" id="updatePageName" class="form-control span6" />
+                        <input type="text" name="updatePageName" id="updatePageName" maxlength="70" class="form-control span6" />
                     </div>
                     <div class="row-fluid">
                         <span class="control-label span3" style="margin-right: -13px">资料信息<span class="required">*</span></span>
