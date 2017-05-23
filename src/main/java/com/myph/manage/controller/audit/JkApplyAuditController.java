@@ -538,20 +538,25 @@ public class JkApplyAuditController extends BaseController {
 			model.addAttribute("progress", ApplyAuditType.MANAGETODO.name);
 			MyphLogger.debug("当前用户的账户类型是:{},角色是:{}", accountType, auditor);
 			Integer auditResult = 0;
-			AjaxResult getproductIdResult = getproductIdByteamId();
-            if(!getproductIdResult.isSuccess()){
-                auditResult = 0;
-            }else{
-    			if (Auditor.MANAGERAUDITOR.name.equals(auditor)) {
-    			    initManagerTodoAuditParams(model, queryDto, accountType, auditor);
-    				auditResult = jkApplyAuditService
-    						.getAudits(Auditor.MANAGERAUDITOR.name, AuditManagerBisStateEnum.INIT.getCode(),(List<Integer>)getproductIdResult.getData()).getData();
-    			} else if (Auditor.DIRECTORAUDITOR.name.equals(auditor)) {
-    			    initDirectorTodoAuditParams(model, queryDto, accountType, auditor);
-    				auditResult = jkApplyAuditService
-    						.getAudits(Auditor.DIRECTORAUDITOR.name, AuditDirectorBisStateEnum.INIT.getCode(),(List<Integer>)getproductIdResult.getData()).getData();
-    			}
-            }
+			//经理/总监取件时根据信审配置取件
+			AjaxResult getproductIdResult = getproductIdByteamId();    
+			if (Auditor.MANAGERAUDITOR.name.equals(auditor)) {
+			    initManagerTodoAuditParams(model, queryDto, accountType, auditor);
+			    if(!getproductIdResult.isSuccess()){
+	                auditResult = 0;
+	            }else{
+	                auditResult = jkApplyAuditService
+	                        .getAudits(Auditor.MANAGERAUDITOR.name, AuditManagerBisStateEnum.INIT.getCode(),(List<Integer>)getproductIdResult.getData()).getData();
+	            }
+			} else if (Auditor.DIRECTORAUDITOR.name.equals(auditor)) {
+			    initDirectorTodoAuditParams(model, queryDto, accountType, auditor);
+			    if(!getproductIdResult.isSuccess()){
+                    auditResult = 0;
+                }else{
+                    auditResult = jkApplyAuditService
+                            .getAudits(Auditor.DIRECTORAUDITOR.name, AuditDirectorBisStateEnum.INIT.getCode(),(List<Integer>)getproductIdResult.getData()).getData();                  
+                }
+			}
 			ServiceResult<Pagination<JkAuditDto>> result = null;
 			Pagination<JkAuditDto> page = null;
 			List<JkAuditDto> audits = null;
