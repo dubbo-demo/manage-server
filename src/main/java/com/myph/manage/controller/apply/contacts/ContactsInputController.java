@@ -8,9 +8,8 @@
  */
 package com.myph.manage.controller.apply.contacts;
 
-import java.util.List;
-
-import org.apache.commons.collections.CollectionUtils;
+import com.myph.apply.dto.ApplyInfoDto;
+import com.myph.manage.controller.apply.ApplyBaseController;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,7 +45,7 @@ import com.myph.member.base.service.MemberInfoService;
  */
 @RequestMapping("/apply")
 @Controller
-public class ContactsInputController {
+public class ContactsInputController extends ApplyBaseController{
 
 	@Autowired
 	private ContactsService contactsService;
@@ -131,9 +130,10 @@ public class ContactsInputController {
 				return AjaxResult.failed("申请单号不能为空");
 			}
 			//+++++++加入回源状态判断
-			ServiceResult<Boolean> isContinue = applyInfoService.isContinueByApplyState(applyLoanNo);
-			if(null != isContinue && !isContinue.getData()) {
-				return AjaxResult.failed(applyLoanNo + "已经不在申请单阶段，不能修改数据");
+			ServiceResult<ApplyInfoDto> applyInfoRes = applyInfoService.queryInfoByAppNo(applyLoanNo);
+			AjaxResult continueResult = getReusltIsContinue(applyInfoRes.getData());
+			if(!continueResult.isSuccess()) {
+				return continueResult;
 			}
 			ApplyUserDto applyUser = applyUserService.queryInfoByLoanNo(applyLoanNo).getData();
 			MemberInfoDto memberInfo = memberInfoService.queryInfoByIdCard(applyUser.getIdCarNo()).getData();
@@ -153,7 +153,7 @@ public class ContactsInputController {
 				memberLinkmanDto.setClientType(Constants.NO_INT);
 				memberLinkmanService.saveLinkman(memberLinkmanDto, operatorUser);
 			}
-			if (jkApplyLinkmanDto.getState() != null) {
+			if (jkApplyLinkmanDto.getState() != null && isUpdateSubState(applyInfoRes.getData().getState(),applyInfoRes.getData().getSubState())) {
 				MyphLogger.info("申请单录入联系人信息录入下一步，更新申请单表状态,单号:{},当前操作人:{},操作人编号:{}", applyLoanNo, operatorName,
 						operatorId);
 				applyInfoService.updateSubState(applyLoanNo, jkApplyLinkmanDto.getState());

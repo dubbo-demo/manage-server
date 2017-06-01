@@ -266,7 +266,7 @@
 						<div>
 							
 							<h4 style="text-align:center" data-ftl="tab_personassets">
-								<strong>禁闭信息</strong>
+								<strong>禁闭信息&nbsp;<a href="#refuse" class="glyphicons no-js edit" data-toggle="modal"><i></i></a></strong>
 							</h4>
 						</div>
 						<hr>
@@ -312,6 +312,34 @@
 		</div>
 	</div>
 </div>
+<div id="refuse" class="modal hide fade" tabindex="-1" data-width="760">
+    <input type="hidden" id="rid" value=""/>
+    <input type="hidden" id="rstate" value=""/>
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"
+                aria-hidden="true"></button>
+        <h4 class="refuseDivTitle">修改禁闭期</h3>
+            <style>
+                .refuseDivTitle {text-align:center;font-weight:bold}
+            </style>
+    </div>
+    <div class="modal-body">
+        <div class="row-fluid">
+            <div class="control-group span10">
+                <label class="help-inline text-right span3">禁闭期截止日:</label>
+                <div class="controls" >
+                    <div class="input-append date date-picker" data-date="${(memberInfo.confineTime?string('yyyy-MM-dd'))!}" data-date-format="yyyy-mm-dd" data-date-viewmode="years">
+                        <input id="date_div" name="createTimeEnd" class="m-wrap span8 date-picker" size="16" type="text" data-date-format="yyyy-mm-dd"  value="${(memberInfo.confineTime?string('yyyy-MM-dd'))!}" /><span class="add-on"><i class="icon-calendar"></i></span>
+                    </div>
+				</div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn blue" onclick="goUpdate(event,${memberInfo.id})">确定</button>
+        <button type="button" data-dismiss="modal" class="btn">取消</button>
+    </div>
+</div>
 <#include "/sys/bottom.ftl">
 <script>
 	$(function(){
@@ -321,11 +349,11 @@
 		$("textarea").attr("readonly","readonly");
 		$("input[type='checkbox']").attr("disabled","disabled");
 		$("select").attr("disabled","disabled");
-		$("input[type='input']").unbind();
-		$("input[type='text']").unbind();
+		$("input[type='input']").not("#date_div").unbind();
+		$("input[type='text']").not("#date_div").unbind();
 		$(".add-on").unbind();
 		$(".required").html("");
-		
+        $("#date_div").removeAttrs("readonly");
 	});
 
 
@@ -341,5 +369,28 @@
 	function page_back(url) {
 		window.location.href = url+"?"+ChkUtil.getCookie("queryParams");
 	};
+
+    function goUpdate(event,eid) {
+        ChkUtil.stopBubbleEvent(event);
+        $.ajax({
+            url : serverPath + '/member/updateConfineTime.htm',
+            type : 'post',
+            data : {
+                id : eid,
+                confineTime : $("#date_div").val()
+            },
+            dataType : 'json',
+            success : function(res) {
+                $("#refuse").modal('hide');
+                if (res.code == '0') {
+                    BootstrapDialog.alert("操作信息成功",function(){
+                        $("#searchForm").submit();
+                    });
+                }else{
+                    BootstrapDialog.alert(res.message);
+                }
+            }
+        })
+    }
 	
 </script>

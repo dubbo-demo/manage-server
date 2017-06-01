@@ -250,7 +250,7 @@
 									<strong>客户信息</strong>
 									<span>&nbsp;&nbsp;&nbsp;&nbsp;</span>
 									<a href="javascript:void(0)" id="ceshi" class="glyphicons no-js pencil"><i></i></a>
-									<a href="javascript:void(0)" data-savetype="KHXX" class="glyphicons no-js edit"><i></i></a>
+									<a href="javascript:void(0)" data-savetype="KHXX" class="glyphicons no-js inbox"><i></i></a>
 									<a href="javascript:void(0)" class="glyphicons no-js unshare"><i></i></a>
 								</h4>
 							</div>
@@ -462,7 +462,7 @@
 									<strong>联系人信息（至少三条不重复联系信息！）</strong>
 									<span>&nbsp;&nbsp;&nbsp;&nbsp;</span>
 									<a href="javascript:void(0)" class="glyphicons no-js pencil"><i></i></a>
-									<a href="javascript:void(0)" data-savetype="LXR" class="glyphicons no-js edit"><i></i></a>
+									<a href="javascript:void(0)" data-savetype="LXR" class="glyphicons no-js inbox"><i></i></a>
 									<a href="javascript:void(0)" class="glyphicons no-js unshare"><i></i></a>
 								</h4>
 							</div>
@@ -481,7 +481,7 @@
 									<strong>个人资产信息</strong>
 									<span>&nbsp;&nbsp;&nbsp;&nbsp;</span>
 									<a href="javascript:void(0)" class="glyphicons no-js pencil"><i></i></a>
-									<a href="javascript:void(0)" data-savetype="GRZC" class="glyphicons no-js edit"><i></i></a>
+									<a href="javascript:void(0)" data-savetype="GRZC" class="glyphicons no-js inbox"><i></i></a>
 									<a href="javascript:void(0)" class="glyphicons no-js unshare"><i></i></a>
 								</h4>
 							</div>
@@ -500,7 +500,7 @@
 									<strong>工作信息</strong>
 									<span>&nbsp;&nbsp;&nbsp;&nbsp;</span>
 									<a href="javascript:void(0)" class="glyphicons no-js pencil"><i></i></a>
-									<a href="javascript:void(0)" data-savetype="GZXX" class="glyphicons no-js edit"><i></i></a>
+									<a href="javascript:void(0)" data-savetype="GZXX" class="glyphicons no-js inbox"><i></i></a>
 									<a href="javascript:void(0)" class="glyphicons no-js unshare"><i></i></a>
 								</h4>
 							</div>

@@ -8,6 +8,7 @@
  */
 package com.myph.manage.controller.apply.jobinfo;
 
+import com.myph.manage.controller.apply.ApplyBaseController;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,7 +45,7 @@ import com.myph.reception.service.ApplyReceptionService;
  */
 @RequestMapping("/apply")
 @Controller
-public class JobInfoInputController {
+public class JobInfoInputController extends ApplyBaseController{
 
 	@Autowired
 	private JobInfoService jobInfoService;
@@ -117,9 +118,9 @@ public class JobInfoInputController {
 
 			ApplyInfoDto appInfo = applyInfoService.queryInfoByAppNo(applyLoanNo).getData();
 			//+++++++加入回源状态判断
-			ServiceResult<Boolean> isContinue = applyInfoService.isContinueByApplyState(appInfo);
-			if(null != isContinue && !isContinue.getData()) {
-				return AjaxResult.failed(appInfo.getApplyLoanNo() + "已经不在申请单阶段，不能修改数据");
+			AjaxResult continueResult = getReusltIsContinue(appInfo);
+			if(!continueResult.isSuccess()) {
+				return continueResult;
 			}
 			String idCardNo = appInfo.getIdCard();
 
@@ -148,7 +149,7 @@ public class JobInfoInputController {
 			}
 
 			JkApplyJobDto applyJob = jobInfoService.selectJobInfoByAppNO(applyLoanNo).getData();// 查询申请单工作信息
-			if (record.getState() != null) {
+			if (record.getState() != null && isUpdateSubState(appInfo.getState(),appInfo.getSubState())) {
 				MyphLogger.info("申请单录入工作信息录入下一步，更新申请单表状态,单号:{},当前操作人:{},操作人编号:{}", applyLoanNo, operatorName,
 						operatorId);
 				// 更新主表子状态
