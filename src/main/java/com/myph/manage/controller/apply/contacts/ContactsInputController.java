@@ -153,10 +153,13 @@ public class ContactsInputController extends ApplyBaseController{
         String applyLoanNo = jkApplyLinkmanDto.getApplyLoanNo();
         MemberLinkmanDto memberLinkmanDto = new MemberLinkmanDto();
         BeanUtils.copyProperties(jkApplyLinkmanDto, memberLinkmanDto);
-        memberLinkmanDto.setAlternatePhone(jkApplyLinkmanDto.getLinkManPhone());
         if(jkApplyLinkmanDto.getId() != null){
             ServiceResult<MemberLinkmanDto> result = memberLinkmanService.selectSelectiveById(jkApplyLinkmanDto.getId());
             oldPhone = result.getData().getLinkManPhone();
+            if(!oldPhone.equals(jkApplyLinkmanDto.getLinkManPhone())){
+                String alternatePhone = result.getData().getAlternatePhone() + "|" + jkApplyLinkmanDto.getLinkManPhone();
+                memberLinkmanDto.setAlternatePhone(alternatePhone);
+            }
             memberLinkmanService.updateLinkman(memberLinkmanDto, operatorName);
         } else {
             ApplyUserDto applyUser = applyUserService.queryInfoByLoanNo(applyLoanNo).getData();
@@ -164,6 +167,7 @@ public class ContactsInputController extends ApplyBaseController{
             Long memberId = memberInfo.getId();
             memberLinkmanDto.setMemberId(memberId);
             memberLinkmanDto.setClientType(Constants.NO_INT);
+            memberLinkmanDto.setAlternatePhone(jkApplyLinkmanDto.getLinkManPhone());
             memberLinkmanService.saveLinkman(memberLinkmanDto, operatorName);
         }
         if (jkApplyLinkmanDto.getState() != null) {

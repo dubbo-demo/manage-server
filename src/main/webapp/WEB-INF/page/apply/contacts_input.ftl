@@ -82,7 +82,7 @@
 				<span class="control-label span4">
 					<input id="linkManType2" type="checkbox" name="linkManType" class="linkManType" value="4"/>其他亲属&nbsp;<span class="required">*</span>
 					<input type="hidden" name="linkManType" value="${(otherMap.linkManType)!}" />	
-					<input type="hidden" name="id" value="${(familyMap.id)!}" />
+					<input type="hidden" name="id" value="${(otherMap.id)!}" />
 				</span>
 				<input type="input" name="linkManName" value="${(otherMap.linkManName)!}" class="span6 m-wrap js_input" />
 				<input type="hidden" name="state" value="" />
@@ -132,7 +132,7 @@
 				<span class="control-label span4">
 					<input id="linkManType3" type="checkbox" name="linkManType" class="linkManType" value="2" />同事&nbsp;<span class="required">*</span>
 					<input type="hidden" name="linkManType" value="${(workMap.linkManType)!}" />	
-					<input type="hidden" name="id" value="${(familyMap.id)!}" />
+					<input type="hidden" name="id" value="${(workMap.id)!}" />
 				</span>
 				<input type="input" name="linkManName" value="${(workMap.linkManName)!}" class="span6 m-wrap js_input" />
 				<input type="hidden" name="state" value="" />
@@ -182,7 +182,7 @@
 				<span class="control-label span4">
 					<input id="linkManType4" type="checkbox" name="linkManType" class="linkManType" value="3" />朋友&nbsp;<span class="required">*</span>
 					<input type="hidden" name="linkManType" value="${(friendMap.linkManType)!}" />	
-					<input type="hidden" name="id" value="${(familyMap.id)!}" />
+					<input type="hidden" name="id" value="${(friendMap.id)!}" />
 				</span>
 				<input type="hidden" name="linkManType" value="${(friendMap.linkManType)!}" />
 				<input type="input" name="linkManName" value="${(friendMap.linkManName)!}" class="span6 m-wrap js_input" />
