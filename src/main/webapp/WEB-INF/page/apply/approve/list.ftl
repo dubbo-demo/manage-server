@@ -58,13 +58,19 @@
 								<option value="0">请选择</option>
 							</select>
 						</div>
-						<div class="control-group span4 " class="m-wrap span8">
-							<label class="help-inline text-right span4">产品类型：
-							</label>
-							<select name="productType" class="m-wrap span8" data-id="${(params.productType)!"0"}">
-								<option value="0">请选择</option>
-							</select>
-						</div>
+						<div class="control-group span4 ">
+                            <label class="help-inline text-right span4">状态：</label>
+                            <div class="">
+                                <select class="m-wrap span8" name="subState">
+                                    <option value="-1">请选择</option>
+                                    <#if stateEnum?? && stateEnum?size gt 0>
+                                    <#list stateEnum?keys as key>
+                                    <option value="${stateEnum[key].code}">${stateEnum[key].desc}</option>
+                                    </#list>
+                                    </#if>
+                                </select>   
+                            </div>                                                                  
+                        </div>
 					</div>	
 					<div class="row-fluid">
 						<div class="control-group span4 ">
@@ -92,9 +98,14 @@
 								<option value="1">是</option>
 								<option value="2">否</option>
 							</select>
-							</#if>
-																					
+							</#if>													
 						</div>
+                        <div class="control-group span4 ">
+                            <label class="help-inline text-right span4">信审小组：</label> 
+                            <select name="teamId" class="m-wrap span8" data-id="${(params.teamId)!"0"}">
+                                <option value="0">请选择</option>
+                            </select>                                              
+                        </div>						
 					</div>										
 					<p>
 						<button type="submit" class="btn blue">查询</button>
@@ -153,6 +164,10 @@
 			<@p.pagination value=page />
 	</div>
 	</div>
-	
+	<script>
+    	$(function(){
+            $("select[name='subState']").val(${(params.subState)!-1});
+        })
+    </script>
 	
 <#include "/sys/bottom.ftl">

@@ -77,6 +77,7 @@
 								type="text" class="m-wrap span8" name="idCard"
 								value="${(applyApproveTask.auditStateName)!}">
 						</div>
+						<input type="hidden" name="state" id="state" value='${(applyLoanInfo.state)!}'/>
 			</div>
 			<div class="row-fluid">
 						<div class="control-group span4 ">
@@ -86,7 +87,7 @@
 								type="text" class="m-wrap span8" name="applyLoanNo"
 								value="${(approveUser)!}">
 								<input
-								type="hidden" id="oldApproveUser" class="m-wrap span8" value="${emplyee.id}">
+								type="hidden" id="oldApproveUser" class="m-wrap span8" value="${(emplyee.id)!}">
 							</div>
 						</div>
 						<div class="control-group span4 ">

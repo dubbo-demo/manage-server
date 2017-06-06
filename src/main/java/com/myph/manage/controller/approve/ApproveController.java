@@ -9,8 +9,12 @@
  */
 package com.myph.manage.controller.approve;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -23,6 +27,7 @@ import com.myph.allot.service.AllotService;
 import com.myph.apply.dto.ApplyInfoDto;
 import com.myph.apply.dto.ApproveDto;
 import com.myph.apply.service.ApplyInfoService;
+import com.myph.applyprogress.dto.ApplyProgressQueryDto;
 import com.myph.approvetask.dto.ApproveParamDto;
 import com.myph.approvetask.dto.ApproveTaskDto;
 import com.myph.approvetask.service.ApproveTaskService;
@@ -34,11 +39,22 @@ import com.myph.common.rom.annotation.Pagination;
 import com.myph.common.util.DateUtils;
 import com.myph.common.util.SensitiveInfoUtils;
 import com.myph.constant.ApplyUtils;
+import com.myph.constant.BusinessState;
 import com.myph.constant.FlowStateEnum;
+import com.myph.constant.PositionEnum;
+import com.myph.constant.bis.AbandonBisStateEnum;
 import com.myph.constant.bis.ApplyBisStateEnum;
+import com.myph.constant.bis.AuditDirectorBisStateEnum;
 import com.myph.constant.bis.AuditFirstBisStateEnum;
 import com.myph.constant.bis.AuditLastBisStateEnum;
 import com.myph.constant.bis.AuditManagerBisStateEnum;
+import com.myph.constant.bis.ContractBisStateEnum;
+import com.myph.constant.bis.ExternalFirstBisStateEnum;
+import com.myph.constant.bis.ExternalLastBisStateEnum;
+import com.myph.constant.bis.FinanceBisStateEnum;
+import com.myph.constant.bis.FinishBisStateEnum;
+import com.myph.constant.bis.SignBisStateEnum;
+import com.myph.employee.dto.EmployeeDetailDto;
 import com.myph.employee.dto.EmployeeInfoDto;
 import com.myph.employee.dto.EmployeeInputDto;
 import com.myph.employee.service.EmployeeInfoService;
@@ -75,7 +91,51 @@ public class ApproveController {
     public final static String PATH = "/apply/approve";
 
     public final static String error = "error/500";
+    
+    private static final HashMap<String, BusinessState> STATE_LIST = new LinkedHashMap<String, BusinessState>();
+    
+    // 未选择
+    public static final Integer UNSELECT = -1;
 
+    static {
+        List<BusinessState> states = new ArrayList<BusinessState>();
+        // 进件
+        states.add(ApplyBisStateEnum.INIT);
+        states.add(ApplyBisStateEnum.REFUSE);
+        states.add(ApplyBisStateEnum.BACK_INIT);
+        // 初审
+        states.add(AuditFirstBisStateEnum.INIT);
+        states.add(AuditFirstBisStateEnum.BACK_INIT);
+        // 复审
+        states.add(AuditLastBisStateEnum.INIT);
+        states.add(AuditLastBisStateEnum.REFUSE);
+        states.add(AuditLastBisStateEnum.BACK_INIT);
+        // 终审
+        states.add(AuditManagerBisStateEnum.INIT);
+        states.add(AuditManagerBisStateEnum.REFUSE);
+        states.add(AuditManagerBisStateEnum.BACK_INIT);
+        // 高级终审
+        states.add(AuditDirectorBisStateEnum.INIT);
+        states.add(AuditDirectorBisStateEnum.REFUSE);
+        // 外访
+        states.add(ExternalFirstBisStateEnum.INIT);
+        states.add(ExternalFirstBisStateEnum.ALLOT);
+        states.add(ExternalFirstBisStateEnum.REJECT);
+        // 签约
+        states.add(SignBisStateEnum.INIT);
+        states.add(SignBisStateEnum.REJECT);
+        states.add(SignBisStateEnum.BACK_INIT);
+        // 合规
+        states.add(ContractBisStateEnum.INIT);
+        // 放款
+        states.add(FinanceBisStateEnum.INIT);
+        states.add(FinishBisStateEnum.INIT);
+        states.add(AbandonBisStateEnum.INIT);
+        for (BusinessState bs : states) {
+            STATE_LIST.put(bs.getClass().getSimpleName() + "." + bs, bs);
+        }
+    }
+    
     @RequestMapping("/queryPageList")
     public String queryPageList(ApproveParamDto page, Model model) {
         if (Constants.UNSELECT_LONG.equals(page.getAreaId())) {
@@ -97,7 +157,15 @@ public class ApproveController {
             page.setSubmitDatee(DateUtils.getToday());
             page.setSubmitDates(DateUtils.addDays(DateUtils.getToday(), -14));
         }
+        generateSubStateList(page);
         MyphLogger.info("查询申请件列表开始");
+        //根据teamId获取人员
+        ServiceResult<List<EmployeeDetailDto>> employeeResult = employeeInfoService.queryEmployeeInfoByTeamId(page.getTeamId());
+        List<Long> employeeIds = new ArrayList<Long>();
+        for(EmployeeDetailDto dto:employeeResult.getData()){
+            employeeIds.add(dto.getId());
+        }
+        page.setEmployeeIdList(StringUtils.join(employeeIds, ","));
         ServiceResult<Pagination<ApproveDto>> list = approveService.queryPageList(page);
         MyphLogger.info("查询申请件列表结束");
 
@@ -158,6 +226,7 @@ public class ApproveController {
 
         model.addAttribute("params", page);
         model.addAttribute("page", list.getData());
+        model.addAttribute("stateEnum", STATE_LIST);
         return PATH + "/list";
     }
 
@@ -270,10 +339,10 @@ public class ApproveController {
             }
             approveUser = emplyee.getEmployeeName();
         }
-        if (null == emplyee) {
-            MyphLogger.error("操作人["+ShiroUtils.getCurrentUserName()+"]当前初审单未取件【" + applyLoanNo + "】");
-            return error;
-        }
+//        if (null == emplyee) {
+//            MyphLogger.error("操作人["+ShiroUtils.getCurrentUserName()+"]当前初审单未取件【" + applyLoanNo + "】");
+//            return error;
+//        }
         approveDto.setAuditStateName(stateName);
         model.addAttribute("applyLoanInfo", applyInfo);
         model.addAttribute("applyApproveTask", approveDto);
@@ -286,11 +355,29 @@ public class ApproveController {
     // searchApproveUser
     @RequestMapping("/searchApproveUser")
     @ResponseBody
-    public AjaxResult searchApproveUser(Long oldApproveUser, String searchWord, Model model) {
-        ServiceResult<EmployeeInfoDto> resultE = employeeInfoService.getEntityById(oldApproveUser);
-        EmployeeInfoDto old = resultE.getData();
+    public AjaxResult searchApproveUser(Integer state, String searchWord, Model model) {
 
-        ServiceResult<List<EmployeeInputDto>> result = employeeInfoService.queryUserByoldInfo(old, searchWord);
+        EmployeeInfoDto old = new EmployeeInfoDto();
+        List<String> positionList = new ArrayList<String>();
+        //初审
+        if(state.equals(FlowStateEnum.AUDIT_FIRST.getCode())){
+            positionList.add(PositionEnum.POSITION_AUDIT_FIRST.getCode());
+        }
+        //复审
+        if(state.equals(FlowStateEnum.AUDIT_LASTED.getCode())){
+            positionList.add(PositionEnum.POSITION_AUDIT_LASTED.getCode());
+        }
+        //终审
+        if(state.equals(FlowStateEnum.AUDIT_MANAGER.getCode())){
+            positionList.add(PositionEnum.POSITION_AUDIT_MANAGER.getCode());
+        }
+        //高级终审
+        if(state.equals(FlowStateEnum.AUDIT_DIRECTOR.getCode())){
+            positionList.add(PositionEnum.POSITION_AUDIT_DEPUTY_DIRECTOR.getCode());
+            positionList.add(PositionEnum.POSITION_AUDIT_DIRECTOR.getCode());
+        }
+        
+        ServiceResult<List<EmployeeInputDto>> result = employeeInfoService.queryUserByoldInfo(positionList, searchWord);
 
         return AjaxResult.success(result.getData());
     }
@@ -326,5 +413,57 @@ public class ApproveController {
         dto.setOldAuditUser(emplyee.getEmployeeName());
         allotService.insertLog(dto);
         return AjaxResult.success(rs.getData());
+    }
+    
+    private void generateSubStateList(ApproveParamDto page) {
+        Integer subState = page.getSubState();
+        List<Integer> subStateList = new ArrayList<Integer>();
+        if (null == subState || UNSELECT.equals(subState)) {
+            return;
+        }
+        // 申请单录入
+        if (ApplyBisStateEnum.INIT.getCode().equals(subState)) {
+            subStateList.add(ApplyBisStateEnum.INIT.getCode());
+            subStateList.add(ApplyBisStateEnum.WORKINFO.getCode());
+            subStateList.add(ApplyBisStateEnum.PERSON_ASSETS.getCode());
+            subStateList.add(ApplyBisStateEnum.COMPOSITE_OPINION.getCode());
+            subStateList.add(ApplyBisStateEnum.LINKMAN_INPUT.getCode());
+        }// 待派件
+        else if (ExternalFirstBisStateEnum.INIT.getCode().equals(subState)) {
+            subStateList.add(ExternalFirstBisStateEnum.INIT.getCode());
+            subStateList.add(ExternalLastBisStateEnum.INIT.getCode());
+        }// 待外访
+        else if (ExternalFirstBisStateEnum.ALLOT.getCode().equals(subState)) {
+            subStateList.add(ExternalFirstBisStateEnum.ALLOT.getCode());
+            subStateList.add(ExternalLastBisStateEnum.ALLOT.getCode());
+        }// 外访拒绝
+        else if (ExternalFirstBisStateEnum.REJECT.getCode().equals(subState)) {
+            subStateList.add(FlowStateEnum.EXTERNAL_FIRST.getCode());
+            subStateList.add(FlowStateEnum.EXTERNAL_LAST.getCode());
+        }// 复审拒绝
+        else if (AuditLastBisStateEnum.REFUSE.getCode().equals(subState)) {
+            subStateList.add(FlowStateEnum.AUDIT_LASTED.getCode());
+        }// 终审拒绝
+        else if (AuditManagerBisStateEnum.REFUSE.getCode().equals(subState)) {
+            subStateList.add(FlowStateEnum.AUDIT_MANAGER.getCode());
+        } else if (AuditDirectorBisStateEnum.REFUSE.getCode().equals(subState)) {
+            subStateList.add(FlowStateEnum.AUDIT_DIRECTOR.getCode());
+        }// 申请拒绝
+        else if (ApplyBisStateEnum.REFUSE.getCode().equals(subState)) {
+            subStateList.add(FlowStateEnum.APPLY.getCode());
+        } // 签约拒绝
+        else if (SignBisStateEnum.REJECT.getCode().equals(subState)) {
+            subStateList.add(FlowStateEnum.SIGN.getCode());
+        }// 合规拒绝
+        else if (ContractBisStateEnum.REJECT.getCode().equals(subState)) {
+            subStateList.add(FlowStateEnum.CONTRACT.getCode());
+        }// 客户放弃
+        else if (AbandonBisStateEnum.INIT.getCode().equals(subState)) {
+            // 设置主流程状态为客户放弃
+            page.setState(FlowStateEnum.ABANDON.getCode());
+        } else {
+            subStateList.add(subState);
+        }
+        page.setSubStateList(StringUtils.join(subStateList, ","));
     }
 }

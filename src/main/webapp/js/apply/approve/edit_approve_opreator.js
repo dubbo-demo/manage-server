@@ -1,5 +1,6 @@
 $(function(){
 	var  custmerurl =serverPath+ "/approve/searchApproveUser.htm";
+	var state = $("#state").val();
 	$("#newApproveUser").select2({
         placeholder: ChkUtil.select2Name,
         allowClear: true,
@@ -7,7 +8,7 @@ $(function(){
         query: function (query) {
         	$.getJSON(custmerurl, {
         		"searchWord" : query.term,
-        		"oldApproveUser" :$("#oldApproveUser").val()
+        		"state" :$("#state").val()
         		}, function(result) {
         		var data = {
                     results: result.data
