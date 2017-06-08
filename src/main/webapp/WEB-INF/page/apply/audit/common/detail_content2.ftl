@@ -237,13 +237,13 @@
 						<div class="control-group span4 ">
 							<label class="control-label">客户姓名<span class="required">*</span></label>
 							<div class="controls">
-								<input type="text" name="memberName" value="${(userinfo.memberName)!''}" class="m-wrap span9" maxlength="20"/>
+								<input type="text" name="memberName" value="${(userinfo.memberName)!''}" readonly class="m-wrap span9" maxlength="20"/>
 							</div>
 						</div>
 						<div class="control-group span4 ">
 							<label class="control-label">姓名拼音<span class="required">*</span></label>
 							<div class="controls">
-								<input type="text" name="nameSpell" value="${(userinfo.nameSpell)!''}" class="m-wrap span9" maxlength="20"/>
+								<input type="text" name="nameSpell" value="${(userinfo.nameSpell)!''}" readonly class="m-wrap span9" maxlength="20"/>
 							</div>
 						</div>
 						<div class="control-group span4 ">

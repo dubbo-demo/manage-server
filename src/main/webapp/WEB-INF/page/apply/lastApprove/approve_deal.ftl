@@ -32,8 +32,8 @@
 
 			<div class="row-fluid">
 				<div class="control-group span4 ">
-					<label class="help-inline text-right span4">贷款类型：</label> <input
-						type="text" class="m-wrap span8" value="信用贷款">
+					<label class="help-inline text-right span4">客户姓名：</label> <input
+						type="text" class="m-wrap span8" value="${(applyLoanInfo.memberName)!}">
 				</div>
 				<div class="control-group span4 ">
 					<label class="help-inline text-right span4">门店：</label> <input
