@@ -9,7 +9,14 @@
  */
 package com.myph.manage.controller.loan;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -25,6 +32,7 @@ import com.myph.common.result.AjaxResult;
 import com.myph.common.result.ServiceResult;
 import com.myph.common.rom.annotation.BasePage;
 import com.myph.common.rom.annotation.Pagination;
+import com.myph.common.util.DateUtils;
 import com.myph.common.util.SensitiveInfoUtils;
 import com.myph.constant.FlowStateEnum;
 import com.myph.flow.dto.ContinueActionDto;
@@ -32,9 +40,14 @@ import com.myph.loan.dto.LoanedInfoDto;
 import com.myph.loan.param.QueryListParam;
 import com.myph.loan.service.LoanedService;
 import com.myph.manage.common.shiro.ShiroUtils;
+import com.myph.manage.common.util.BeanUtils;
+import com.myph.manage.controller.BaseController;
 import com.myph.manage.facadeService.FacadeFlowStateExchangeService;
+import com.myph.member.base.dto.MemberVerifyDto;
+import com.myph.member.feedback.dto.FeedBackDto;
 import com.myph.organization.dto.OrganizationDto;
 import com.myph.organization.service.OrganizationService;
+import com.myph.performance.service.FinanceManageService;
 import com.myph.product.service.ProductService;
 
 /**
@@ -47,7 +60,7 @@ import com.myph.product.service.ProductService;
  */
 @Controller
 @RequestMapping("/loan")
-public class LoanController {
+public class LoanController extends BaseController{
     @Autowired
     private OrganizationService organizationService;
     @Autowired
@@ -58,6 +71,9 @@ public class LoanController {
 
     @Autowired
     FacadeFlowStateExchangeService facadeFlowStateExchangeService;
+    
+    @Autowired
+    private FinanceManageService financeManageService;
 
     @Autowired
     ApplyInfoService applyInfoService;
@@ -169,4 +185,71 @@ public class LoanController {
         return "/apply/progress/loaned_detail";
     }
 
+    
+    @RequestMapping("/exportFinanceInfo")
+    public void exportFinanceInfo( HttpServletResponse response,com.myph.performance.param.QueryListParam param) {
+        MyphLogger.debug("放款管理导出：/loan/exportFinanceInfo.htm|param=" + param);
+        if (null == param.getStatus()) {
+            param.setStatus(Constants.NO_INT);
+        }
+        if (Constants.UNSELECT_LONG.equals(param.getProductType())) {
+            param.setProductType(null);
+        }
+        if (Constants.UNSELECT_LONG.equals(param.getStoreId())) {
+            param.setStoreId(null);
+        }
+        if (Constants.UNSELECT_LONG.equals(param.getProId())) {
+            param.setProId(null);
+        }
+        if (Constants.UNSELECT_LONG.equals(param.getAreaId())) {
+            param.setAreaId(null);
+        }
+        try {
+            // 设置参数查询满足条件的所有数据不分页
+            List<com.myph.performance.dto.LoanedInfoDto> list = financeManageService.queryFinanceInfo(param).getData();
+            String columnNames[] = { "大区", "门店", "客户", "团队经理", "客户经理", "手机号码", "身份证号", "合同号",
+                    "申请单号", "银行卡号", "开户行", "产品名称", "借款金额","借款期限", "借款利率",
+                    "还款开始时间", "还款结束时间", "服务费", "实际打款金额", "总利息", ",每期应收", "首期应收" };// 列名
+            String keys[] = { "areaName","storeName","memberName","leaderName","bmName","phone","idCard","contractNo",
+                    "applyLoanNo","bankCardNo","bankName","productName","contractAmount","loanPeriods","interestRate",
+                    "beginTime","endTime","serviceRate","repayMoney","interestAmount","everyReapyAmount","firstReapyAmount" };
+            String fileName = "放款管理" + new SimpleDateFormat("yyyyMMddhhmmss").format(new Date()).toString();
+            // 获取Excel数据
+            List<Map<String, Object>> excelList = getExcelMapList(list);
+            // 导出Excel数据
+            exportExcel(response, fileName, columnNames, keys, excelList);
+        } catch (Exception e) {
+            MyphLogger.error(e, "异常[结束放款管理导出：/loan/exportFinanceInfo.htm]");
+        }
+        MyphLogger.debug("结束放款管理导出：/loan/exportFinanceInfo.htm");
+    }
+    
+    /**
+     * 获取Excel数据
+     * 
+     * @param list
+     * @return
+     */
+    private List<Map<String, Object>> getExcelMapList(List<com.myph.performance.dto.LoanedInfoDto> list) {
+        List<Map<String, Object>> destList = new ArrayList<Map<String, Object>>();
+        if (null == list) {
+            return destList;
+        }
+        Map<String, Object> destMap = null;
+        for (com.myph.performance.dto.LoanedInfoDto dto : list) {
+            destMap = BeanUtils.transBeanToMap(dto);
+            Date beginTime = dto.getBeginTime();
+            if (null != beginTime) {
+                SimpleDateFormat sdf = new SimpleDateFormat(DateUtils.DATE_FORMAT_PATTERN);
+                destMap.put("beginTime", sdf.format(beginTime));
+            }
+            Date endTime = dto.getEndTime();
+            if (null != endTime) {
+                SimpleDateFormat sdf = new SimpleDateFormat(DateUtils.DATE_FORMAT_PATTERN);
+                destMap.put("endTime", sdf.format(endTime));
+            }
+            destList.add(destMap);
+        }
+        return destList;
+    }
 }
