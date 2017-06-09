@@ -13,6 +13,7 @@ function init() {
 	initAreaData();
 	// 加载团队数据
 	initTeamData();
+	initProductData();
 }
 function initAreaData() {
 	$.ajax({
@@ -35,6 +36,37 @@ function initAreaData() {
 					select_.append("<option " + isSelected + " value='"
 							+ result.data[i].id + "'>" + result.data[i].orgName
 							+ "</option>");
+				}
+			} else {
+				BootstrapDialog.alert(result.message);
+			}
+		},
+		error : function() {
+			BootstrapDialog.alert("操作失败");
+		}
+	});
+}
+
+function initProductData() {
+	$.ajax({
+		url : serverPath + "/node/selectNodeList.htm",
+		type : "post",
+		data : {
+			"parentCode" : "proType",
+			"Time" : new Date().getMilliseconds()
+		},
+		dataType : "json",
+		success : function(result) {
+			if (result.code == 0) {
+				// 清空除第一条内容的外的其它数据
+				var select_ = $("select[name='productType']");
+				select_.find("option:gt(0)").remove();
+				for (var i = 0; i < result.data.length; i++) {
+					var isSelected = result.data[i].id == select_
+							.attr('data-id') ? "selected='selected'" : "";
+					select_.append("<option " + isSelected + " value='"
+							+ result.data[i].id + "'>"
+							+ result.data[i].nodeName + "</option>");
 				}
 			} else {
 				BootstrapDialog.alert(result.message);
@@ -167,4 +199,14 @@ function loaned(ids,applyLoanNos) {
 	}else{
 		BootstrapDialog.alert("请选择要放款单！");
 	}
+}
+
+function down(status){
+	ChkUtil.form_trim($("#searchForm"));
+	ChkUtil.saveCookie("queryParams", $("#searchForm").serialize(),"","/");
+	var url = serverPath + "/loan/exportFinanceInfo.htm?status=" + status;
+	$("#searchForm").attr("action", url);
+	$("#searchForm").submit();
+	url = serverPath + "/loan/queryPageList.htm";
+	$("#searchForm").attr("action", url);
 }

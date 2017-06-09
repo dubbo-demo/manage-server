@@ -42,6 +42,7 @@ import com.myph.constant.ApplyUtils;
 import com.myph.constant.BusinessState;
 import com.myph.constant.FlowStateEnum;
 import com.myph.constant.PositionEnum;
+import com.myph.constant.StateListUtils;
 import com.myph.constant.bis.AbandonBisStateEnum;
 import com.myph.constant.bis.ApplyBisStateEnum;
 import com.myph.constant.bis.AuditDirectorBisStateEnum;
@@ -91,50 +92,9 @@ public class ApproveController {
     public final static String PATH = "/apply/approve";
 
     public final static String error = "error/500";
-    
-    private static final HashMap<String, BusinessState> STATE_LIST = new LinkedHashMap<String, BusinessState>();
-    
+        
     // 未选择
     public static final Integer UNSELECT = -1;
-
-    static {
-        List<BusinessState> states = new ArrayList<BusinessState>();
-        // 进件
-        states.add(ApplyBisStateEnum.INIT);
-        states.add(ApplyBisStateEnum.REFUSE);
-        states.add(ApplyBisStateEnum.BACK_INIT);
-        // 初审
-        states.add(AuditFirstBisStateEnum.INIT);
-        states.add(AuditFirstBisStateEnum.BACK_INIT);
-        // 复审
-        states.add(AuditLastBisStateEnum.INIT);
-        states.add(AuditLastBisStateEnum.REFUSE);
-        states.add(AuditLastBisStateEnum.BACK_INIT);
-        // 终审
-        states.add(AuditManagerBisStateEnum.INIT);
-        states.add(AuditManagerBisStateEnum.REFUSE);
-        states.add(AuditManagerBisStateEnum.BACK_INIT);
-        // 高级终审
-        states.add(AuditDirectorBisStateEnum.INIT);
-        states.add(AuditDirectorBisStateEnum.REFUSE);
-        // 外访
-        states.add(ExternalFirstBisStateEnum.INIT);
-        states.add(ExternalFirstBisStateEnum.ALLOT);
-        states.add(ExternalFirstBisStateEnum.REJECT);
-        // 签约
-        states.add(SignBisStateEnum.INIT);
-        states.add(SignBisStateEnum.REJECT);
-        states.add(SignBisStateEnum.BACK_INIT);
-        // 合规
-        states.add(ContractBisStateEnum.INIT);
-        // 放款
-        states.add(FinanceBisStateEnum.INIT);
-        states.add(FinishBisStateEnum.INIT);
-        states.add(AbandonBisStateEnum.INIT);
-        for (BusinessState bs : states) {
-            STATE_LIST.put(bs.getClass().getSimpleName() + "." + bs, bs);
-        }
-    }
     
     @RequestMapping("/queryPageList")
     public String queryPageList(ApproveParamDto page, Model model) {
@@ -226,7 +186,7 @@ public class ApproveController {
 
         model.addAttribute("params", page);
         model.addAttribute("page", list.getData());
-        model.addAttribute("stateEnum", STATE_LIST);
+        model.addAttribute("stateEnum", StateListUtils.getStateList());
         return PATH + "/list";
     }
 

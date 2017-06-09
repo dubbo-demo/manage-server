@@ -142,6 +142,7 @@ $(function(){
 				<p>
 					<button type="submit" class="btn blue">查询</button>
 					<a href="javascript:loaned()" class="btn blue">放款</a>
+					<a href="javascript:down(0)" class="btn blue">下载</a>
 				</p>
 			</form>
 			</div>
