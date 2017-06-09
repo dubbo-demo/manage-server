@@ -41,6 +41,7 @@ import com.myph.compliance.dto.JkComplianceLogDto;
 import com.myph.compliance.service.JkComplianceLogService;
 import com.myph.constant.BusinessState;
 import com.myph.constant.FlowStateEnum;
+import com.myph.constant.StateListUtils;
 import com.myph.constant.bis.AbandonBisStateEnum;
 import com.myph.constant.bis.ApplyBisStateEnum;
 import com.myph.constant.bis.AuditDirectorBisStateEnum;
@@ -81,7 +82,6 @@ public class ApplyProgressController extends BaseController {
     // 未选择
     public static final Integer UNSELECT = -1;
 
-    private static final HashMap<String, BusinessState> STATE_LIST = new LinkedHashMap<String, BusinessState>();
     @Autowired
     private ApplyProgressService applyProgressService;
     @Autowired
@@ -104,48 +104,6 @@ public class ApplyProgressController extends BaseController {
     private SysParamConfigService sysParamConfigService;
     @Autowired
     private MemberInfoService memberInfoService;
-
-    /**
-     * 初始化状态条件
-     */
-    static {
-        List<BusinessState> states = new ArrayList<BusinessState>();
-        // 进件
-        states.add(ApplyBisStateEnum.INIT);
-        states.add(ApplyBisStateEnum.REFUSE);
-        states.add(ApplyBisStateEnum.BACK_INIT);
-        // 初审
-        states.add(AuditFirstBisStateEnum.INIT);
-        states.add(AuditFirstBisStateEnum.BACK_INIT);
-        // 复审
-        states.add(AuditLastBisStateEnum.INIT);
-        states.add(AuditLastBisStateEnum.REFUSE);
-        states.add(AuditLastBisStateEnum.BACK_INIT);
-        // 终审
-        states.add(AuditManagerBisStateEnum.INIT);
-        states.add(AuditManagerBisStateEnum.REFUSE);
-        states.add(AuditManagerBisStateEnum.BACK_INIT);
-        // 高级终审
-        states.add(AuditDirectorBisStateEnum.INIT);
-        states.add(AuditDirectorBisStateEnum.REFUSE);
-        // 外访
-        states.add(ExternalFirstBisStateEnum.INIT);
-        states.add(ExternalFirstBisStateEnum.ALLOT);
-        states.add(ExternalFirstBisStateEnum.REJECT);
-        // 签约
-        states.add(SignBisStateEnum.INIT);
-        states.add(SignBisStateEnum.REJECT);
-        states.add(SignBisStateEnum.BACK_INIT);
-        // 合规
-        states.add(ContractBisStateEnum.INIT);
-        // 放款
-        states.add(FinanceBisStateEnum.INIT);
-        states.add(FinishBisStateEnum.INIT);
-        states.add(AbandonBisStateEnum.INIT);
-        for (BusinessState bs : states) {
-            STATE_LIST.put(bs.getClass().getSimpleName() + "." + bs, bs);
-        }
-    }
 
     /**
      * 
@@ -220,7 +178,7 @@ public class ApplyProgressController extends BaseController {
 
         model.addAttribute("page", pageResult.getData());
         model.addAttribute("queryDto", queryDto);
-        model.addAttribute("stateEnum", STATE_LIST);
+        model.addAttribute("stateEnum", StateListUtils.getStateList());
         MyphLogger.debug("结束申请进度查询：/apply/progress/list.htm|page=" + pageResult);
         return "/apply/progress/progress_list";
     }
