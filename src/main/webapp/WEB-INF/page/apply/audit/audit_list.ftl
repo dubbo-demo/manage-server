@@ -188,7 +188,6 @@ background: #f2dede
 		ChkUtil.stopBubbleEvent(event);
 		var progress = $('#progress').val();
 		var forwardPath = serverPath + "/audit/list/"+progress+".htm";
-        $('.form-actions .blue').attr('disabled',"true");
         $(".btn.blue").attr('disabled',"true");
 		$.ajax({
 			url : serverPath + "/audit/pickup.htm",

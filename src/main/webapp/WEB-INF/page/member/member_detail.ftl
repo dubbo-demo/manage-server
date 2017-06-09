@@ -372,6 +372,7 @@
 
     function goUpdate(event,eid) {
         ChkUtil.stopBubbleEvent(event);
+        $(".btn.blue").attr('disabled',"true");
         $.ajax({
             url : serverPath + '/member/updateConfineTime.htm',
             type : 'post',
@@ -381,6 +382,7 @@
             },
             dataType : 'json',
             success : function(res) {
+                $(".btn.blue").removeAttr("disabled");
                 $("#refuse").modal('hide');
                 if (res.code == '0') {
                     BootstrapDialog.alert("操作信息成功",function(){
