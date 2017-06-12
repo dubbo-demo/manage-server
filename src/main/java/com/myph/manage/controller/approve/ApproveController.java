@@ -32,6 +32,7 @@ import com.myph.approvetask.dto.ApproveParamDto;
 import com.myph.approvetask.dto.ApproveTaskDto;
 import com.myph.approvetask.service.ApproveTaskService;
 import com.myph.common.constant.Constants;
+import com.myph.common.constant.NumberConstants;
 import com.myph.common.log.MyphLogger;
 import com.myph.common.result.AjaxResult;
 import com.myph.common.result.ServiceResult;
@@ -120,12 +121,14 @@ public class ApproveController {
         generateSubStateList(page);
         MyphLogger.info("查询申请件列表开始");
         //根据teamId获取人员
-        ServiceResult<List<EmployeeDetailDto>> employeeResult = employeeInfoService.queryEmployeeInfoByTeamId(page.getTeamId());
-        List<Long> employeeIds = new ArrayList<Long>();
-        for(EmployeeDetailDto dto:employeeResult.getData()){
-            employeeIds.add(dto.getId());
+        if(page.getTeamId().longValue() != 0){
+            ServiceResult<List<EmployeeDetailDto>> employeeResult = employeeInfoService.queryEmployeeInfoByTeamId(page.getTeamId());
+            List<Long> employeeIds = new ArrayList<Long>();
+            for(EmployeeDetailDto dto:employeeResult.getData()){
+                employeeIds.add(dto.getId());
+            }
+            page.setEmployeeIdList(StringUtils.join(employeeIds, ",")); 
         }
-        page.setEmployeeIdList(StringUtils.join(employeeIds, ","));
         ServiceResult<Pagination<ApproveDto>> list = approveService.queryPageList(page);
         MyphLogger.info("查询申请件列表结束");
 
