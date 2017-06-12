@@ -118,7 +118,13 @@ function jobInfoSave(nextFlag){
 		success : function(res) {
 			if (res.code == 0) {
 				if (nextFlag == undefined) {
-					BootstrapDialog.alert('操作成功!');
+					BootstrapDialog.alert("操作成功", function() {
+						setTimeout(function() {
+							if( typeof editClose === 'function' ){
+								window.location.reload();
+							}
+						}, 0);
+					});
 				}
 			} else {
 				BootstrapDialog.alert(res.message);

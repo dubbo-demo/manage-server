@@ -206,7 +206,7 @@
 											if (res.code == '0') {
 												BootstrapDialog.alert("操作成功", function() {
 													setTimeout(function() {
-														//editClose(e);
+														editClose(e);
 													}, 0);
 												});
 											} else {
@@ -442,7 +442,7 @@
 					</h4>
 				</div>
 				<hr>
-				<script src="${cdnPath}/js/apply/contactsInput.js"></script>
+				<script src="${cdnPath}/js/apply/contactsInput.js?v=${VERSION_NO}"></script>
 				<div style="width:100%;" id="tab_contacts_input">
 				
 				</div>
@@ -461,7 +461,7 @@
 					</h4>
 				</div>
 				<hr>
-				<script src="${cdnPath}/js/apply/personassets.js"></script>
+				<script src="${cdnPath}/js/apply/personassets.js?v=${VERSION_NO}"></script>
 				<div id="tab_personassets">
 					
 				</div>
@@ -480,7 +480,7 @@
 					</h4>
 				</div>
 				<hr>
-				<script src="${cdnPath}/js/apply/jobinfoInput.js"></script>
+				<script src="${cdnPath}/js/apply/jobinfoInput.js?v=${VERSION_NO}"></script>
 				<div style="width:100%;" id="tab_job_info_input">
 					
 				</div>
