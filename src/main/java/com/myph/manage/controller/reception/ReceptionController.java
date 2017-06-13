@@ -332,7 +332,7 @@ public class ReceptionController {
                     } catch (Exception e) {
                         MyphLogger.error(e, "操作用户信息异常,身份证:{},手机号:{}", SensitiveInfoUtils.maskIdCard(applyUserDto.getIdCarNo()),
                                 applyUserDto.getPhone());
-                        return AjaxResult.failed("身份证或手机号已经存在，请联系管理员!");
+                        return AjaxResult.failed("身份证或手机号已经存在会员信息中!");
                     }
                 }
                 data = applyReceptionService.subMitInfo(applyReceptionDto);
@@ -400,7 +400,7 @@ public class ReceptionController {
                     } catch (Exception e) {
                         MyphLogger.error(e, "操作用户信息异常,身份证:{},手机号:{}", SensitiveInfoUtils.maskIdCard(applyUserDto.getIdCarNo()),
                                 applyUserDto.getPhone());
-                        return AjaxResult.failed("身份证或手机号已经存在，请联系管理员!");
+                        return AjaxResult.failed("身份证或手机号已经存在会员信息中!");
                     }
                 }
                 data = applyReceptionService.updateSubmitInfo(applyReceptionDto);
