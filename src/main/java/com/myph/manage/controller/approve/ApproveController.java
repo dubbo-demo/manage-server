@@ -121,7 +121,7 @@ public class ApproveController {
         generateSubStateList(page);
         MyphLogger.info("查询申请件列表开始");
         //根据teamId获取人员
-        if(page.getTeamId().longValue() != 0){
+        if(page.getTeamId() != null && page.getTeamId() != 0){
             ServiceResult<List<EmployeeDetailDto>> employeeResult = employeeInfoService.queryEmployeeInfoByTeamId(page.getTeamId());
             List<Long> employeeIds = new ArrayList<Long>();
             for(EmployeeDetailDto dto:employeeResult.getData()){

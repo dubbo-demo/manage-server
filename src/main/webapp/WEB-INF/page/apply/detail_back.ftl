@@ -233,7 +233,7 @@
 											if (res.code == '0') {
 												BootstrapDialog.alert("操作成功", function() {
 													setTimeout(function() {
-														editClose(e);
+														//editClose(e);
 													}, 0);
 												});
 											} else {

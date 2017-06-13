@@ -8,10 +8,11 @@
 		$("li[name='two_li']:eq(0)").addClass("active");
 		<#if cType??&&cType!="">
 			//input,text,select
-			$("input[type='input']").attr("disabled","disabled");
-			$("input[type='text']").attr("disabled","disabled");
-			$("input[type='radio']").attr("disabled","disabled");
-			$("select,textarea").attr("disabled","disabled");
+			$("input[type='input']").attr("readonly","readonly");
+			$("input[type='text']").attr("readonly","readonly");
+			$("input[type='radio']").attr("readonly","readonly");
+			$("select").attr("disabled","disabled");
+			$("textarea").attr("readonly","readonly");
 			// 按钮
 			$(".form-actions .blue").css('display','none')
 		</#if>

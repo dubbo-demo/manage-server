@@ -68,7 +68,7 @@
             </div>
 		</div>
 	</div>
-<#if updateCType?? && (!cType?? || cType ='')>
+<#if updateCType?? && !cType??>
 	<#include "/apply/audit/common/detail_content2.ftl">
 <#else>
 	<#include "/apply/audit/common/detail_content.ftl">

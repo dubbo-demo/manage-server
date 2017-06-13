@@ -166,11 +166,11 @@ background: #f2dede
 			cache : false,
 			success : function(res) {
                 $(".btn.blue").removeAttr("disabled");
-                if(res.success) {
-                    window.location.href = forwardPath;
-                } else {
-                    BootstrapDialog.alert(res.message);
-                }
+//				BootstrapDialog.alert(res.message,function(){
+					if(res.success) {
+						window.location.href = forwardPath;
+					}
+//				});
 			},
 			error : function(res) {
 				BootstrapDialog.alert(res.message);

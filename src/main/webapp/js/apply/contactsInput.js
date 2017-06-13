@@ -357,13 +357,7 @@ function contactsSaveInfo(nextFlag,formID,next) {
 				if(checkNum > 0) {
 					checkNum--;
 					if(checkNum == 0) {
-						BootstrapDialog.alert("操作成功", function() {
-							setTimeout(function() {
-								if( typeof editClose === 'function' ){
-									window.location.reload();
-								}
-							}, 0);
-						});
+						BootstrapDialog.alert('操作成功!');
 					}
 				}
 			} else {

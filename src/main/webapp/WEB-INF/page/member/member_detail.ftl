@@ -266,9 +266,7 @@
 						<div>
 							
 							<h4 style="text-align:center" data-ftl="tab_personassets">
-								<strong>禁闭信息</strong>
-								<span>&nbsp;&nbsp;&nbsp;&nbsp;</span>
-								<a href="#refuse" class="glyphicons no-js edit" data-toggle="modal" style="bottom:10px;"><i></i></a>
+								<strong>禁闭信息&nbsp;<a href="#refuse" class="glyphicons no-js edit" data-toggle="modal"><i></i></a></strong>
 							</h4>
 						</div>
 						<hr>

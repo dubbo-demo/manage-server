@@ -80,13 +80,7 @@ function personassetsSave(record){
 		success : function(res) {
 			if (res.code == 0) {
 				if(record.state == PERSON_ASSETS || record.state == BACK_INIT){
-					BootstrapDialog.alert("操作成功", function() {
-						setTimeout(function() {
-							if( typeof editClose === 'function' ){
-								window.location.reload();
-							}
-						}, 0);
-					});
+					BootstrapDialog.alert("操作成功！");
 				}
 			} else {
 				BootstrapDialog.alert(res.message);

@@ -265,7 +265,7 @@
 					</div>
 				</div>
 				<div class="control-group span4 " name="applyInfo" style="display: none;">
-					<label class="help-inline text-right span4 control-label">申请金额<span class="required">*</span></label> <input
+					<label class="help-inline text-right span4 control-label">批复金额<span class="required">*</span></label> <input
 						type="text" class="m-wrap span8" name="creditMoney">
 				</div>
 				
