@@ -8,9 +8,8 @@
  */
 package com.myph.manage.controller.apply.contacts;
 
-import java.util.List;
-
-import org.apache.commons.collections.CollectionUtils;
+import com.myph.apply.dto.ApplyInfoDto;
+import com.myph.manage.controller.apply.ApplyBaseController;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,7 +45,7 @@ import com.myph.member.base.service.MemberInfoService;
  */
 @RequestMapping("/apply")
 @Controller
-public class ContactsInputController {
+public class ContactsInputController extends ApplyBaseController{
 
 	@Autowired
 	private ContactsService contactsService;
@@ -131,48 +130,69 @@ public class ContactsInputController {
 				return AjaxResult.failed("申请单号不能为空");
 			}
 			//+++++++加入回源状态判断
-			ServiceResult<Boolean> isContinue = applyInfoService.isContinueByApplyState(applyLoanNo);
-			if(null != isContinue && !isContinue.getData()) {
-				return AjaxResult.failed(applyLoanNo + "已经不在申请单阶段，不能修改数据");
+			ServiceResult<ApplyInfoDto> applyInfoRes = applyInfoService.queryInfoByAppNo(applyLoanNo);
+			AjaxResult continueResult = getReusltIsContinue(applyInfoRes.getData());
+			if(!continueResult.isSuccess()) {
+				return continueResult;
 			}
-			ApplyUserDto applyUser = applyUserService.queryInfoByLoanNo(applyLoanNo).getData();
-			MemberInfoDto memberInfo = memberInfoService.queryInfoByIdCard(applyUser.getIdCarNo()).getData();
-			ServiceResult<MemberLinkmanDto> result = memberLinkmanService.selectSingleMemberLinkman(memberInfo.getId(),
-					jkApplyLinkmanDto.getLinkManType());
-
-			String operatorUser = ShiroUtils.getCurrentUserName();
-			Long memberId = memberInfo.getId();
-			MemberLinkmanDto memberLinkmanDto = new MemberLinkmanDto();
-			BeanUtils.copyProperties(jkApplyLinkmanDto, memberLinkmanDto);
-			memberLinkmanDto.setMemberId(memberId);
-			memberLinkmanDto.setAlternatePhone(jkApplyLinkmanDto.getLinkManPhone());
-
-			if (result.success() && result.getData() != null) {
-				memberLinkmanService.updateLinkman(memberLinkmanDto, operatorUser);
-			} else {
-				memberLinkmanDto.setClientType(Constants.NO_INT);
-				memberLinkmanService.saveLinkman(memberLinkmanDto, operatorUser);
-			}
-			if (jkApplyLinkmanDto.getState() != null) {
-				MyphLogger.info("申请单录入联系人信息录入下一步，更新申请单表状态,单号:{},当前操作人:{},操作人编号:{}", applyLoanNo, operatorName,
-						operatorId);
-				applyInfoService.updateSubState(applyLoanNo, jkApplyLinkmanDto.getState());
-			}
-
-			ServiceResult<JkApplyLinkmanDto> contactResult = contactsService
-					.getSingleApplyLinkman(jkApplyLinkmanDto.getApplyLoanNo(), jkApplyLinkmanDto.getLinkManType());
-			if (contactResult.success() && contactResult.getData() != null) {
-				// 更新
-				ServiceResult<Integer> updateResult = contactsService.updateLinkman(jkApplyLinkmanDto, operatorUser);
-				return AjaxResult.formatFromServiceResult(updateResult);
-			} else {
-				// 新增
-				ServiceResult<Integer> addResult = contactsService.saveLinkman(jkApplyLinkmanDto, operatorUser);
-				return AjaxResult.formatFromServiceResult(addResult);
-			}
+			String oldPhone = "";
+            //更新或插入MemberLinkman表
+            oldPhone = insertOrUpdateMemberLinkman(jkApplyLinkmanDto,oldPhone);
+            //更新或插入jkApplyLinkman表
+            insertOrUpdateJkApplyLinkman(jkApplyLinkmanDto,oldPhone);   
+            return AjaxResult.success();
 		} catch (Exception e) {
 			MyphLogger.error("申请件联系人信息保存异常", e);
 			return AjaxResult.failed("服务异常，请稍后重试");
 		}
 	}
+	
+	private String insertOrUpdateMemberLinkman(JkApplyLinkmanDto jkApplyLinkmanDto,String oldPhone){
+        String operatorName = ShiroUtils.getCurrentUserName();
+        Long operatorId = ShiroUtils.getCurrentUserId();
+        String applyLoanNo = jkApplyLinkmanDto.getApplyLoanNo();
+        MemberLinkmanDto memberLinkmanDto = new MemberLinkmanDto();
+        BeanUtils.copyProperties(jkApplyLinkmanDto, memberLinkmanDto);
+        if(jkApplyLinkmanDto.getId() != null){
+            ServiceResult<MemberLinkmanDto> result = memberLinkmanService.selectSelectiveById(jkApplyLinkmanDto.getId());
+            oldPhone = result.getData().getLinkManPhone();
+            if(!oldPhone.equals(jkApplyLinkmanDto.getLinkManPhone())){
+                String alternatePhone = result.getData().getAlternatePhone() + "|" + jkApplyLinkmanDto.getLinkManPhone();
+                memberLinkmanDto.setAlternatePhone(alternatePhone);
+            }
+            memberLinkmanService.updateLinkman(memberLinkmanDto, operatorName);
+        } else {
+            ApplyUserDto applyUser = applyUserService.queryInfoByLoanNo(applyLoanNo).getData();
+            MemberInfoDto memberInfo = memberInfoService.queryInfoByIdCard(applyUser.getIdCarNo()).getData();
+            Long memberId = memberInfo.getId();
+            memberLinkmanDto.setMemberId(memberId);
+            memberLinkmanDto.setClientType(Constants.NO_INT);
+            memberLinkmanDto.setAlternatePhone(jkApplyLinkmanDto.getLinkManPhone());
+            memberLinkmanService.saveLinkman(memberLinkmanDto, operatorName);
+        }
+        if (jkApplyLinkmanDto.getState() != null) {
+            MyphLogger.info("申请单录入联系人信息录入下一步，更新申请单表状态,单号:{},当前操作人:{},操作人编号:{}", applyLoanNo, operatorName,
+                    operatorId);
+            applyInfoService.updateSubState(applyLoanNo, jkApplyLinkmanDto.getState());
+        }
+        return oldPhone;
+    }
+    
+    private void insertOrUpdateJkApplyLinkman(JkApplyLinkmanDto jkApplyLinkmanDto,String oldPhone){
+        String operatorName = ShiroUtils.getCurrentUserName();
+        if(StringUtils.isBlank(oldPhone)){
+            // 界面不存在老号码，说明是新增
+            contactsService.saveLinkman(jkApplyLinkmanDto, operatorName);
+        }else{
+            ServiceResult<JkApplyLinkmanDto> contactResult = contactsService
+                    .getSingleApplyLinkman(jkApplyLinkmanDto.getApplyLoanNo(), oldPhone);
+            if (contactResult.success() && contactResult.getData() != null) {
+                // 更新
+                contactsService.updateLinkman(jkApplyLinkmanDto,oldPhone, operatorName);
+            } else {
+                // 新增
+                contactsService.saveLinkman(jkApplyLinkmanDto, operatorName);
+            }
+        }
+    }
 }

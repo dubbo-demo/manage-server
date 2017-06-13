@@ -148,7 +148,9 @@ function addInfo(saveOfsubmit) {
 	if($("#submitType").val() == 1) {
 		msg = "提交信息成功";
 	}
+	$('.form-actions .blue').attr('disabled',"true");
 	$.post(serverPath+'/reception/addInfo.htm', $('form').serialize(), function(res) {
+		$('.form-actions .blue').removeAttr("disabled");
 		if (res.code == '0') {
 			BootstrapDialog.alert(msg, function(){
                 window.location.href = serverPath + "/reception/list.htm";

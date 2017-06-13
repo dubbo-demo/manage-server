@@ -72,12 +72,12 @@ background: #f2dede
 							<@p.sort field="a.applyLoanNo" sortField="${(page.sortField)!}" sortOrder="${(page.sortOrder)!}" name="申请单号" ></@p.sort>
 							<th>客户</th>
 							<th>门店</th>
+							<@p.sort field="a.applyTime" sortField="${(page.sortField)!}" sortOrder="${(page.sortOrder)!}" name="进件日期" ></@p.sort>
 							<#if progress == 'todo'>
 								<@p.sort field="a.fetchTime" sortField="${(page.sortField)!}" sortOrder="${(page.sortOrder)!}" name="取件日期" ></@p.sort>
 								<th>状态</th>	
 							</#if>
 							<#if progress == 'done'>
-								<@p.sort field="a.applyTime" sortField="${(page.sortField)!}" sortOrder="${(page.sortOrder)!}" name="进件日期" ></@p.sort>
 								<@p.sort field="a.auditFirstTime" sortField="${(page.sortField)!}" sortOrder="${(page.sortOrder)!}" name="初审日期" ></@p.sort>
 								<@p.sort field="a.auditReviewTime" sortField="${(page.sortField)!}" sortOrder="${(page.sortOrder)!}" name="复审日期" ></@p.sort>	
 								<@p.sort field="a.lastDate" sortField="${(page.sortField)!}" sortOrder="${(page.sortOrder)!}" name="终审日期" ></@p.sort>
@@ -102,6 +102,7 @@ background: #f2dede
 								</td>
 								<td>${item.memberName!""}</td>
 								<td>${item.storeName!""}</td>
+                                <td><#if item.applyTime??>${item.applyTime?datetime}</#if></td>
 								<#if progress == 'todo'>
 									<td><#if item.fetchTime??>${item.fetchTime?datetime}</#if></td>
 									<td>
@@ -125,7 +126,6 @@ background: #f2dede
 									</td>
 								</#if>
 								<#if progress == 'done'>
-									<td><#if item.applyTime??>${item.applyTime?datetime}</#if></td>
 									<td><#if item.auditFirstTime??>${item.auditFirstTime?datetime}</#if></td>
 									<td><#if item.auditReviewTime??>${item.auditReviewTime?datetime}</#if></td>
 									<td><#if item.lastDate??>${item.lastDate?datetime}</#if></td>
@@ -188,6 +188,7 @@ background: #f2dede
 		ChkUtil.stopBubbleEvent(event);
 		var progress = $('#progress').val();
 		var forwardPath = serverPath + "/audit/list/"+progress+".htm";
+        $(".btn.blue").attr('disabled',"true");
 		$.ajax({
 			url : serverPath + "/audit/pickup.htm",
 			type : "post",
@@ -196,11 +197,12 @@ background: #f2dede
 			dataType : "json",
 			cache : false,
 			success : function(res) {
-				BootstrapDialog.alert(res.message,function(){
+                $(".btn.blue").removeAttr("disabled");
+//				BootstrapDialog.alert(res.message,function(){
 					if(res.success) {
 						window.location.href = forwardPath;
 					}
-				});
+//				});
 			},
 			error : function(res) {
 				BootstrapDialog.alert(res.message);

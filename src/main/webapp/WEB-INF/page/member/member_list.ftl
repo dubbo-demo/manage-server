@@ -43,16 +43,12 @@
 								type="text" class="m-wrap span8" name="idCarNo"
 								value="${(queryDto.idCarNo)!}">
 						</div>
-						<div class="control-group span4 ">
-							<label class="help-inline text-right span4">创建日期：</label> 
-									<div class="input-append date date-picker" data-date="${(queryDto.createTimeStart?string('yyyy-MM-dd'))!}" data-date-format="yyyy-mm-dd" data-date-viewmode="years">
-										<input name="createTimeStart" class="m-wrap span8 date-picker" size="16" type="text" data-date-format="yyyy-mm-dd"  value="${(queryDto.createTimeStart?string('yyyy-MM-dd'))!}"/><span class="add-on"><i class="icon-calendar"></i></span>
-									</div>		
-									<span style="margin-left:-28px">--</span>
-									<div class="input-append date date-picker" data-date="${(queryDto.createTimeEnd?string('yyyy-MM-dd'))!}" data-date-format="yyyy-mm-dd" data-date-viewmode="years">
-										<input name="createTimeEnd" class="m-wrap span8 date-picker" size="16" type="text" data-date-format="yyyy-mm-dd"  value="${(queryDto.createTimeEnd?string('yyyy-MM-dd'))!}" /><span class="add-on"><i class="icon-calendar"></i></span>
-									</div>	
-						</div>
+                        <div class="control-group span4 ">
+                            <label class="help-inline text-right span4">手机号：</label> 
+                            <input
+                                type="text" class="m-wrap span8" name="phone"
+                                value="${(queryDto.phone)!}">
+                        </div>
 					</div>
 					<div class="row-fluid">
 						<div class="control-group span4 ">
@@ -71,6 +67,16 @@
 								<option value="1">APP</option>
 							</select>
 						</div>
+                        <div class="control-group span4 ">
+                            <label class="help-inline text-right span4">创建日期：</label> 
+                            <div class="input-append date date-picker" data-date="${(queryDto.createTimeStart?string('yyyy-MM-dd'))!}" data-date-format="yyyy-mm-dd" data-date-viewmode="years">
+                                <input name="createTimeStart" class="m-wrap span8 date-picker" size="16" type="text" data-date-format="yyyy-mm-dd"  value="${(queryDto.createTimeStart?string('yyyy-MM-dd'))!}"/><span class="add-on"><i class="icon-calendar"></i></span>
+                            </div>      
+                            <span style="margin-left:-28px">--</span>
+                            <div class="input-append date date-picker" data-date="${(queryDto.createTimeEnd?string('yyyy-MM-dd'))!}" data-date-format="yyyy-mm-dd" data-date-viewmode="years">
+                                <input name="createTimeEnd" class="m-wrap span8 date-picker" size="16" type="text" data-date-format="yyyy-mm-dd"  value="${(queryDto.createTimeEnd?string('yyyy-MM-dd'))!}" /><span class="add-on"><i class="icon-calendar"></i></span>
+                            </div>  
+                        </div>						
 					</div>
 					<p>
 						<button type="button" class="btn blue" onclick="search()">查询</button>

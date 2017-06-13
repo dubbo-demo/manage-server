@@ -136,6 +136,7 @@
 			</div>
 			<p>
 				<button type="submit" class="btn blue">查询</button>
+				<a href="javascript:down(1)" class="btn blue">下载</a>
 			</p>
 		</form>
 		</div>

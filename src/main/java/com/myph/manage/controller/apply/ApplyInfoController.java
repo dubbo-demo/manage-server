@@ -3,10 +3,12 @@ package com.myph.manage.controller.apply;
 import java.util.Date;
 import java.util.List;
 
+import com.myph.applyprogress.dto.ApplyProgressDto;
+import com.myph.common.util.SensitiveInfoUtils;
+import com.myph.constant.bis.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,10 +17,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.alibaba.dubbo.common.utils.StringUtils;
 import com.alibaba.fastjson.JSONObject;
-import com.myph.apply.constant.LinkmanTypeEnum;
 import com.myph.apply.dto.ApplyInfoDto;
 import com.myph.apply.dto.ApplyUserDto;
-import com.myph.apply.dto.JkApplyLinkmanDto;
 import com.myph.apply.linkman.service.ContactsService;
 import com.myph.apply.service.ApplyInfoService;
 import com.myph.apply.service.ApplyUserService;
@@ -28,12 +28,10 @@ import com.myph.auditlog.service.AuditLogService;
 import com.myph.common.activemq.ActivemqUtil;
 import com.myph.common.activemq.ConstantKey;
 import com.myph.common.constant.Constants;
-import com.myph.common.exception.DataValidateException;
 import com.myph.common.log.MyphLogger;
 import com.myph.common.result.AjaxResult;
 import com.myph.common.result.ServiceResult;
 import com.myph.constant.FlowStateEnum;
-import com.myph.constant.bis.ApplyBisStateEnum;
 import com.myph.employee.service.EmployeeInfoService;
 import com.myph.flow.dto.RejectActionDto;
 import com.myph.manage.common.constant.ClientType;
@@ -46,8 +44,6 @@ import com.myph.member.assets.dto.MemberAssetsDto;
 import com.myph.member.assets.service.AssetsService;
 import com.myph.member.base.dto.MemberInfoDto;
 import com.myph.member.base.service.MemberInfoService;
-import com.myph.member.blacklist.dto.BlackQueryDto;
-import com.myph.member.blacklist.dto.InnerBlackDto;
 import com.myph.member.blacklist.service.InnerBlackService;
 import com.myph.mqSendLog.dto.JkMqLogDto;
 import com.myph.mqSendLog.service.JkMqService;
@@ -59,7 +55,7 @@ import com.myph.reception.dto.ApplyReceptionDto;
 import com.myph.reception.service.ApplyReceptionService;
 
 /**
- * 
+ *
  * @ClassName: ReceptionController
  * @Description: 申请件
  * @author heyx
@@ -68,7 +64,7 @@ import com.myph.reception.service.ApplyReceptionService;
  */
 @Controller
 @RequestMapping("/apply")
-public class ApplyInfoController {
+public class ApplyInfoController extends ApplyBaseController{
 
     @Autowired
     ApplyInfoService applyInfoService;
@@ -115,7 +111,7 @@ public class ApplyInfoController {
 
     /**
      * 根据团队ID加载团队信息服务
-     * 
+     *
      * @param idCard
      * @return
      */
@@ -167,7 +163,7 @@ public class ApplyInfoController {
     }
 
     /**
-     * 
+     *
      * @名称 getOrgName
      * @描述 根据id获取组织name
      * @返回类型 String
@@ -185,7 +181,7 @@ public class ApplyInfoController {
     }
 
     /**
-     * 
+     *
      * @名称 applyDetail
      * @描述 TODO(这里用一句话描述这个方法的作用)
      * @返回类型 String
@@ -209,12 +205,27 @@ public class ApplyInfoController {
         if (StringUtils.isNotEmpty(isView)) {
             return "/apply/audit/common/detail_content";
         }
+        ServiceResult<ApplyInfoDto> applyInfoRes = applyInfoService.queryInfoByAppNo(applyLoanNo);
+        if(applyInfoRes.success()) {
+            MyphLogger.info("ApplyInfoInputController.applyDetail.获取历史案件 输入参数{},身份证号:{}", applyLoanNo,
+                    SensitiveInfoUtils.maskIdCard(userinfodata.getData().getIdCarNo()));
+            ServiceResult<List<ApplyProgressDto>> historyData = applyInfoService.listInfoByCardNotOne(userinfodata.getData().getIdCarNo(),applyLoanNo);
+            model.addAttribute("historyData", historyData.getData());
+            ApplyBisStateEnum[] values = ApplyBisStateEnum.values();
+            model.addAttribute("constant", values);
+            if(applyInfoRes.getData().getSubState().equals(AuditFirstBisStateEnum.INIT.getCode())
+                    || applyInfoRes.getData().getSubState().equals(AuditLastBisStateEnum.INIT.getCode())
+                    || applyInfoRes.getData().getSubState().equals(AuditDirectorBisStateEnum.INIT.getCode())
+                    || applyInfoRes.getData().getSubState().equals(AuditManagerBisStateEnum.INIT.getCode())) {
+                model.addAttribute("updateCType", applyInfoRes.getData().getSubState());
+            }
+        }
         model.addAttribute("cType", cType);
         return "/apply/detail";
     }
 
     /**
-     * 
+     *
      * @名称 personassets
      * @描述 个人资产页(这里用一句话描述这个方法的作用)
      * @返回类型 String
@@ -264,7 +275,7 @@ public class ApplyInfoController {
     }
 
     /**
-     * 
+     *
      * @名称 compositeOpinion
      * @描述 综合意见(这里用一句话描述这个方法的作用)
      * @返回类型 String
@@ -293,11 +304,16 @@ public class ApplyInfoController {
      */
     @RequestMapping("/check/applyInfoGo")
     @ResponseBody
-    public AjaxResult personassetsSave(String applyLoanNo) {
+    public AjaxResult applyInfoGo(String applyLoanNo) {
         MyphLogger.info("加入回源状态判断,applyLoanNo:{}",applyLoanNo);
         //+++++++加入回源状态判断
-        ServiceResult<Boolean> isContinue = applyInfoService.isContinueByApplyState(applyLoanNo);
-        if(null != isContinue && !isContinue.getData()) {
+        ServiceResult<ApplyInfoDto> applyInfoRes = applyInfoService.queryInfoByAppNo(applyLoanNo);
+        if (null == applyInfoRes.getData()) {
+            MyphLogger.error("申请件信息查询失败:" + applyLoanNo);
+            return AjaxResult.failed("申请件信息查询失败");
+        }
+        boolean isContinue = isUpdateBySubState(applyInfoRes.getData().getState(),applyInfoRes.getData().getSubState());
+        if(!isContinue) {
             MyphLogger.info(applyLoanNo + "已经不在申请单阶段，不能修改数据");
             return AjaxResult.failed(applyLoanNo + "已经不在申请单阶段，不能修改数据");
         }
@@ -306,7 +322,7 @@ public class ApplyInfoController {
     }
 
     /**
-     * 
+     *
      * @名称 personassetsSave
      * @描述 个人资产保存(这里用一句话描述这个方法的作用)
      * @返回类型 AjaxResult
@@ -322,29 +338,26 @@ public class ApplyInfoController {
         MyphLogger.info("操作人ID【" + ShiroUtils.getCurrentUserId() + "】操作人【" + ShiroUtils.getCurrentUserName()
                 + "】 ApplyInfoInputController.personassetsSave 输入参数[" + record + "]");
 
-        //+++++++加入回源状态判断
-        ServiceResult<Boolean> isContinue = applyInfoService.isContinueByApplyState(record.getApplyLoanNo());
-        if(null != isContinue && !isContinue.getData()) {
-            return AjaxResult.failed(record.getApplyLoanNo() + "已经不在申请单阶段，不能修改数据");
+        // 拿 到 个人身份证ID去查询员工信息
+        ServiceResult<ApplyInfoDto> applyInfoRes = applyInfoService.queryInfoByAppNo(record.getApplyLoanNo());
+        ApplyInfoDto applyInfo = applyInfoRes.getData();
+        AjaxResult continueResult = getReusltIsContinue(applyInfo);
+        if(!continueResult.isSuccess()) {
+            return continueResult;
         }
-
         applyPersonassetsService.insert(record);
         MyphLogger.info(
                 "操作人ID【" + ShiroUtils.getCurrentUserId() + "】操作人【" + ShiroUtils.getCurrentUserName() + "】 个人资产数据更新成功");
 
-        // 更新主表子状态
-        applyInfoService.updateSubState(record.getApplyLoanNo(), record.getState());
+        if(isUpdateSubState(applyInfo.getState(),applyInfo.getSubState())) {
+            // 更新主表子状态
+            applyInfoService.updateSubState(record.getApplyLoanNo(), record.getState());
+        }
 
         MyphLogger.info(
                 "操作人ID【" + ShiroUtils.getCurrentUserId() + "】操作人【" + ShiroUtils.getCurrentUserName() + "】 主表数据状态更新成功");
 
-        // 拿 到 个人身份证ID去查询员工信息
-        ServiceResult<ApplyInfoDto> applyInfoRes = applyInfoService.queryInfoByAppNo(record.getApplyLoanNo());
-        ApplyInfoDto applyInfo = applyInfoRes.getData();
-        if (null == applyInfo) {
-            MyphLogger.error("申请件信息查询失败:" + record.getApplyLoanNo());
-            return AjaxResult.failed("申请件信息查询失败");
-        }
+
         ServiceResult<MemberInfoDto> memberRs = memberService.queryInfoByIdCard(applyInfo.getIdCard());
         if (null == memberRs.getData()) {
             MyphLogger.error("没有查询到该客户的信息:" + applyInfo.getPhone());
@@ -380,7 +393,7 @@ public class ApplyInfoController {
     }
 
     /**
-     * 
+     *
      * @名称 personassetsSave
      * @描述 综合意见提交(这里用一句话描述这个方法的作用)
      * @返回类型 AjaxResult
@@ -414,7 +427,7 @@ public class ApplyInfoController {
         if (StringUtils.isBlank(desc)) {
             desc = applyInfo.getApplyRemark();
         }
-        
+
         // 验证直系联系人是否为我司黑名单的人，如果在，直接拒绝不提示。
 //        ServiceResult<JkApplyLinkmanDto> linkManResult = contactsService
 //                .getSingleApplyLinkman(applyInfo.getApplyLoanNo(), LinkmanTypeEnum.FAMILY_CONTACT.getType());
@@ -433,7 +446,7 @@ public class ApplyInfoController {
 //        if (!CollectionUtils.isEmpty(innerBlackRs.getData())) {
 //            record.setState(ApplyBisStateEnum.REFUSE.getCode());
 //        }
-        
+
         applyInfo.setApplyRemark(desc);
         if (ApplyBisStateEnum.COMPOSITE_OPINION.getCode().equals(record.getSaveOrSubmit())) {
             applyInfo.setSubState(ApplyBisStateEnum.COMPOSITE_OPINION.getCode());

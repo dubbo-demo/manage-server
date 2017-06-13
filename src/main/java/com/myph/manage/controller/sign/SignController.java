@@ -840,7 +840,7 @@ public class SignController extends BaseController {
 				repay.setDelflag(Constants.YES_INT);
 				String agreeRepayDate = DateTimeUtil.getAddMonth(loanTime, accumulation);// 用户账单还款开始日期
 				repay.setAgreeRepayDate(DateTimeUtil.convertStringToDate(agreeRepayDate));// 协议还款日期
-				repay.setRepayPeriod(new Integer(i));// 期数
+				repay.setRepayPeriod(new Integer(accumulation));// 期数
 				// 月还本金 = 合同金额/期数
 				BigDecimal principal = contractAmount.divide(periods, 2, BigDecimal.ROUND_HALF_UP);
 				// 月还利息

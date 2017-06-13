@@ -5,8 +5,8 @@ $(function(){
 	$("select,textarea").attr("disabled","disabled");
 	
 	$(".unshare").hide();
-	$(".edit").hide();
-	$(".edit").click(function(){
+	$(".inbox").hide();
+	$(".inbox").click(function(){
 		// 客户信息
 		if($(this).data("savetype") == 'KHXX') {
 			if(userinfo_updateInfo(this)) {

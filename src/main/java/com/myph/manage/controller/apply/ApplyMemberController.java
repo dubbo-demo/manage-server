@@ -2,7 +2,6 @@ package com.myph.manage.controller.apply;
 
 import java.util.Date;
 
-import com.myph.constant.FlowStateEnum;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +37,7 @@ import com.myph.member.base.service.MemberInfoService;
  */
 @Controller
 @RequestMapping("/apply/member")
-public class ApplyMemberController {
+public class ApplyMemberController extends ApplyBaseController{
 
     @Autowired
     ApplyInfoService applyInfoService;
@@ -141,13 +140,8 @@ public class ApplyMemberController {
         if (StringUtils.isEmpty(applyLoanNo)) {
             return AjaxResult.failed("申请单号不能为空");
         }
-        MyphLogger.info("修改个人信息 updateInfoBack 输入参数{}", applyUserDto.toString());
+        MyphLogger.info("修改个人信息 updateInfo 输入参数{}", applyUserDto.toString());
         try {
-            //+++++++加入回源状态判断
-            ServiceResult<Boolean> isContinue = applyInfoService.isContinueByApplyState(applyLoanNo);
-            if(null != isContinue && !isContinue.getData()) {
-                return AjaxResult.failed(applyLoanNo + "已经不在申请单阶段，不能修改数据");
-            }
             ServiceResult<Integer> data = null;
             if (null != applyUserDto && null != applyUserDto.getEmail()) {
                 applyUserDto.setEmail(applyUserDto.getEmail().toLowerCase());
@@ -184,6 +178,11 @@ public class ApplyMemberController {
     public AjaxResult updateInfoBack(ApplyUserDto applyUserDto, Integer type) {
         MyphLogger.info("退回修改个人信息 updateInfoBack 输入参数{}", applyUserDto.toString());
         try {
+            ServiceResult<ApplyInfoDto> applyInfoRes = applyInfoService.queryInfoByAppNo(applyUserDto.getApplyLoanNo());
+            AjaxResult continueResult = getReusltIsContinue(applyInfoRes.getData());
+            if(!continueResult.isSuccess()) {
+                return continueResult;
+            }
             ServiceResult<Integer> data = null;
             // 修改保存
             data = applyUserService.updateInfoBack(applyUserDto);

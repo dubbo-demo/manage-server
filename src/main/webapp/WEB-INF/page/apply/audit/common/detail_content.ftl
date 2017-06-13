@@ -88,6 +88,7 @@
 						<label class="control-label">接待意见描述</label>
 						<div class="controls">
 							<textarea class="span9 m-wrap" rows="3" name="description" maxlength="300">${reception.description!}</textarea>
+                            &nbsp;&nbsp;<a href="#applyDetailList" id="hostoy_btn" class="btn btn-info btn-lg" data-toggle="modal" style="display: none;">历史案件</a>
 						</div>
 					</div>
 				</div>

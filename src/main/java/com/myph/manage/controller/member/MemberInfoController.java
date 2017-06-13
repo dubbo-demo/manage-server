@@ -1,7 +1,9 @@
 package com.myph.manage.controller.member;
 
+import java.util.Date;
 import java.util.List;
 
+import com.myph.common.result.AjaxResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -31,6 +33,7 @@ import com.myph.member.confine.service.MemberConfineLogService;
 import com.myph.member.intenetinfo.dto.IntenetInfoDto;
 import com.myph.member.intenetinfo.service.IntenetInfoService;
 import com.myph.personassets.dto.ApplyPersonassetsDto;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 @RequestMapping("/member")
@@ -154,8 +157,32 @@ public class MemberInfoController extends BaseController {
 
         // 禁闭期信息
         List<MemberConfineLogDto> confineLogs = memberConfineLogService.listInfosByMemberId(id).getData();
+        Date now = new Date();
+        // 如果会员表的禁闭时间为空，或者小于当前时间，展示失效标记
+        if (null == memberInfo.getConfineTime()
+                || now.getTime() > memberInfo.getConfineTime().getTime()) {
+            for (MemberConfineLogDto dto : confineLogs) {
+                dto.setState(1);// 过期失效
+            }
+        }
         model.addAttribute("confineLogs", confineLogs);
         return "/member/member_detail";
+    }
+
+
+    /**
+     * 修改会员禁闭期
+     * @return
+     */
+    @RequestMapping("/updateConfineTime")
+    @ResponseBody
+    public AjaxResult updateConfineTime(MemberQueryDto memberInfoDto) {
+        MyphLogger.info("修改会员禁闭期：/updateConfineTime.htm|memberInfoDto=" + memberInfoDto.toString());
+        ServiceResult<Integer> result = memberInfoService.updateConfineTime(memberInfoDto);
+        if(result.success()) {
+            return AjaxResult.success();
+        }
+        return AjaxResult.failed("修改禁闭期失败");
     }
 
 }
