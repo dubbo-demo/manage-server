@@ -54,12 +54,10 @@ import com.myph.reception.dto.ApplyReceptionDto;
 import com.myph.reception.service.ApplyReceptionService;
 
 /**
- * 
+ * @author heyx
  * @ClassName: ReceptionController
  * @Description: TODO(这里用一句话描述这个类的作用)
- * @author heyx
  * @date 2016年9月1日 下午2:06:05
- *
  */
 @Controller
 @RequestMapping("/reception")
@@ -100,7 +98,7 @@ public class ReceptionController {
 
     /**
      * 列表
-     * 
+     *
      * @param model
      * @param ApplyReceptionDto
      * @param basePage
@@ -147,7 +145,7 @@ public class ReceptionController {
 
     /**
      * 新增跳转
-     * 
+     *
      * @return
      */
     @RequestMapping("/addForm")
@@ -157,7 +155,7 @@ public class ReceptionController {
 
     /**
      * 修改跳转
-     * 
+     *
      * @return
      */
     @RequestMapping("/updateForm")
@@ -169,7 +167,7 @@ public class ReceptionController {
 
     /**
      * 根据id加载团队信息服务
-     * 
+     *
      * @param storeId
      * @return
      */
@@ -187,7 +185,7 @@ public class ReceptionController {
 
     /**
      * 根据applyLoanNo加载团队信息服务
-     * 
+     *
      * @param applyLoanNo
      * @return
      */
@@ -204,14 +202,12 @@ public class ReceptionController {
     }
 
     /**
-     * 
      * @名称 showProduct
      * @描述
      * @返回类型 AjaxResult
      * @日期 2016年9月7日 下午6:55:05
      * @创建人 heyx
      * @更新人 heyx
-     *
      */
     @RequestMapping("/showProduct")
     @ResponseBody
@@ -221,34 +217,30 @@ public class ReceptionController {
     }
 
     /**
-     * 
      * @名称 showProduct
      * @描述
      * @返回类型 AjaxResult
      * @日期 2016年9月7日 下午6:55:05
      * @创建人 heyx
      * @更新人 heyx
-     *
      */
     @RequestMapping("/showProductName")
     @ResponseBody
     public AjaxResult showProductName(String id) {
         ServiceResult<SysNodeDto> result = new ServiceResult<SysNodeDto>();
-        if(StringUtils.isNotBlank(id)){
+        if (StringUtils.isNotBlank(id)) {
             result = nodeService.selectByPrimaryKey(Long.valueOf(id));
         }
         return AjaxResult.success(result.getData());
     }
 
     /**
-     * 
      * @名称 showProduct
      * @描述
      * @返回类型 AjaxResult
      * @日期 2016年9月7日 下午6:55:05
      * @创建人 heyx
      * @更新人 heyx
-     *
      */
     @RequestMapping("/showProductNum")
     @ResponseBody
@@ -258,14 +250,12 @@ public class ReceptionController {
     }
 
     /**
-     * 
      * @名称 showProduct
      * @描述 获取业务经理
      * @返回类型 AjaxResult
      * @日期 2016年9月7日 下午6:55:05
      * @创建人 heyx
      * @更新人 heyx
-     *
      */
     @RequestMapping("/showBMEmpoyee")
     @ResponseBody
@@ -273,20 +263,17 @@ public class ReceptionController {
         EmpDetailDto empDetail = ShiroUtils.getEmpDetail();
         List<Long> ids = new ArrayList<Long>();
         ids.add(empDetail.getStoreId());
-        // ids.add(49L);
         ServiceResult<List<EmployeeInputDto>> result = employeeInfoService.queryUserInputInfoByOrgId(ids, nameSpell);
         return AjaxResult.success(result.getData());
     }
 
     /**
-     * 
      * @名称 showProduct
      * @描述 获取客服经理
      * @返回类型 AjaxResult
      * @日期 2016年9月7日 下午6:55:05
      * @创建人 heyx
      * @更新人 heyx
-     *
      */
     @RequestMapping("/showCustomerEmpoyee")
     @ResponseBody
@@ -300,7 +287,7 @@ public class ReceptionController {
 
     /**
      * 新增
-     * 
+     *
      * @return
      */
     @RequestMapping("/addInfo")
@@ -340,7 +327,13 @@ public class ReceptionController {
                     ApplyUserDto applyUserDto = new ApplyUserDto();
                     BeanUtils.copyProperties(applyReceptionDto, applyUserDto);
                     applyUserDto.setIdCarNo(applyReceptionDto.getIdCard());
-                    updateMemberInfo(applyUserDto);
+                    try {
+                        updateMemberInfo(applyUserDto);
+                    } catch (Exception e) {
+                        MyphLogger.error(e, "操作用户信息异常,身份证:{},手机号:{}", SensitiveInfoUtils.maskIdCard(applyUserDto.getIdCarNo()),
+                                applyUserDto.getPhone());
+                        return AjaxResult.failed("身份证或手机号已经存在，请联系管理员!");
+                    }
                 }
                 data = applyReceptionService.subMitInfo(applyReceptionDto);
             } else {
@@ -363,10 +356,10 @@ public class ReceptionController {
         mDto.setModifyUser(ShiroUtils.getCurrentUserName());
         ServiceResult<Integer> mResult = memberInfoService.updateInfoByIdCard(mDto);
         if (mResult.getCode().equals(MemberInfoServiceResultCode.UPDATE_ZERO.getCode())) {
-        	mDto.setMemberSource(ClientType.WEB.getCode());
-        	mDto.setCreateTime(new Date());
-        	mDto.setCreateUser(ShiroUtils.getCurrentUserName());
-        	memberInfoService.addInfo(mDto);
+            mDto.setMemberSource(ClientType.WEB.getCode());
+            mDto.setCreateTime(new Date());
+            mDto.setCreateUser(ShiroUtils.getCurrentUserName());
+            memberInfoService.addInfo(mDto);
             MyphLogger.info("新增用户信息 idcard:{}", SensitiveInfoUtils.maskIdCard(mDto.getIdCarNo()));
         } else {
             MyphLogger.info("修改用户信息 idcard:{}", SensitiveInfoUtils.maskIdCard(mDto.getIdCarNo()));
@@ -375,7 +368,7 @@ public class ReceptionController {
 
     /**
      * 修改
-     * 
+     *
      * @return
      */
     @RequestMapping("/updateInfo")
@@ -402,7 +395,13 @@ public class ReceptionController {
                     ApplyUserDto applyUserDto = new ApplyUserDto();
                     applyUserDto.setIdCarNo(applyReceptionDto.getIdCard());
                     BeanUtils.copyProperties(applyReceptionDto, applyUserDto);
-                    updateMemberInfo(applyUserDto);
+                    try {
+                        updateMemberInfo(applyUserDto);
+                    } catch (Exception e) {
+                        MyphLogger.error(e, "操作用户信息异常,身份证:{},手机号:{}", SensitiveInfoUtils.maskIdCard(applyUserDto.getIdCarNo()),
+                                applyUserDto.getPhone());
+                        return AjaxResult.failed("身份证或手机号已经存在，请联系管理员!");
+                    }
                 }
                 data = applyReceptionService.updateSubmitInfo(applyReceptionDto);
             } else {
@@ -420,7 +419,7 @@ public class ReceptionController {
 
     /**
      * 修改接待信息状态
-     * 
+     *
      * @return
      */
     @RequestMapping("/updateState")
@@ -443,7 +442,6 @@ public class ReceptionController {
      * @日期 2016年9月8日 下午6:40:49
      * @创建人 heyx
      * @更新人 heyx
-     *
      */
     @RequestMapping("/validateCardToResult")
     @ResponseBody
@@ -498,14 +496,12 @@ public class ReceptionController {
     }
 
     /**
-     * 
      * @名称 isConfineTime
      * @描述 是否在禁闭期
      * @返回类型 boolean
      * @日期 2016年9月12日 下午5:04:08
      * @创建人 heyx
      * @更新人 heyx
-     *
      */
     private String isConfineTime(String idCard) {
         ServiceResult<MemberInfoDto> mResult = memberInfoService.queryInfoByIdCard(idCard);
