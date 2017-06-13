@@ -190,7 +190,7 @@
 					</div>
 				</div>
 				<div class="control-group span4 " >
-					<label class="help-inline text-right span4">申请金额：</label> <input
+					<label class="help-inline text-right span4">批复金额：</label> <input
 						type="text" class="m-wrap span8" name="applyMoney"
 						value="${(auditLog.suggestMoney)!}" readonly="true">
 				</div>
