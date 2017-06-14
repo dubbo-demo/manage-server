@@ -89,7 +89,7 @@
 <div id="jieAnDiv" style="display: none;">
 	<div class="row-fluid">
 		<div class="control-group span3 ">
-			<label class="control-label">捷安征信拒绝</label>
+			<label class="control-label">捷安征信</label>
 			<div class="controls">
 					<span class="text" id="titleType" >
 					</span>
