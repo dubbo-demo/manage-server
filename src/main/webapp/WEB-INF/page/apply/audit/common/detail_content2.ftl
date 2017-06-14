@@ -1,4 +1,4 @@
-<script src="${cdnPath}/js/apply/detail/detail_back.js"></script>
+<script src="${cdnPath}/js/apply/detail/detail_back.js?v=${VERSION_NO}"></script>
 <div class="row-fluid">
 	<div class="portlet box">
 		<div class="portlet-body form">
@@ -79,7 +79,7 @@
 						<label class="control-label">贷款详细用途</label>
 						<div class="controls">
 							<textarea class="span9 m-wrap" rows="3" name="loanPurpose" maxlength="300">${reception.loanPurpose!}</textarea>
-							 &nbsp;&nbsp;<input type="button" class="btn yellow" onclick="javascript:queryFileForm();" value="查看附件" />
+							 &nbsp;&nbsp;<input type="button" class="btn yellow" onclick="javascript:queryFileFormAudit();" value="查看附件" />
 						</div>
 					</div>
 				</div>
