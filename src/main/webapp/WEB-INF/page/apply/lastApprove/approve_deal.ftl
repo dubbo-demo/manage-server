@@ -12,7 +12,7 @@
 			window.location.href=e+"${(applyLoanInfo.applyLoanNo)!}&cType=${cType!}";
 	} 
 </script>
-<script src="${cdnPath}/js/apply/lastApprove/lastApprove.js"></script>
+<script src="${cdnPath}/js/apply/lastApprove/lastApprove.js?v=${VERSION_NO}"></script>
 <div class="tab-content">
 
 

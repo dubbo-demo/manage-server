@@ -12,7 +12,7 @@
 			window.location.href=e+"${(applyLoanInfo.applyLoanNo)!}&cType=${cType!}";
 	} 
 </script>
-<script src="${cdnPath}/js/apply/firstApprove/firstApprove.js"></script>
+<script src="${cdnPath}/js/apply/firstApprove/firstApprove.js?v=${VERSION_NO}"></script>
 <div class="tab-content">
 
 	<!-- BEGIN SAMPLE TABLE PORTLET-->
