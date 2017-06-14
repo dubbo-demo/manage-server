@@ -1,7 +1,7 @@
 
 <#include "/sys/top.ftl">
 <#include "/sys/left.ftl">
-<script src="${cdnPath}/js/apply/approve/edit_approve_opreator.js"></script>
+<script src="${cdnPath}/js/apply/approve/edit_approve_opreator.js?v=${VERSION_NO}"></script>
 
 	<div class="page-content">
 		<div class="container-fluid">
