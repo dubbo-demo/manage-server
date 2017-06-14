@@ -2,7 +2,7 @@
 <#include "/sys/left.ftl">
 <link rel="stylesheet" type="text/css" href="${cdnPath}/common/bootstrap/media/css/select2_metro.css" />
 <script type="text/javascript" src="${cdnPath}/common/bootstrap/media/js/select2.min.js"></script>
-<script src="${cdnPath}/js/apply/detail/detail_back.js"></script>
+<script src="${cdnPath}/js/apply/detail/detail_back.js?v=${VERSION_NO}"></script>
 <div class="page-content">
 			<!-- header -->
 			<div class="container-fluid">
@@ -467,7 +467,7 @@
 								</h4>
 							</div>
 							<hr>
-							<script src="${cdnPath}/js/apply/contactsInput.js"></script>
+							<script src="${cdnPath}/js/apply/contactsInput.js?v=${VERSION_NO}"></script>
 							<div style="width:100%;" id="tab_contacts_input">
 							
 							</div>
@@ -486,7 +486,7 @@
 								</h4>
 							</div>
 							<hr>
-							<script src="${cdnPath}/js/apply/personassets.js"></script>
+							<script src="${cdnPath}/js/apply/personassets.js?v=${VERSION_NO}"></script>
 							<div id="tab_personassets">
 								
 							</div>
@@ -505,7 +505,7 @@
 								</h4>
 							</div>
 							<hr>
-							<script src="${cdnPath}/js/apply/jobinfoInput.js"></script>
+							<script src="${cdnPath}/js/apply/jobinfoInput.js?v=${VERSION_NO}"></script>
 							<div style="width:100%;" id="tab_job_info_input">
 								
 							</div>

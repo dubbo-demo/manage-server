@@ -47,6 +47,11 @@ function queryBackFileForm() {
 	window.open(url + '?applyLoanNo=' + applyLoanNo);
 }
 
+function queryFileFormAudit() {
+	var url = serverPath + "/productFile/fileUpload.htm";
+	window.open(url + '?isView=0&applyLoanNo=' + $("#applyLoanNo").val());
+}
+
 function jobInfoAddInfo() {
 	var form = $("#jobinfoinput_form");
 	var f = false;
