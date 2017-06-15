@@ -96,6 +96,8 @@ public class ReceptionController {
     @Autowired
     CityCodeService cityCodeService;
 
+    private final static String remarkConfine = "该用户已经被管理员手动设置了禁闭期";
+
     /**
      * 列表
      *
@@ -168,7 +170,6 @@ public class ReceptionController {
     /**
      * 根据id加载团队信息服务
      *
-     * @param storeId
      * @return
      */
     @RequestMapping("/queryInfoQueryById/{id}")
@@ -514,7 +515,7 @@ public class ReceptionController {
                 // 过了禁闭期
                 return null;
             } else {
-                return mResult.getData().getConfineRemark();
+                return StringUtils.isEmpty(mResult.getData().getConfineRemark())? remarkConfine : mResult.getData().getConfineRemark();
             }
         }
         return null;
