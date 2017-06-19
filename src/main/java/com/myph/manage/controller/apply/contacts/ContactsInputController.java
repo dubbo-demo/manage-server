@@ -135,11 +135,10 @@ public class ContactsInputController extends ApplyBaseController{
 			if(!continueResult.isSuccess()) {
 				return continueResult;
 			}
-			String oldPhone = "";
             //更新或插入MemberLinkman表
-            oldPhone = insertOrUpdateMemberLinkman(jkApplyLinkmanDto,oldPhone);
+			JkApplyLinkmanDto oldJkApplyLinkmanDto = insertOrUpdateMemberLinkman(jkApplyLinkmanDto);
             //更新或插入jkApplyLinkman表
-            insertOrUpdateJkApplyLinkman(jkApplyLinkmanDto,oldPhone);   
+            insertOrUpdateJkApplyLinkman(jkApplyLinkmanDto,oldJkApplyLinkmanDto);   
             return AjaxResult.success();
 		} catch (Exception e) {
 			MyphLogger.error("申请件联系人信息保存异常", e);
@@ -147,7 +146,8 @@ public class ContactsInputController extends ApplyBaseController{
 		}
 	}
 	
-	private String insertOrUpdateMemberLinkman(JkApplyLinkmanDto jkApplyLinkmanDto,String oldPhone){
+	private JkApplyLinkmanDto insertOrUpdateMemberLinkman(JkApplyLinkmanDto jkApplyLinkmanDto){
+	    String oldPhone = "";
         String operatorName = ShiroUtils.getCurrentUserName();
         Long operatorId = ShiroUtils.getCurrentUserId();
         String applyLoanNo = jkApplyLinkmanDto.getApplyLoanNo();
@@ -175,24 +175,23 @@ public class ContactsInputController extends ApplyBaseController{
                     operatorId);
             applyInfoService.updateSubState(applyLoanNo, jkApplyLinkmanDto.getState());
         }
-        return oldPhone;
+        JkApplyLinkmanDto result = new JkApplyLinkmanDto();
+        result.setLinkManType(jkApplyLinkmanDto.getLinkManType());
+        result.setLinkManPhone(oldPhone);
+        return result;
     }
     
-    private void insertOrUpdateJkApplyLinkman(JkApplyLinkmanDto jkApplyLinkmanDto,String oldPhone){
+    private void insertOrUpdateJkApplyLinkman(JkApplyLinkmanDto jkApplyLinkmanDto,JkApplyLinkmanDto oldJkApplyLinkmanDto){
         String operatorName = ShiroUtils.getCurrentUserName();
-        if(StringUtils.isBlank(oldPhone)){
-            // 界面不存在老号码，说明是新增
+        ServiceResult<JkApplyLinkmanDto> contactResult = contactsService
+                .getSingleApplyLinkman(jkApplyLinkmanDto.getApplyLoanNo(), oldJkApplyLinkmanDto);
+        if (contactResult.success() && contactResult.getData() != null) {
+            // 更新
+            jkApplyLinkmanDto.setId(contactResult.getData().getId());
+            contactsService.updateLinkman(jkApplyLinkmanDto, operatorName);
+        } else {
+            // 新增
             contactsService.saveLinkman(jkApplyLinkmanDto, operatorName);
-        }else{
-            ServiceResult<JkApplyLinkmanDto> contactResult = contactsService
-                    .getSingleApplyLinkman(jkApplyLinkmanDto.getApplyLoanNo(), oldPhone);
-            if (contactResult.success() && contactResult.getData() != null) {
-                // 更新
-                contactsService.updateLinkman(jkApplyLinkmanDto,oldPhone, operatorName);
-            } else {
-                // 新增
-                contactsService.saveLinkman(jkApplyLinkmanDto, operatorName);
-            }
         }
     }
 }
