@@ -6,11 +6,11 @@
 	</#list>
     var state = "${applyInfo.subState!}"; 
 </script>
-<script src="${cdnPath}/js/apply/newInfoIndex.js"></script>
-<script src="${cdnPath}/js/apply/personassets.js"></script>
-<script src="${cdnPath}/js/apply/compositeOpinion.js"></script>
-<script src="${cdnPath}/js/apply/jobinfoInput.js"></script>
-<script src="${cdnPath}/js/apply/contactsInput.js"></script>
+<script src="${cdnPath}/js/apply/newInfoIndex.js?v=${VERSION_NO}"></script>
+<script src="${cdnPath}/js/apply/personassets.js?v=${VERSION_NO}"></script>
+<script src="${cdnPath}/js/apply/compositeOpinion.js?v=${VERSION_NO}"></script>
+<script src="${cdnPath}/js/apply/jobinfoInput.js?v=${VERSION_NO}"></script>
+<script src="${cdnPath}/js/apply/contactsInput.js?v=${VERSION_NO}"></script>
 <div class="page-content">
 	<!-- BEGIN PAGE CONTAINER-->
 
