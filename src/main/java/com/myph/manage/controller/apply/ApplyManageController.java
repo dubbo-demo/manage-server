@@ -124,7 +124,8 @@ public class ApplyManageController extends BaseController {
 			if (null != userInfo) {
 				userStoreId = userInfo.getStoreId();
 				userStoreName = userInfo.getStoreName();
-				queryDto.setStoreId(userStoreId);
+				//电销客服需求调整 禅道1113，取消门店限制，只跟当前业务员挂钩
+				//queryDto.setStoreId(userStoreId);
 				model.addAttribute("storeName", userStoreName);
 			}
 		}
