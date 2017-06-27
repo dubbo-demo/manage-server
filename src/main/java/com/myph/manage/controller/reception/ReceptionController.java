@@ -378,8 +378,8 @@ public class ReceptionController {
         MyphLogger.info("修改接待信息");
         try {
             EmpDetailDto empDetail = ShiroUtils.getEmpDetail();
-            if (null == empDetail || null == empDetail.getCityId()) {
-                return AjaxResult.failed("新增接待信息失败，请用门店账户录入!");
+            if (null == empDetail) {
+                return AjaxResult.failed("修改提交信息失败，请登录账户录入!");
             }
             applyReceptionDto.setCityId(empDetail.getCityId());
             applyReceptionDto.setAreaId(empDetail.getRegionId());
