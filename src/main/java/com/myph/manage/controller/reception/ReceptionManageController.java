@@ -117,14 +117,13 @@ public class ReceptionManageController {
     @ResponseBody
     public synchronized AjaxResult allotInfo(ApplyReceptionManageDto applyReceptionManageDto) {
         try {
-            EmployeeInfoDto user = ShiroUtils.getCurrentUser();
+//            EmployeeInfoDto user = ShiroUtils.getCurrentUser();
             EmpDetailDto empDetail = ShiroUtils.getEmpDetail();
-            if (null == empDetail || null == empDetail.getCityId()
-                    || empDetail.getIsManage().equals(Constants.NOT_MANAGE)) {
-                MyphLogger.info("分配接待信息失败，请用门店管理账户录入 username:{}", ShiroUtils.getCurrentUserName());
-                return AjaxResult.failed("分配接待信息失败，请用门店管理账户录入!");
+            if (null == empDetail || empDetail.getIsManage().equals(Constants.NOT_MANAGE)) {
+                MyphLogger.info("分配接待信息失败，请用管理账户录入 username:{}", ShiroUtils.getCurrentUserName());
+                return AjaxResult.failed("分配接待信息失败，请用管理账户录入!");
             }
-            applyReceptionManageDto.setStoreId(user.getOrgId());
+//            applyReceptionManageDto.setStoreId(user.getOrgId());
             applyReceptionManageDto.setCreateUser(ShiroUtils.getCurrentUserName());
             ServiceResult<Integer> result = applyReceptionManageService.updateCustomer(applyReceptionManageDto);
             MyphLogger.info("分配接待信息 applyReceptionDto:{}", applyReceptionManageDto.toString());
