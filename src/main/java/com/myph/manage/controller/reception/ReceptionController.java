@@ -381,8 +381,8 @@ public class ReceptionController {
             if (null == empDetail) {
                 return AjaxResult.failed("修改提交信息失败，请登录账户录入!");
             }
-            applyReceptionDto.setCityId(empDetail.getCityId());
-            applyReceptionDto.setAreaId(empDetail.getRegionId());
+//            applyReceptionDto.setCityId(empDetail.getCityId());
+//            applyReceptionDto.setAreaId(empDetail.getRegionId());
             applyReceptionDto.setCreateUser(ShiroUtils.getCurrentUserName());
             if (StringUtils.isNotEmpty(applyReceptionDto.getMemberName())) {
                 applyReceptionDto.setNameSpell(PingYinUtil.getPingYin(applyReceptionDto.getMemberName()).toUpperCase());
