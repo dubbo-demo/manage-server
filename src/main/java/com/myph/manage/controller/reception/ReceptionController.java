@@ -114,14 +114,14 @@ public class ReceptionController {
         // 门店级别
         if (null != empDetail && ORGANIZATION_TYPE.STORE_TYPE.toNumber() == user.getOrgType()) {
             model.addAttribute("empStoreId", empDetail.getStoreId());
-            dto.setStoreId(empDetail.getStoreId());
+//            dto.setStoreId(empDetail.getStoreId());
         }
         model.addAttribute("orgType", user.getOrgType());
         model.addAttribute("regionId", empDetail.getRegionId());
         // 大区级别
-        if (null != empDetail.getRegionId() && ORGANIZATION_TYPE.REGION_TYPE.toNumber() == user.getOrgType()) {
-            dto.setAreaId(empDetail.getRegionId());
-        }
+//        if (null != empDetail.getRegionId() && ORGANIZATION_TYPE.REGION_TYPE.toNumber() == user.getOrgType()) {
+//            dto.setAreaId(empDetail.getRegionId());
+//        }
         if (null != user) {
             dto.setCustomerServiceId(user.getId());
         }
