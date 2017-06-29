@@ -102,7 +102,7 @@ public class ReceptionController {
      * 列表
      *
      * @param model
-     * @param ApplyReceptionDto
+     * @param
      * @param basePage
      * @return
      */
@@ -381,8 +381,13 @@ public class ReceptionController {
             if (null == empDetail) {
                 return AjaxResult.failed("修改提交信息失败，请登录账户录入!");
             }
-//            applyReceptionDto.setCityId(empDetail.getCityId());
-//            applyReceptionDto.setAreaId(empDetail.getRegionId());
+            if(null == empDetail.getRegionId()) {
+                OrganizationDto org = organizationService.selectOrganizationById(applyReceptionDto.getStoreId()).getData();
+                applyReceptionDto.setAreaId(org == null ? null : org.getParentId());
+            } else {
+                applyReceptionDto.setAreaId(empDetail.getRegionId());
+                applyReceptionDto.setCityId(empDetail.getCityId());
+            }
             applyReceptionDto.setCreateUser(ShiroUtils.getCurrentUserName());
             if (StringUtils.isNotEmpty(applyReceptionDto.getMemberName())) {
                 applyReceptionDto.setNameSpell(PingYinUtil.getPingYin(applyReceptionDto.getMemberName()).toUpperCase());
