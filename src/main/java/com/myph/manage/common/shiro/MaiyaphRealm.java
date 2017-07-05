@@ -16,6 +16,7 @@ import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.subject.Subject;
+import org.apache.tools.ant.taskdefs.condition.And;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -147,15 +148,14 @@ public class MaiyaphRealm extends AuthorizingRealm {
 				MyphLogger.debug("用户名不正确,手机号:{}", token.getUsername());
 				throw new DataValidateException("用户名不正确");
 			}
-			ServiceResult<SysUserDto> sysUserResult = sysUserService.selectSysUserById(employeeInfoDto.getId());
-			SysUserDto sysUserDto = sysUserResult.getData();
-			if (!sysUserResult.success() || sysUserDto == null) {// 账户状态0：禁用
-				MyphLogger.debug("用户账户不存在,手机号:{},用户ID:{}", employeeInfoDto.getMobilePhone(), employeeInfoDto.getId());
-				throw new DataValidateException("用户账户不存在");
-			} else if (Constants.NO_INT == sysUserDto.getAmountState()) {
-				MyphLogger.debug("用户账户不存在,手机号:{},用户ID:{}", employeeInfoDto.getMobilePhone(), employeeInfoDto.getId());
-				throw new DataValidateException("用户账户未启用");
+			if(employeeInfoDto.getUserFlag() == null || Constants.NO.equals(employeeInfoDto.getUserFlag())){
+			    MyphLogger.debug("用户账户未启用,手机号:{},用户ID:{}", employeeInfoDto.getMobilePhone(), employeeInfoDto.getId());
+                throw new DataValidateException("用户账户未启用");
 			}
+			if(employeeInfoDto.getIcmbFlag() == null || Constants.YES.equals(employeeInfoDto.getIcmbFlag())){
+                MyphLogger.debug("用户已离职,手机号:{},用户ID:{}", employeeInfoDto.getMobilePhone(), employeeInfoDto.getId());
+                throw new DataValidateException("用户已离职");
+            }
 			AuthenticationInfo authcInfo = new SimpleAuthenticationInfo(employeeInfoDto.getMobilePhone(),
 					token.getPassword(), employeeInfoDto.getEmployeeName());
 			ServiceResult<EmployeeDetailDto> empDetailResult = organizationService

@@ -1,6 +1,6 @@
 <#include "/sys/top.ftl">
 <#include "/sys/left.ftl">
-<script src="${cdnPath}/js/employee/manageEmployeeMoveInfo.js"></script>
+<script src="${cdnPath}/js/employee/manageEmployeeMoveInfo.js?v=${VERSION_NO}"></script>
 <script type="text/javascript">
     var serverPath = "${serverPath}";
     var queryDto = {orgId:"${(orgId)!''}"};

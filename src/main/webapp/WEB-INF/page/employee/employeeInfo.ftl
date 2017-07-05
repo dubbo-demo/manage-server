@@ -1,6 +1,6 @@
 <#include "/sys/top.ftl">
 <#include "/sys/left.ftl">
-<script src="${cdnPath}/js/employee/employeeInfo.js?20161128"></script>
+<script src="${cdnPath}/js/employee/employeeInfo.js?v=${VERSION_NO}"></script>
 <script type="text/javascript">
     var serverPath = "${serverPath}";
     
@@ -11,6 +11,7 @@
 
 	$(function() {
 		initTreePullDown(treeObject.treePullDown);
+		$("select[name='icmbFlag']").val(${(queryDto.icmbFlag)!});
 	});
 </script>
 <div class="page-content" >
@@ -61,6 +62,14 @@
 						<option value ="0">请选择</option>
 					</select>
 				</div>
+				<div class="control-group span4 ">
+                    <label class="help-inline text-right span4">状态：</label>
+                    <select class="m-wrap span8" id="icmbFlag" name="icmbFlag">
+                        <option value ="-1">全部</option>
+                        <option value ="0" selected = "selected">在职</option>
+                        <option value ="1">离职</option>
+                    </select>
+                </div>
 			</div>
 			<p>
 					<@shiro.hasPermission name="employee:search">
@@ -83,21 +92,25 @@
 					<th>员工编号</th>
 					<th>身份证号</th>
 					<th>性别</th>
-					<th>入职日期</th>
 					<th>手机号码</th>
 					<th>所属区域</th>
 					<th>大区</th>
 					<th>门店</th>
 					<th>部门</th>
 					<th>岗位</th>
+					<th>星级</th>
+					<th>团队负责人</th>
 					<@shiro.hasPermission name="employee:edit">
 					<th>操作</th>
 					</@shiro.hasPermission>
-					<th>操作</th>
 					<@shiro.hasPermission name="employee:move">
 					<th>操作</th>
 					</@shiro.hasPermission>
 					<th>操作</th>
+					<th>操作</th>
+					<@shiro.hasPermission name="employee:forbidden">
+					<th>操作</th>
+					</@shiro.hasPermission>
 					<th>操作</th>
 				</tr>
 			</thead>
@@ -111,26 +124,53 @@
 					<td>${item.employeeNo}</td>
 					<td>${item.identityNumber}</td>
 					<td><#if item.sex == 1>男<#else>女</#if></td>
-					<td>${item.entryTime}</td>
 					<td>${item.mobilePhone}</td>
 					<td><#if item.orgType == 2>总部<#else>大区</#if></td>
 					<td>${(item.regionName)!''}</td>
 					<td>${(item.storeName)!''}</td>
 					<td>${item.departmentName}</td>
 					<td>${item.positionName}</td>
+					<td>${(item.jobLevel)!''}</td>
+					<td>${(item.leaderName)!''}</td>
 					<@shiro.hasPermission name="employee:edit">
 					<td><a href="${serverPath}/employee/editEmployeeInfo.htm?id=${item.id?c}&searchemployeeName=${(queryDto.employeeName)!''}&searchemployeeNo=${(queryDto.employeeNo)!''}&searchidentityNumber=${(queryDto.identityNumber)!''}&searchorgType=${(queryDto.orgType)!''}&searchorgId=${(queryDto.orgId)!''}&searchorgName=${(queryDto.orgName)!''}&searchpositionId=${(queryDto.positionId)!''}&pageIndex=${(page.pageIndex)!1}&pageSize=${(page.pageSize)!10}">修改</a></td>
 					</@shiro.hasPermission>
-					<td><#if item.userFlag == 0><a href="${serverPath}/employee/addSysUser.htm?id=${item.id?c}" onClick="return confirm('确定要创建账号？');">创建账号</a><#else><span style="color:#999;">创建账号</span></#if></td>
 					<@shiro.hasPermission name="employee:move">
 					<td><a href="${serverPath}/employee/manageEmployeeMoveInfo.htm?id=${item.id?c}&searchemployeeName=${(queryDto.employeeName)!''}&searchemployeeNo=${(queryDto.employeeNo)!''}&searchidentityNumber=${(queryDto.identityNumber)!''}&searchorgType=${(queryDto.orgType)!''}&searchorgId=${(queryDto.orgId)!''}&searchorgName=${(queryDto.orgName)!''}&searchpositionId=${(queryDto.positionId)!''}&pageIndex=${(page.pageIndex)!1}&pageSize=${(page.pageSize)!10}">员工调动</a></td>
 					</@shiro.hasPermission>
-					<td><a href="${serverPath}/employee/queryEmployeeMoveInfo.htm?id=${item.id?c}&searchemployeeName=${(queryDto.employeeName)!''}&searchemployeeNo=${(queryDto.employeeNo)!''}&searchidentityNumber=${(queryDto.identityNumber)!''}&searchorgType=${(queryDto.orgType)!''}&searchorgId=${(queryDto.orgId)!''}&searchorgName=${(queryDto.orgName)!''}&searchpositionId=${(queryDto.positionId)!''}&pageIndex=${(page.pageIndex)!1}&pageSize=${(page.pageSize)!10}">调动记录</a></td>
+					<td><a href="${serverPath}/employee/queryEmployeeMoveInfo.htm?id=${item.id?c}&searchemployeeName=${(queryDto.employeeName)!''}&searchemployeeNo=${(queryDto.employeeNo)!''}&searchidentityNumber=${(queryDto.identityNumber)!''}&searchorgType=${(queryDto.orgType)!''}&searchorgId=${(queryDto.orgId)!''}&searchorgName=${(queryDto.orgName)!''}&searchpositionId=${(queryDto.positionId)!''}&pageIndex=${(page.pageIndex)!1}&pageSize=${(page.pageSize)!10}">变更记录</a></td>
 					<td><a href="${serverPath}/employee/queryEmployeeInfoDetail.htm?id=${item.id?c}&searchemployeeName=${(queryDto.employeeName)!''}&searchemployeeNo=${(queryDto.employeeNo)!''}&searchidentityNumber=${(queryDto.identityNumber)!''}&searchorgType=${(queryDto.orgType)!''}&searchorgId=${(queryDto.orgId)!''}&searchorgName=${(queryDto.orgName)!''}&searchpositionId=${(queryDto.positionId)!''}&pageIndex=${(page.pageIndex)!1}&pageSize=${(page.pageSize)!10}">详细信息</a></td>
+					<@shiro.hasPermission name="employee:forbidden">
+					<td><a  <#if item.icmbFlag?? && item.icmbFlag == '0'>href="javascript:updateUserflag(${item.id!},${item.userFlag!})"<#else>href="javascript:void(0)"</#if>><#if item.userFlag?? &&  item.userFlag == '0'>启用<#else>禁用</#if></a></td>
+					</@shiro.hasPermission>
+					<td><a data-target="#icmbShow" data-toggle="modal" class="aIcmbShow" data-id='${item.id!}' data-icmbflag='${item.icmbFlag!}'><#if item.icmbFlag?? && item.icmbFlag == '0'>离职<#else>复职</#if></a></td>
 				</tr>
 				</#list>
 			</tbody>
 		</table>
+        <div id="icmbShow" class="modal hide fade icmbShow" tabindex="-1" data-width="760">
+            <input type="hidden" id="icmbShowId" name="icmbShowId"></input>
+            <input type="hidden" id="icmbShowFlag" name="icmbShowFlag"></input>
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"
+                    aria-hidden="true"></button>
+                    <h3>备注</h3>
+            </div>
+            <div class="modal-body">
+                <div class="row-fluid ">
+                    <label class="help-inline span3 text-left control-label"><span id="icmbTimeLabel"></span><span class="required">*</span></label>
+                    <input id="icmbTime" name="icmbTime" class="m-wrap span8 date-picker" size="16" type="text" data-date-format="yyyy-mm-dd"/><span class="add-on"><i class="icon-calendar"></i></span>
+                </div>      
+                <div class="row-fluid ">
+                    <label class="help-inline span3 text-left control-label">说明：<span class="required">*</span></label>
+                    <textarea rows="4" class="span8 m-wrap" id="remark" name="remark" maxlength="50"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>  
+                <button type="button" class="btn blue" onclick="updateIcmbFlag();">确定</button>
+            </div>
+        </div>
         <@p.pagination value=page />
 	</div>
 </div>

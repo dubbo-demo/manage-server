@@ -22,6 +22,20 @@ $(function() {
 			}
 		});
 	}
+	$(".aIcmbShow").on('click',function(){
+		  var icmbFlag = $(this).data("icmbflag");
+	        var id = $(this).attr("data-id");
+	        $("#icmbShowId").val(id);
+	        $("#icmbShowFlag").val(icmbFlag);
+	        if(icmbFlag == 1){
+	        	$("#icmbTimeLabel").html("复职日期：");
+	        }else{
+	        	$("#icmbTimeLabel").html("离职日期：");
+	        }        
+	        $("#icmbTime").removeClass("error");
+	        $("#remark").removeClass("error");
+	})
+
 });
 
 function search(event) {
@@ -226,6 +240,72 @@ function onClick(e, treeId, treeNode) {
 			$("#positionId").append(
 					"<option value='" + resultData[i].positionId + "'>"
 							+ resultData[i].positionName + "</option>");
+		}
+	});
+}
+
+function updateUserflag(id,userFlag){
+	$.ajax({
+		url : serverPath + "/employee/updateUserflag.htm",
+		type : "post",
+		data : {
+			"id" : id,
+			"userFlag" : userFlag,
+			"Time" : new Date().getMilliseconds()
+		},
+		dataType : "json",
+		success : function(result) {
+			if (result.code == 0) {
+				BootstrapDialog.alert('操作成功', function(result) {
+					window.location.reload();
+				});
+			} else {
+				BootstrapDialog.alert("操作失败");
+			}
+		},
+		error : function() {
+			BootstrapDialog.alert("操作失败");
+		}
+	});
+}
+
+function updateIcmbFlag(){
+	var f = false;
+	if(ChkUtil.isNull($("#icmbTime").val())) {
+		$("#icmbTime").addClass("error");
+		f = true;
+	}else{
+		$("#icmbTime").removeClass("error");
+	}
+	if(ChkUtil.isNull($("#remark").val())) {
+		$("#remark").addClass("error");
+		f = true;
+	}else{
+		$("#remark").removeClass("error");
+	}	
+	if(f) {
+		return false;
+	}
+	$.ajax({
+		url : serverPath + "/employee/updateIcmbFlag.htm",
+		type : "post",
+		data : {
+			"id" : $("#icmbShowId").val(),
+			"icmbFlag" : $("#icmbShowFlag").val(),
+			"icmbTime" : $("#icmbTime").val()
+		},
+		dataType : "json",
+		success : function(result) {
+			if (result.code == 0) {
+				BootstrapDialog.alert('操作成功', function(result) {
+					window.location.reload();
+				});
+			} else {
+				BootstrapDialog.alert(result.message);
+			}
+		},
+		error : function() {
+			BootstrapDialog.alert("操作失败");
 		}
 	});
 }
