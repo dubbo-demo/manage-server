@@ -100,17 +100,6 @@
 					<th>岗位</th>
 					<th>星级</th>
 					<th>团队负责人</th>
-					<@shiro.hasPermission name="employee:edit">
-					<th>操作</th>
-					</@shiro.hasPermission>
-					<@shiro.hasPermission name="employee:move">
-					<th>操作</th>
-					</@shiro.hasPermission>
-					<th>操作</th>
-					<th>操作</th>
-					<@shiro.hasPermission name="employee:forbidden">
-					<th>操作</th>
-					</@shiro.hasPermission>
 					<th>操作</th>
 				</tr>
 			</thead>
@@ -132,18 +121,19 @@
 					<td>${item.positionName}</td>
 					<td>${(item.jobLevel)!''}</td>
 					<td>${(item.leaderName)!''}</td>
-					<@shiro.hasPermission name="employee:edit">
-					<td><a href="${serverPath}/employee/editEmployeeInfo.htm?id=${item.id?c}&searchemployeeName=${(queryDto.employeeName)!''}&searchemployeeNo=${(queryDto.employeeNo)!''}&searchidentityNumber=${(queryDto.identityNumber)!''}&searchorgType=${(queryDto.orgType)!''}&searchorgId=${(queryDto.orgId)!''}&searchorgName=${(queryDto.orgName)!''}&searchpositionId=${(queryDto.positionId)!''}&pageIndex=${(page.pageIndex)!1}&pageSize=${(page.pageSize)!10}">修改</a></td>
+                    <td>					
+                    <@shiro.hasPermission name="employee:edit">
+					<a href="${serverPath}/employee/editEmployeeInfo.htm?id=${item.id?c}&searchemployeeName=${(queryDto.employeeName)!''}&searchemployeeNo=${(queryDto.employeeNo)!''}&searchidentityNumber=${(queryDto.identityNumber)!''}&searchorgType=${(queryDto.orgType)!''}&searchorgId=${(queryDto.orgId)!''}&searchorgName=${(queryDto.orgName)!''}&searchpositionId=${(queryDto.positionId)!''}&pageIndex=${(page.pageIndex)!1}&pageSize=${(page.pageSize)!10}">修改</a>
 					</@shiro.hasPermission>
 					<@shiro.hasPermission name="employee:move">
-					<td><a href="${serverPath}/employee/manageEmployeeMoveInfo.htm?id=${item.id?c}&searchemployeeName=${(queryDto.employeeName)!''}&searchemployeeNo=${(queryDto.employeeNo)!''}&searchidentityNumber=${(queryDto.identityNumber)!''}&searchorgType=${(queryDto.orgType)!''}&searchorgId=${(queryDto.orgId)!''}&searchorgName=${(queryDto.orgName)!''}&searchpositionId=${(queryDto.positionId)!''}&pageIndex=${(page.pageIndex)!1}&pageSize=${(page.pageSize)!10}">员工调动</a></td>
+					<a href="${serverPath}/employee/manageEmployeeMoveInfo.htm?id=${item.id?c}&searchemployeeName=${(queryDto.employeeName)!''}&searchemployeeNo=${(queryDto.employeeNo)!''}&searchidentityNumber=${(queryDto.identityNumber)!''}&searchorgType=${(queryDto.orgType)!''}&searchorgId=${(queryDto.orgId)!''}&searchorgName=${(queryDto.orgName)!''}&searchpositionId=${(queryDto.positionId)!''}&pageIndex=${(page.pageIndex)!1}&pageSize=${(page.pageSize)!10}">员工调动</a>
 					</@shiro.hasPermission>
-					<td><a href="${serverPath}/employee/queryEmployeeMoveInfo.htm?id=${item.id?c}&searchemployeeName=${(queryDto.employeeName)!''}&searchemployeeNo=${(queryDto.employeeNo)!''}&searchidentityNumber=${(queryDto.identityNumber)!''}&searchorgType=${(queryDto.orgType)!''}&searchorgId=${(queryDto.orgId)!''}&searchorgName=${(queryDto.orgName)!''}&searchpositionId=${(queryDto.positionId)!''}&pageIndex=${(page.pageIndex)!1}&pageSize=${(page.pageSize)!10}">变更记录</a></td>
-					<td><a href="${serverPath}/employee/queryEmployeeInfoDetail.htm?id=${item.id?c}&searchemployeeName=${(queryDto.employeeName)!''}&searchemployeeNo=${(queryDto.employeeNo)!''}&searchidentityNumber=${(queryDto.identityNumber)!''}&searchorgType=${(queryDto.orgType)!''}&searchorgId=${(queryDto.orgId)!''}&searchorgName=${(queryDto.orgName)!''}&searchpositionId=${(queryDto.positionId)!''}&pageIndex=${(page.pageIndex)!1}&pageSize=${(page.pageSize)!10}">详细信息</a></td>
+					<a href="${serverPath}/employee/queryEmployeeMoveInfo.htm?id=${item.id?c}&searchemployeeName=${(queryDto.employeeName)!''}&searchemployeeNo=${(queryDto.employeeNo)!''}&searchidentityNumber=${(queryDto.identityNumber)!''}&searchorgType=${(queryDto.orgType)!''}&searchorgId=${(queryDto.orgId)!''}&searchorgName=${(queryDto.orgName)!''}&searchpositionId=${(queryDto.positionId)!''}&pageIndex=${(page.pageIndex)!1}&pageSize=${(page.pageSize)!10}">变更记录</a>
+					<a href="${serverPath}/employee/queryEmployeeInfoDetail.htm?id=${item.id?c}&searchemployeeName=${(queryDto.employeeName)!''}&searchemployeeNo=${(queryDto.employeeNo)!''}&searchidentityNumber=${(queryDto.identityNumber)!''}&searchorgType=${(queryDto.orgType)!''}&searchorgId=${(queryDto.orgId)!''}&searchorgName=${(queryDto.orgName)!''}&searchpositionId=${(queryDto.positionId)!''}&pageIndex=${(page.pageIndex)!1}&pageSize=${(page.pageSize)!10}">详细信息</a>
 					<@shiro.hasPermission name="employee:forbidden">
-					<td><a  <#if item.icmbFlag?? && item.icmbFlag == '0'>href="javascript:updateUserflag(${item.id!},${item.userFlag!})"<#else>href="javascript:void(0)"</#if>><#if item.userFlag?? &&  item.userFlag == '0'>启用<#else>禁用</#if></a></td>
+					<a  <#if item.icmbFlag?? && item.icmbFlag == '0'>href="javascript:updateUserflag(${item.id!},${item.userFlag!})"<#else>href="javascript:alertInfo()"</#if>><#if item.userFlag?? &&  item.userFlag == '0'>启用<#else>禁用</#if></a>
 					</@shiro.hasPermission>
-					<td><a data-target="#icmbShow" data-toggle="modal" class="aIcmbShow" data-id='${item.id!}' data-icmbflag='${item.icmbFlag!}'><#if item.icmbFlag?? && item.icmbFlag == '0'>离职<#else>复职</#if></a></td>
+					<a data-target="#icmbShow" data-toggle="modal" class="aIcmbShow" data-id='${item.id!}' data-icmbflag='${item.icmbFlag!}'><#if item.icmbFlag?? && item.icmbFlag == '0'>离职<#else>复职</#if></a></td>
 				</tr>
 				</#list>
 			</tbody>

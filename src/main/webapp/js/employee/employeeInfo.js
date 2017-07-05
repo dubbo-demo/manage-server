@@ -309,3 +309,7 @@ function updateIcmbFlag(){
 		}
 	});
 }
+
+function alertInfo(){
+	BootstrapDialog.alert("离职员工禁止启用");
+}

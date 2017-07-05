@@ -455,8 +455,10 @@ public class EmployeeController {
         employeeDetailDto.setId(id);
         if(icmbFlag == Constants.NO_INT){
             employeeDetailDto.setIcmbFlag(Constants.YES);
+            employeeDetailDto.setUserFlag(Constants.NO);
         }else{
             employeeDetailDto.setIcmbFlag(Constants.NO);
+            employeeDetailDto.setUserFlag(Constants.YES);
         }
         employeeDetailDto.setUpdateUser(ShiroUtils.getCurrentUser().getEmployeeName());
         employeeDetailDto.setIcmbTime(icmbTime);
