@@ -47,25 +47,19 @@ public class RoleController {
     PositionService positionService;
 
     @RequestMapping("/queryPageList")
-    public String queryPageList(BasePage page, Model model) {
-        ServiceResult<Pagination<SysRoleDto>> list = roleService.queryPageList(page.getPageIndex(), page.getPageSize());
+    public String queryPageList(SysRoleDto queryDto,BasePage page, Model model) {
+        ServiceResult<Pagination<SysRoleDto>> list = roleService.queryPageList(queryDto,page.getPageIndex(), page.getPageSize());
         model.addAttribute("result", list.getData());
-        ServiceResult<List<PositionDto>> positions = positionService.selectPosition();
-
-        model.addAttribute("positions", positions.getData());
         model.addAttribute("page", list.getData());
+        model.addAttribute("queryDto", queryDto);
         return PATH + "/list";
     }
 
     @RequestMapping("/getTemplate")
     public String getTemplate(Long id, Model model) {
-        ServiceResult<List<PositionDto>> positions = positionService.selectPosition();
-        model.addAttribute("positions", positions.getData());
         if (null != id) {
             ServiceResult<SysRoleDto> result = roleService.getRole(id);
             model.addAttribute("record", result.getData());
-            ServiceResult<List<Map<String, Object>>> positionIds = roleService.getRoleSelectedPosition(id);
-            model.addAttribute("positions", positionIds.getData());
         }
         return PATH + "/new_edit";
     }
@@ -76,15 +70,11 @@ public class RoleController {
         SysRoleDto dto = new SysRoleDto();
         dto.setRoleCode(param.getRoleCode());
         dto.setRoleName(param.getRoleName());
+        dto.setRoleType(param.getRoleType());
         dto.setCreateUser(ShiroUtils.getCurrentUserName());
         ServiceResult<Long> result = roleService.save(dto);
         Long id = result.getData();
         MyphLogger.access("保存角色成功！【" + id + "】");
-        RolePositionDto rolePositionDto = new RolePositionDto();
-        rolePositionDto.setPositionIds(param.getPositionIds());
-        rolePositionDto.setRoleId(id);
-        rolePositionDto.setCreateUser(ShiroUtils.getCurrentUserName());
-        roleService.save(rolePositionDto);
         return result;
     }
 
@@ -99,18 +89,11 @@ public class RoleController {
     @ResponseBody
     public ServiceResult<Integer> update(@RequestBody NewRoleParam param, Model model) {
         SysRoleDto dto = new SysRoleDto();
-        dto.setRoleCode(param.getRoleCode());
         dto.setRoleName(param.getRoleName());
         dto.setId(param.getId());
         ServiceResult<Integer> result = roleService.update(dto);
 
         MyphLogger.access("更新角色成功！【" + dto.getId() + "】");
-        RolePositionDto rolePositionDto = new RolePositionDto();
-        rolePositionDto.setPositionIds(param.getPositionIds());
-        rolePositionDto.setRoleId(dto.getId());
-        rolePositionDto.setCreateUser(ShiroUtils.getCurrentUserName());
-        roleService.save(rolePositionDto);
-        MyphLogger.access("更新角色与岗位成功！【" + dto.getId() + "】");
         return result;
     }
 
