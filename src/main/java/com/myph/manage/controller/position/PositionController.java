@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.myph.common.log.MyphLogger;
 import com.myph.common.result.AjaxResult;
 import com.myph.common.result.ServiceResult;
+import com.myph.common.rom.annotation.BasePage;
+import com.myph.common.rom.annotation.Pagination;
 import com.myph.manage.common.shiro.ShiroUtils;
 import com.myph.position.dto.PositionDto;
 import com.myph.position.service.OrgPositionService;
@@ -31,10 +33,14 @@ public class PositionController {
     private SysRoleService sysRoleService;
 
     @RequestMapping("/showPosition")
-    public String querPosition(Model model) {
+    public String querPosition(PositionDto positionDto, BasePage page,Model model) {
         try {
-            ServiceResult<List<PositionDto>> positionList = positionService.selectPosition();
-            model.addAttribute("positionList", positionList.getData());
+            ServiceResult<Pagination<PositionDto>> positionList = positionService.selectPosition(positionDto,
+                    page.getPageSize(), page.getPageIndex());
+            //查询岗位角色关系信息
+            
+            model.addAttribute("page", positionList.getData());
+            model.addAttribute("positionDto", positionDto);
             return "position/position";
         } catch (Exception e) {
             MyphLogger.error(e, "显示岗位异常");

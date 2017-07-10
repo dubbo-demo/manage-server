@@ -1,5 +1,6 @@
 $(function() {
-
+	//$('.cdjs').dropdown();
+	//$('.sjjs').dropdown();
 });
 
 function checkInput(patrn, obj) {
