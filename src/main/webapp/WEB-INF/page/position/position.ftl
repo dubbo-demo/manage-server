@@ -95,20 +95,14 @@
                         </select>
                     </div>
                     <div class="row-fluid">
-                    <lable class="dropdown1 bottom-up">
+                    <lable class="dropdown bottom-up">
                         <a class="btn green" href="#" data-toggle="dropdown">菜单角色选择<i class="icon-angle-down"></i></a>
-                        <div class="dropdown-menu bottom-up dropdown-checkboxes hold-on-click" style="height:150px;margin-left:15px;margin-bottom:-140px;width:100px;overflow-y:auto;overflow-x:auto">
-                            <label><input type="checkbox" position-data-id = "1" value="1" name="roleNames">aaa11111111111111111111111111a</label>
-                            <label><input type="checkbox" position-data-id = "1" value="1" name="roleNames">aaaa</label>
-                            <label><input type="checkbox" position-data-id = "1" value="1" name="roleNames">aaaa</label>
+                        <div class="dropdown-menu menuRole bottom-up dropdown-checkboxes hold-on-click" style="height:150px;margin-left:0px;margin-bottom:-190px;width:100px;overflow-y:auto;overflow-x:auto">
                         </div>
                     </lable>
-                    <lable class="dropdown2 bottom-up">
+                    <lable class="dropdown bottom-up">
                         <a class="btn green" href="#" data-toggle="dropdown" style="margin-left:50px;">数据角色选择<i class="icon-angle-down"></i></a>
-                        <div class="dropdown-menu bottom-up dropdown-checkboxes hold-on-click" style="height:150px;margin-left:190px;margin-bottom:-140px;width:100px;overflow-y:auto;overflow-x:auto">
-                            <label><input type="checkbox" position-data-id = "1" value="1" name="roleNames">111</label>
-                            <label><input type="checkbox" position-data-id = "1" value="1" name="roleNames">11</label>
-                            <label><input type="checkbox" position-data-id = "1" value="1" name="roleNames">111</label>
+                        <div class="dropdown-menu dataRole bottom-up dropdown-checkboxes hold-on-click" style="height:150px;margin-left:50px;margin-bottom:-190px;width:100px;overflow-y:auto;overflow-x:auto">
                         </div>
                     </lable>                       
                     </div>  

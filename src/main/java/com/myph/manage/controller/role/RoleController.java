@@ -2,7 +2,6 @@ package com.myph.manage.controller.role;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -14,17 +13,16 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.myph.base.dto.MenuDto;
 import com.myph.base.service.MenuService;
 import com.myph.common.log.MyphLogger;
+import com.myph.common.result.AjaxResult;
 import com.myph.common.result.ServiceResult;
 import com.myph.common.rom.annotation.BasePage;
 import com.myph.common.rom.annotation.Pagination;
 import com.myph.manage.common.shiro.ShiroUtils;
 import com.myph.manage.param.NewRoleParam;
-import com.myph.position.dto.PositionDto;
 import com.myph.position.service.OrgPositionService;
 import com.myph.position.service.PositionService;
 import com.myph.role.dto.RolePermissionSimpleTreeDto;
 import com.myph.role.dto.RolePermissionTreeDto;
-import com.myph.role.dto.RolePositionDto;
 import com.myph.role.dto.SysRoleDto;
 import com.myph.role.service.SysRoleService;
 
@@ -189,6 +187,14 @@ public class RoleController {
         }
 
         return ServiceResult.newSuccess(tree);
+    }
+    
+    
+    @RequestMapping("/selectRolesByType")
+    @ResponseBody
+    public AjaxResult selectRolesByType(Integer roleType) {
+        ServiceResult<List<SysRoleDto>> result = roleService.selectRolesByType(roleType);
+        return AjaxResult.success(result.getData());
     }
 
 }

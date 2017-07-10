@@ -1,7 +1,17 @@
-$(function() {
-	//$('.cdjs').dropdown();
-	//$('.sjjs').dropdown();
-});
+$(function(){ 
+
+}); 
+
+function setCheckbox() {  
+    $(':checkbox[name=dataRoles]').each(function(){  
+        $(this).click(function(){  
+            if($(this).attr('checked')){  
+                $(':checkbox[name=dataRoles]').removeAttr('checked');  
+                $(this).attr('checked','checked');  
+            }  
+        });  
+    });  
+};  
 
 function checkInput(patrn, obj) {
 	obj.value = obj.value.replace(/(^\s*)|(\s*$)/g, "");// 删除二边空格
@@ -38,6 +48,51 @@ function selectMaxPositionId() {
 		}
 	};
 	$.ajax(options);
+	showMenuRole();
+	showDataRole();
+}
+
+function showMenuRole(){
+	$(".menuRoleLabel").remove();
+	var data = {
+			url : serverPath + '/role/selectRolesByType.htm',
+			type : 'post',
+			dataType : 'json',
+			data : {
+				"roleType" : 0,
+				"Time" : new Date().getMilliseconds()
+			},
+			success : function(result) {
+				var data = result.data;
+				for (var i = 0; i < data.length; i++) {
+					$(".menuRole").append("<label class='menuRoleLabel'><input type='checkbox' value='" + data[i].id + "' name='menuRoles'>" + data[i].roleName + "</label>");
+				}
+			}
+		};
+		$.ajax(data);
+}
+
+function showDataRole(){
+	$(".dataRoleLabel").remove();
+	var data = {
+			url : serverPath + '/role/selectRolesByType.htm',
+			type : 'post',
+			dataType : 'json',
+			data : {
+				"roleType" : 1,
+				"Time" : new Date().getMilliseconds()
+			},
+			success : function(result) {
+				var data = result.data;
+				for (var i = 0; i < data.length; i++) {
+					$(".dataRole").append("<label class='dataRoleLabel'><input type='checkbox' class='dataRoles' value='" + data[i].id + "' name='dataRoles'>" + data[i].roleName + "</label>");
+				}
+				$(".dataRoles").on("click",function(){
+					setCheckbox();
+				});
+			}
+		};
+		$.ajax(data);
 }
 
 function addPosition() {
@@ -48,6 +103,19 @@ function addPosition() {
 		BootstrapDialog.alert("岗位名不可为空");
 		return false;
 	}
+	
+	var dataRoleIds = [];
+	$("input[name='dataRoles']:checked").each(function(index,dom){
+		var value = $(dom).val();
+		dataRoleIds.push(value);
+	});
+	
+	var menuRoleIds = [];
+	$("input[name='menuRoles']:checked").each(function(index,dom){
+		var value = $(dom).val();
+		menuRoleIds.push(value);
+	});	
+	return false;
 	// 岗位名称进行校验，不可与数据库中重复
 	var options = {
 		url : serverPath + '/position/addPosition.htm',
@@ -57,7 +125,9 @@ function addPosition() {
 			"Time" : new Date().getMilliseconds(),
 			"positionCode" : $("#addPositionCode").val(),
 			"positionName" : $("#addPositionName").val(),
-			"isManage" : $("#addIsManage").val()
+			"isManage" : $("#addIsManage").val(),
+			"dataRoleIds" : dataRoleIds,
+			"menuRoleIds" : menuRoleIds
 		},
 		success : function(result) {
 			var data = result.data;
