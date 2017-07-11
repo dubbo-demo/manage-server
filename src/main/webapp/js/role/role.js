@@ -269,7 +269,12 @@ $(function() {
 			})
 		});
 	});
-	
+	$("*[data-permission2-id]").click(function(e){
+		$("#condition_roleid").val($(this).data("permission2-id"));
+		$("#role_condition_content").load("${ctx}/roleCondition/init.htm?roleId="+$(this).data("permission2-id"),function(){
+
+		});
+	});
 	$("*[data-permission-id]").click(function(e){
 		var id = $(this).attr("data-permission-id");
 		treeSetting.roleId = id;

@@ -73,7 +73,13 @@
 					<td>${role.roleCode}</td>
 					<td>${role.roleName }</td>
 					<td><#if role.roleType == 0>菜单权限角色<#else>数据权限角色</#if></td>
-					<td><a class="btn blue" data-toggle="modal" data-permission-id="${role.id}" href="#role_permission">权限设置</a></td>
+					<td>
+						<#if role.roleType == 0>
+                            <a class="btn blue" data-toggle="modal" data-permission-id="${role.id}" href="#role_permission">权限设置</a>
+						<#else>
+                            <a class="btn blue" data-toggle="modal" data-permission2-id="${role.id}" href="#role_condition">数据权限</a>
+						</#if>
+					</td>
 					<td>
 					<label class="radio span">
 						<input 

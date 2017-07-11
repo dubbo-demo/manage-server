@@ -46,7 +46,7 @@ function showOrganization(setting, obj) {
 			treeNote.pId = resultData[i].parentId;
 			treeNote.name = resultData[i].orgName;
 			treeNote.level = resultData[i].orgLevel;
-			treeNote.open = true;
+			treeNote.open = false;
 			zNodes.push(treeNote);
 		}
 	});

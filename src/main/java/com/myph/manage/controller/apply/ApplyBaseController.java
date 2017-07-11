@@ -5,6 +5,9 @@ import com.myph.common.log.MyphLogger;
 import com.myph.common.result.AjaxResult;
 import com.myph.constant.FlowStateEnum;
 import com.myph.constant.bis.*;
+import com.myph.team.dto.SysTeamDto;
+import com.myph.team.service.SysTeamService;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * @author heyx
@@ -15,6 +18,25 @@ import com.myph.constant.bis.*;
  * @date 2017/5/31
  */
 public class ApplyBaseController {
+
+    @Autowired
+    SysTeamService sysTeamService;
+
+    public static final String NO_TEAM_STR = "请将业务员与团队经理关系绑定！";
+
+    /**
+     * 根据业务经理获取团队信息
+     * @param bmid
+     * @return
+     */
+    public SysTeamDto getTeamManage(Long bmid) {
+        // 获取团队经理
+        SysTeamDto teamDto = null;
+        if(null != bmid) {
+            teamDto =  sysTeamService.queryInfoByBmId(bmid).getData();
+        }
+        return teamDto;
+    }
 
     /**
      * @Description: 是否能够操作数据

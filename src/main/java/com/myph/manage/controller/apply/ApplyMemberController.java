@@ -2,6 +2,7 @@ package com.myph.manage.controller.apply;
 
 import java.util.Date;
 
+import com.myph.team.dto.SysTeamDto;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -99,6 +100,14 @@ public class ApplyMemberController extends ApplyBaseController{
             if (null != userDto.getData()) {
                 return AjaxResult.failed(applyUserDto.getApplyLoanNo()+"已经新增成功，修改请关闭当前界面，从申请单管理界面重新进入！");
             }
+            // update团队经理
+            SysTeamDto teamDto = getTeamManage(applyUserDto.getBmId());
+            if(null == teamDto) {
+                return AjaxResult.failed(NO_TEAM_STR);
+            } else {
+                applyUserDto.setTeamManageId(teamDto.getLeaderId());
+                applyUserDto.setTeamManageName(teamDto.getLeaderName());
+            }
             ServiceResult<Integer> data = null;
             if (null != applyUserDto && null != applyUserDto.getEmail()) {
                 applyUserDto.setEmail(applyUserDto.getEmail().toLowerCase());
@@ -142,6 +151,14 @@ public class ApplyMemberController extends ApplyBaseController{
         }
         MyphLogger.info("修改个人信息 updateInfo 输入参数{}", applyUserDto.toString());
         try {
+            // update团队经理
+            SysTeamDto teamDto = getTeamManage(applyUserDto.getBmId());
+            if(null == teamDto) {
+                return AjaxResult.failed(NO_TEAM_STR);
+            } else {
+                applyUserDto.setTeamManageId(teamDto.getLeaderId());
+                applyUserDto.setTeamManageName(teamDto.getLeaderName());
+            }
             ServiceResult<Integer> data = null;
             if (null != applyUserDto && null != applyUserDto.getEmail()) {
                 applyUserDto.setEmail(applyUserDto.getEmail().toLowerCase());
