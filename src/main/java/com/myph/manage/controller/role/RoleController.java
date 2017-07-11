@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.myph.base.dto.MenuDto;
 import com.myph.base.service.MenuService;
+import com.myph.common.constant.Constants;
 import com.myph.common.log.MyphLogger;
 import com.myph.common.result.AjaxResult;
 import com.myph.common.result.ServiceResult;
@@ -21,6 +22,7 @@ import com.myph.manage.common.shiro.ShiroUtils;
 import com.myph.manage.param.NewRoleParam;
 import com.myph.position.service.OrgPositionService;
 import com.myph.position.service.PositionService;
+import com.myph.role.dto.AuditPositionRoleDto;
 import com.myph.role.dto.RolePermissionSimpleTreeDto;
 import com.myph.role.dto.RolePermissionTreeDto;
 import com.myph.role.dto.SysRoleDto;
@@ -189,12 +191,24 @@ public class RoleController {
         return ServiceResult.newSuccess(tree);
     }
     
-    
     @RequestMapping("/selectRolesByType")
     @ResponseBody
     public AjaxResult selectRolesByType(Integer roleType) {
         ServiceResult<List<SysRoleDto>> result = roleService.selectRolesByType(roleType);
         return AjaxResult.success(result.getData());
+    }
+    
+    @RequestMapping("/selectRolesByTypeAndPositionId")
+    @ResponseBody
+    public AjaxResult selectRolesByTypeAndPositionId(Integer roleType,Integer positionId) {
+        ServiceResult<List<SysRoleDto>> sysRoles = roleService.selectRolesByType(roleType);
+        ServiceResult<List<Long>> menuRoleIds = roleService.selectRoleIds(positionId,Constants.NO_INT);
+        ServiceResult<List<Long>> dataRoleIds = roleService.selectRoleIds(positionId,Constants.YES_INT);
+        AuditPositionRoleDto result = new AuditPositionRoleDto();
+        result.setRoles(sysRoles.getData());
+        result.setMenuRoleIds(menuRoleIds.getData());
+        result.setDataRoleIds(dataRoleIds.getData());
+        return AjaxResult.success(result);
     }
 
 }

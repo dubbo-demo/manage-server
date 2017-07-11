@@ -13,6 +13,16 @@ function setCheckbox() {
     });  
 };  
 
+function setAuditCheckbox() {  
+    $(':checkbox[name=auditDataRoles]').each(function(){  
+        $(this).click(function(){  
+            if($(this).attr('checked')){  
+                $(':checkbox[name=auditDataRoles]').removeAttr('checked');  
+                $(this).attr('checked','checked');  
+            }  
+        });  
+    });  
+};
 function checkInput(patrn, obj) {
 	obj.value = obj.value.replace(/(^\s*)|(\s*$)/g, "");// 删除二边空格
 	var objExp = new RegExp(patrn);
@@ -87,9 +97,64 @@ function showDataRole(){
 				for (var i = 0; i < data.length; i++) {
 					$(".dataRole").append("<label class='dataRoleLabel'><input type='checkbox' class='dataRoles' value='" + data[i].id + "' name='dataRoles'>" + data[i].roleName + "</label>");
 				}
-				$(".dataRoles").on("click",function(){
-					setCheckbox();
-				});
+				setCheckbox();
+			}
+		};
+		$.ajax(data);
+}
+
+function showAuditMenuRole(positionId){
+	$(".auditMenuRoleLabel").remove();
+	var data = {
+			url : serverPath + '/role/selectRolesByTypeAndPositionId.htm',
+			type : 'post',
+			dataType : 'json',
+			data : {
+				"roleType" : 0,
+				"positionId" : positionId,
+				"Time" : new Date().getMilliseconds()
+			},
+			success : function(result) {
+				var data = result.data;
+				var roles = data.roles;
+				for (var i = 0; i < roles.length; i++) {
+					$(".auditMenuRole").append("<label class='auditMenuRoleLabel'><input type='checkbox' class='"+ roles[i].id +"' value='" + roles[i].id + "' name='auditMenuRoles'>" + roles[i].roleName + "</label>");
+				}
+				//设置默认选中
+				var menuRoleIds = data.menuRoleIds;
+				for(var i = 0; i < menuRoleIds.length; i++){
+					var id = '.'+menuRoleIds[i];
+					$(id).attr("checked",'true');
+				}
+			}
+		};
+		$.ajax(data);
+}
+
+function showAuditDataRole(positionId){
+	$(".auditDataRoleLabel").remove();
+	var data = {
+			url : serverPath + '/role/selectRolesByTypeAndPositionId.htm',
+			type : 'post',
+			dataType : 'json',
+			data : {
+				"roleType" : 1,
+				"positionId" : positionId,
+				"Time" : new Date().getMilliseconds()
+			},
+			success : function(result) {
+				var data = result.data;
+				var roles = data.roles;
+				for (var i = 0; i < roles.length; i++) {
+					$(".auditDataRole").append("<label class='auditDataRoleLabel'><input type='checkbox' class='auditDataRoles " + roles[i].id + "' value='" + roles[i].id + "' name='auditDataRoles'>" + roles[i].roleName + "</label>");
+				}
+				setAuditCheckbox();
+				//设置默认选中
+				var dataRoleIds = data.dataRoleIds;
+				for(var i = 0; i < dataRoleIds.length; i++){
+					var id = '.'+dataRoleIds[i];
+					$(id).attr("checked",'true');
+				}
 			}
 		};
 		$.ajax(data);
@@ -115,20 +180,20 @@ function addPosition() {
 		var value = $(dom).val();
 		menuRoleIds.push(value);
 	});	
-	return false;
-	// 岗位名称进行校验，不可与数据库中重复
-	var options = {
-		url : serverPath + '/position/addPosition.htm',
-		type : 'post',
-		dataType : 'json',
-		data : {
-			"Time" : new Date().getMilliseconds(),
+	var data = {
 			"positionCode" : $("#addPositionCode").val(),
 			"positionName" : $("#addPositionName").val(),
 			"isManage" : $("#addIsManage").val(),
 			"dataRoleIds" : dataRoleIds,
 			"menuRoleIds" : menuRoleIds
-		},
+		};
+	// 岗位名称进行校验，不可与数据库中重复
+	var options = {
+		url : serverPath + '/position/addPosition.htm',
+		type : 'post',
+		dataType : 'json',
+		contentType : "application/json",
+		data : JSON.stringify(data),
 		success : function(result) {
 			var data = result.data;
 			if (data > 0) {
@@ -156,18 +221,34 @@ function updatePosition() {
 		BootstrapDialog.alert("岗位名不可为空");
 		return false;
 	}
+	var dataRoleIds = [];
+	$("input[name='auditDataRoles']:checked").each(function(index,dom){
+		var value = $(dom).val();
+		dataRoleIds.push(value);
+	});
+	
+	var menuRoleIds = [];
+	$("input[name='auditMenuRoles']:checked").each(function(index,dom){
+		var value = $(dom).val();
+		menuRoleIds.push(value);
+	});	
+	
+	var data = {
+			"positionCode" : $("#updatePositionCode").val(),
+			"positionName" : $("#updatePositionName").val(),
+			"isManage" : $("#updateIsManage").val(),
+			"id" : $("#updatePositionId").val(),
+			"dataRoleIds" : dataRoleIds,
+			"menuRoleIds" : menuRoleIds
+		};
+	
 	// 岗位名称进行校验，不可与数据库中重复
 	var options = {
 		url : serverPath + '/position/updatePosition.htm',
 		type : 'post',
 		dataType : 'json',
-		data : {
-			"Time" : new Date().getMilliseconds(),
-			"positionCode" : $("#updatePositionCode").val(),
-			"positionName" : $("#updatePositionName").val(),
-			"isManage" : $("#updateIsManage").val(),
-			"id" : $("#updatePositionId").val()
-		},
+		contentType : "application/json",
+		data : JSON.stringify(data),
 		success : function(result) {
 			var data = result.data;
 			if (data > 0) {
@@ -193,6 +274,8 @@ function update(id) {
 	}else{
 		$("#updateIsManage").val(0);
 	}
+	showAuditMenuRole(id);
+	showAuditDataRole(id);
 }
 
 function del(id) {

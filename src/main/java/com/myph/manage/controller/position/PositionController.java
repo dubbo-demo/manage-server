@@ -7,6 +7,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -76,7 +77,7 @@ public class PositionController {
 
     @RequestMapping("/addPosition")
     @ResponseBody
-    public AjaxResult addPosition(Model model, PositionDto positionDto) {
+    public AjaxResult addPosition(Model model, @RequestBody PositionDto positionDto) {
         try {
             // 检查岗位名称是否重复
             ServiceResult<Integer> checkPositionName = positionService.checkPositionName(positionDto);
@@ -122,7 +123,7 @@ public class PositionController {
 
     @RequestMapping("/updatePosition")
     @ResponseBody
-    public AjaxResult updatePosition(Model model, PositionDto positionDto) {
+    public AjaxResult updatePosition(Model model, @RequestBody PositionDto positionDto) {
         try {
             // 检查岗位名称是否重复
             ServiceResult<Integer> checkPositionName = positionService.checkPositionName(positionDto);
