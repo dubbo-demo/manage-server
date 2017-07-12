@@ -16,12 +16,16 @@ public class RoleConditionDto extends BaseInfo {
 
     private static final long serialVersionUID = 3425947513154526967L;
 
+    // 组织
     private List<OrganizationDto> orgs;
 
+    // 产品与逾期
     private List<SysRoleConditionDto> prdOvers;
 
-    private List<SysRoleConditionDto> clients;
+    // 渠道
+    private List<Integer> clients;
 
+    // 数据源
     private List<SysRoleConditionDto> sources;
 
 }
