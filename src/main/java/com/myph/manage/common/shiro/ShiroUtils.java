@@ -3,6 +3,7 @@
  */
 package com.myph.manage.common.shiro;
 
+import com.myph.manage.common.shiro.dto.RoleConditionDto;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
@@ -24,6 +25,7 @@ public class ShiroUtils {
     public static final String CURRENT_USER_KEY = "currentUser";
     public static final String CURRENT_ACCOUNT_TYPE = "accountType";
     public static final String CURRENT_EMP_DETAIL = "empDetail";
+    public static final String ROLE_CONDITION= "role_condition";
 
     public static EmployeeInfoDto getCurrentUser() {
         try {
@@ -240,5 +242,26 @@ public class ShiroUtils {
 
         }
         return empDetailDto;
+    }
+
+    /**
+     *
+     *
+     * @名称 getRoleCondition
+     * @描述 获取当前登录用户数据权限相关信息
+     * @返回类型 String
+     * @日期 2016年9月27日 下午6:24:25
+     * @创建人 hf
+     * @更新人 hf
+     *
+     */
+    public static RoleConditionDto getRoleCondition() {
+        RoleConditionDto roleConditionDto = new RoleConditionDto();
+        try {
+            roleConditionDto = (RoleConditionDto) ShiroUtils.getSessionAttribute(ShiroUtils.ROLE_CONDITION);
+        } catch (Exception e) {
+
+        }
+        return roleConditionDto;
     }
 }
