@@ -271,7 +271,7 @@ $(function() {
 	});
 	$("*[data-permission2-id]").click(function(e){
 		$("#condition_roleid").val($(this).data("permission2-id"));
-		$("#role_condition_content").load("${ctx}/roleCondition/init.htm?roleId="+$(this).data("permission2-id"),function(){
+		$("#role_condition_content").load(serverPath + "/roleCondition/init.htm?roleId="+$(this).data("permission2-id"),function(){
 
 		});
 	});

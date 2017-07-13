@@ -61,9 +61,17 @@
 									<div class="control-group span3 ">
 										<label class="help-inline text-right span4">渠道：</label>
 										<select class="m-wrap span5" id="clientType" name="clientType" value="${queryDto.clientType!}">
-											<option value="">请选择</option>
-											<option value="0">线下</option>
-											<option value="1">app</option>
+											<#if queryDto.clientType??>
+											    <#if queryDto.clientType == 1>
+                                                    <option value="1">app</option>
+												<#else>
+                                                    <option value="0">web</option>
+											    </#if>
+											<#else>
+                                                <option value="">请选择</option>
+                                                <option value="0">web</option>
+                                                <option value="1">app</option>
+											</#if>
 										</select>
 									</div>
 									<div class="control-group span3 ">
