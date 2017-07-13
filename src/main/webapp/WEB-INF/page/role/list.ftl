@@ -137,5 +137,19 @@
 				<button type="button" class="btn blue" data-dismiss="modal" onclick="role_permission_edit();">提交</button>
 			</div>
 	</div>
+	<div id="role_condition" class="modal hide fade" tabindex="-1"
+		 data-width="760" style="width:45%;height:70%;overflow-y:auto;overflow-x:hidden ">
+		<input type="hidden" id="condition_roleid" value="">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal"
+					aria-hidden="true"></button>
+			<h3>数据权限</h3>
+		</div>
+		<div id="role_condition_content" class="" style=""></div>
+		<div class="modal-footer">
+			<button type="button" data-dismiss="modal" class="btn">返回</button>
+			<button type="button" class="btn blue" data-dismiss="modal" onclick="submitRoleCondition();">提交</button>
+		</div>
+	</div>
 	
 <#include "/sys/bottom.ftl">

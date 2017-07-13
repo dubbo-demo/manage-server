@@ -28,8 +28,8 @@
 							</#if>
                             <label class="checkbox" style="width:17%;">
                                 <span>
-									<input type="checkbox" name="shops" class="checkboxitem" id="shop${s.orgCode}"
-										   onchange="changeShop(this,'${s.parentId}')" parentId="${s.parentId}" value="${s.orgCode}"/>
+									<input type="checkbox" name="shops" class="checkboxitem" id="shop${s.id}"
+										   onchange="changeShop(this,'${s.parentId}')" parentId="${s.parentId}" value="${s.id}"/>
 								</span>${s.orgName}
                             </label>
 						</#if>
