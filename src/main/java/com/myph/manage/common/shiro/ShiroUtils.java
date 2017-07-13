@@ -4,12 +4,18 @@
 package com.myph.manage.common.shiro;
 
 import com.myph.manage.common.shiro.dto.RoleConditionDto;
+import com.myph.organization.dto.OrganizationDto;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
 
 import com.myph.common.log.MyphLogger;
 import com.myph.employee.dto.EmployeeInfoDto;
+import com.myph.employee.constants.EmployeeMsg.ORGANIZATION_TYPE;
 import com.myph.employee.dto.EmpDetailDto;
 
 /**
@@ -239,7 +245,7 @@ public class ShiroUtils {
         try {
             empDetailDto = (EmpDetailDto) ShiroUtils.getSessionAttribute(ShiroUtils.CURRENT_EMP_DETAIL);
         } catch (Exception e) {
-
+            MyphLogger.error("获取当前登录用户组织相关信息异常", e);
         }
         return empDetailDto;
     }
@@ -259,8 +265,60 @@ public class ShiroUtils {
         try {
             roleConditionDto = (RoleConditionDto) ShiroUtils.getSessionAttribute(ShiroUtils.ROLE_CONDITION);
         } catch (Exception e) {
-
+            MyphLogger.error("获取当前登录用户数据权限相关信息异常", e);
         }
         return roleConditionDto;
     }
+    
+    /**
+     * 
+     * @名称 getRegionInfo 
+     * @描述 获取当前登录用户数据权限中大区信息
+     * @返回类型 List<OrganizationDto>     
+     * @日期 2017年7月13日 下午2:20:24
+     * @创建人  吴阳春
+     * @更新人  吴阳春
+     *
+     */
+    public static List<OrganizationDto> getRegionInfo() {
+        List<OrganizationDto> result = new ArrayList<OrganizationDto>();
+        try {
+            RoleConditionDto roleConditionDto = (RoleConditionDto) ShiroUtils.getSessionAttribute(ShiroUtils.ROLE_CONDITION);
+            for(OrganizationDto dto:roleConditionDto.getOrgs()){
+                if(dto.getOrgType() == ORGANIZATION_TYPE.REGION_TYPE.toNumber()){
+                    result.add(dto);
+                }
+            }
+        } catch (Exception e) {
+            MyphLogger.error("获取当前登录用户数据权限中大区信息异常", e);
+        }
+        return result; 
+    }
+
+    /**
+     * 
+     * @名称 getStoreInfo 
+     * @描述 根据大区ID获取当前登录用户数据权限中门店信息
+     * @返回类型 List<OrganizationDto>     
+     * @日期 2017年7月13日 下午2:22:16
+     * @创建人  吴阳春
+     * @更新人  吴阳春
+     *
+     */
+    public static List<OrganizationDto> getStoreInfo(Long id) {
+        List<OrganizationDto> result = new ArrayList<OrganizationDto>();
+        try {
+            RoleConditionDto roleConditionDto = (RoleConditionDto) ShiroUtils.getSessionAttribute(ShiroUtils.ROLE_CONDITION);
+            for(OrganizationDto dto:roleConditionDto.getOrgs()){
+                if(dto.getParentId() == id){
+                    result.add(dto);
+                }
+            }
+        } catch (Exception e) {
+            MyphLogger.error("根据大区ID获取当前登录用户数据权限中门店信息异常", e);
+        }
+        return result; 
+    }
+
+    
 }

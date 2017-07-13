@@ -308,4 +308,29 @@ public class OrganizationController {
             return AjaxResult.failed("获取总部下所有部门信息异常");
         }
     }
+    
+    
+    @RequestMapping("/getRegionInfo")
+    @ResponseBody
+    public AjaxResult getRegionInfo() {
+        try {
+            List<OrganizationDto> result = ShiroUtils.getRegionInfo();
+            return AjaxResult.success(result);
+        } catch (Exception e) {
+            MyphLogger.error("获取当前登录用户数据权限中大区信息异常",e);
+            return AjaxResult.failed("获取当前登录用户数据权限中大区信息异常");
+        }
+    }
+    
+    @RequestMapping("/getStoreInfo")
+    @ResponseBody
+    public AjaxResult getStoreInfo(Long id) {
+        try {
+            List<OrganizationDto> result = ShiroUtils.getStoreInfo(id);
+            return AjaxResult.success(result);
+        } catch (Exception e) {
+            MyphLogger.error("根据大区ID获取当前登录用户数据权限中门店信息",e);
+            return AjaxResult.failed("根据大区ID获取当前登录用户数据权限中门店信息");
+        }
+    }
 }
