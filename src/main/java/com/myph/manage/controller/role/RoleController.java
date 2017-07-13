@@ -200,7 +200,7 @@ public class RoleController {
     
     @RequestMapping("/selectRolesByTypeAndPositionId")
     @ResponseBody
-    public AjaxResult selectRolesByTypeAndPositionId(Integer roleType,Integer positionId) {
+    public AjaxResult selectRolesByTypeAndPositionId(Integer roleType,Long positionId) {
         ServiceResult<List<SysRoleDto>> sysRoles = roleService.selectRolesByType(roleType);
         ServiceResult<List<Long>> menuRoleIds = roleService.selectRoleIds(positionId,Constants.NO_INT);
         ServiceResult<List<Long>> dataRoleIds = roleService.selectRoleIds(positionId,Constants.YES_INT);

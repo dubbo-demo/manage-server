@@ -245,14 +245,13 @@ public class ShiroUtils {
     }
 
     /**
-     *
-     *
-     * @名称 getRoleCondition
+     * 
+     * @名称 getRoleCondition 
      * @描述 获取当前登录用户数据权限相关信息
-     * @返回类型 String
-     * @日期 2016年9月27日 下午6:24:25
-     * @创建人 hf
-     * @更新人 hf
+     * @返回类型 RoleConditionDto     
+     * @日期 2017年7月12日 下午1:55:49
+     * @创建人  HYX
+     * @更新人  HYX
      *
      */
     public static RoleConditionDto getRoleCondition() {

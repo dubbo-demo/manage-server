@@ -26,6 +26,6 @@ public class RoleConditionDto extends BaseInfo {
     private List<Integer> clients;
 
     // 数据源
-    private List<SysRoleConditionDto> sources;
+    private List<String> sources;
 
 }
