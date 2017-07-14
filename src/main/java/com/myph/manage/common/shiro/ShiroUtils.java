@@ -320,5 +320,29 @@ public class ShiroUtils {
         return result; 
     }
 
+    /**
+     *
+     * @名称 getStoreInfo
+     * @描述 获取当前登录用户数据权限中门店信息
+     * @返回类型 List<OrganizationDto>
+     * @日期 2017年7月13日 下午2:22:16
+     * @创建人  吴阳春
+     * @更新人  吴阳春
+     *
+     */
+    public static List<OrganizationDto> getStoreInfo() {
+        List<OrganizationDto> result = new ArrayList<OrganizationDto>();
+        try {
+            RoleConditionDto roleConditionDto = (RoleConditionDto) ShiroUtils.getSessionAttribute(ShiroUtils.ROLE_CONDITION);
+            for(OrganizationDto dto:roleConditionDto.getOrgs()){
+                if(dto.getOrgType() == ORGANIZATION_TYPE.STORE_TYPE.toNumber()){
+                    result.add(dto);
+                }
+            }
+        } catch (Exception e) {
+            MyphLogger.error("获取当前登录用户数据权限中门店信息异常", e);
+        }
+        return result;
+    }
     
 }

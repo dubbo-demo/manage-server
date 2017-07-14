@@ -77,19 +77,19 @@ public class SysRoleConditionController {
                     orgStr = orgStr + "," + roleC.getConditionCode();
                 }
             }
-            if(RoleConditionEnum.PRODUCT.getDesc().equals(roleC.getDimension())) {
+            if(RoleConditionEnum.PRODUCT.getCode().equals(roleC.getDimension())) {
                 pStr = roleC.getConditionCode() == null ? null : roleC.getConditionCode().split(",");
                 for(String yq : pStr) {
                     pList.add(roleC.getParentCode()+yq);
                 }
             }
-            if(RoleConditionEnum.CLIENT.getDesc().equals(roleC.getDimension())) {
+            if(RoleConditionEnum.CLIENT.getCode().equals(roleC.getDimension())) {
                 pStr = roleC.getConditionCode() == null ? null : roleC.getConditionCode().split(",");
                 for(String yq : pStr) {
                     cList.add(roleC.getParentCode()+yq);
                 }
             }
-            if(RoleConditionEnum.SOURCE.getDesc().equals(roleC.getDimension())) {
+            if(RoleConditionEnum.SOURCE.getCode().equals(roleC.getDimension())) {
                 pStr = roleC.getConditionCode() == null ? null : roleC.getConditionCode().split(",");
                 for(String yq : pStr) {
                     sList.add(roleC.getParentCode()+yq);

@@ -200,8 +200,13 @@ public class SignController extends BaseController {
 	private void initSignListParams(Model model, SignQueryDto queryDto, BasePage basePage) {
 		EmployeeInfoDto user = ShiroUtils.getCurrentUser();
 		EmpDetailDto empDetail = ShiroUtils.getEmpDetail();
+		List<OrganizationDto> orgs = ShiroUtils.getStoreInfo();
 		model.addAttribute("user", user);
-		queryDto.setStoreId(empDetail.getStoreId());
+		List<Long> storeIds = new ArrayList<Long>();
+		for(OrganizationDto org : orgs){
+			storeIds.add(org.getId());
+		}
+		queryDto.setStoreIds(storeIds);
 		model.addAttribute("storeName", empDetail.getStoreName());
 		if (null == basePage.getSortField()) {// 进件日期倒序
 			basePage.setSortField("a.subState DESC,t.passTime");
