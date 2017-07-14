@@ -310,7 +310,7 @@ public class ShiroUtils {
         try {
             RoleConditionDto roleConditionDto = (RoleConditionDto) ShiroUtils.getSessionAttribute(ShiroUtils.ROLE_CONDITION);
             for(OrganizationDto dto:roleConditionDto.getOrgs()){
-                if(dto.getParentId() == id){
+                if(dto.getParentId().equals(id)){
                     result.add(dto);
                 }
             }

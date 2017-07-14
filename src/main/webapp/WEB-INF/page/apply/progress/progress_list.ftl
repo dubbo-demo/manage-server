@@ -293,15 +293,8 @@ background: #f2dede
 		initAreaData();
 	}
 	function initAreaData(){
-	var queryData;
-	var url;
-	if(orgType==2){
-	    url=serverPath + "/organization/selectOrgByOrgType.htm";
-		queryData ={"orgType" : 1,	"Time" : new Date().getMilliseconds()}
-	}else{
-	    url=serverPath + "/organization/selectOrganizationById.htm";
-		queryData ={"id":regionId,	"Time" : new Date().getMilliseconds()}
-	};
+	var queryData ={"Time" : new Date().getMilliseconds()};
+	var url=serverPath + "/organization/getRegionInfo.htm";
 		$.ajax({
 			url: url,
 			type:"post",
@@ -347,16 +340,8 @@ background: #f2dede
 		if(parentId == "0"){
 			return;
 		}
-		var queryData;
-		var url;
-		if(orgType==3)
-		{
-		    url=serverPath + "/organization/selectOrganizationById.htm";
-			queryData ={"id":storeId,	"Time" : new Date().getMilliseconds()}
-		}else{
-		    url=serverPath + "/organization/selectOrgByParentId.htm";
-			queryData ={"parentId" : parentId,	"Time" : new Date().getMilliseconds()}
-		};
+		var queryData ={"id":parentId, "Time" : new Date().getMilliseconds()}
+		var url=serverPath + "/organization/getStoreInfo.htm";
 		$.ajax({
 			url: url,
 			type:"post",

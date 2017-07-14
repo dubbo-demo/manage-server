@@ -64,10 +64,12 @@ public class EmployeeController {
         EmpDetailDto empDetail = ShiroUtils.getEmpDetail();
         EmployeeInfoDto user = ShiroUtils.getCurrentUser();
         Long orgId = 0l;
-        if (user.getOrgType() == 3) {
+        if (user.getOrgType() == EmployeeMsg.ORGANIZATION_TYPE.STORE_TYPE.toNumber()) {
             orgId = empDetail.getStoreId();
-        } else {
+        } else if(user.getOrgType() == EmployeeMsg.ORGANIZATION_TYPE.REGION_TYPE.toNumber()) {
             orgId = empDetail.getRegionId();
+        } else{
+            orgId = 0l;
         }
         if (null == queryDto.getOrgId()) {
             queryDto.setOrgId(orgId);
