@@ -368,7 +368,11 @@ function contactsSaveInfo(nextFlag,formID,next) {
 				if(checkNum > 0) {
 					checkNum--;
 					if(checkNum == 0) {
-						BootstrapDialog.alert(res.message);
+						BootstrapDialog.alert(res.message, function() {
+							setTimeout(function() {
+									window.location.reload();
+							}, 0);
+						});
 					}
 				}
 			}
@@ -378,7 +382,11 @@ function contactsSaveInfo(nextFlag,formID,next) {
 			if(checkNum > 0) {
 				checkNum--;
 				if(checkNum == 0) {
-					BootstrapDialog.alert("系统异常");
+					BootstrapDialog.alert("系统异常", function() {
+						setTimeout(function() {
+								window.location.reload();
+						}, 0);
+					});
 				}
 			}
 		}
