@@ -368,11 +368,7 @@ function contactsSaveInfo(nextFlag,formID,next) {
 				if(checkNum > 0) {
 					checkNum--;
 					if(checkNum == 0) {
-						BootstrapDialog.alert(res.message, function() {
-							setTimeout(function() {
-									window.location.reload();
-							}, 0);
-						});
+						BootstrapDialog.alert(res.message);
 					}
 				}
 			}
@@ -382,11 +378,7 @@ function contactsSaveInfo(nextFlag,formID,next) {
 			if(checkNum > 0) {
 				checkNum--;
 				if(checkNum == 0) {
-					BootstrapDialog.alert("系统异常", function() {
-						setTimeout(function() {
-								window.location.reload();
-						}, 0);
-					});
+					BootstrapDialog.alert("数据已更新，请刷新页面后查看");
 				}
 			}
 		}

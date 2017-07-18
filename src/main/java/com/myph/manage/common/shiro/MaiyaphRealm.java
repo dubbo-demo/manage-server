@@ -290,7 +290,7 @@ public class MaiyaphRealm extends AuthorizingRealm {
             List<OrganizationDto> curOrgs = this.getCurOrgs(orgType,empDetailDto);
             result.setOrgs(curOrgs);
         }
-        MyphLogger.info("数据权限缓存:"+result.toString());
+        MyphLogger.debug("数据权限缓存:"+result.toString());
         return result;
     }
     
