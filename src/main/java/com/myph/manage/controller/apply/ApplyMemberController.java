@@ -100,7 +100,7 @@ public class ApplyMemberController extends ApplyBaseController{
             if (null != userDto.getData()) {
                 return AjaxResult.failed(applyUserDto.getApplyLoanNo()+"已经新增成功，修改请关闭当前界面，从申请单管理界面重新进入！");
             }
-            // update团队经理
+            //TODO V2.0 业务员变了，修改团队经理？？？是否reception一直
             SysTeamDto teamDto = getTeamManage(applyUserDto.getBmId());
             if(null == teamDto) {
                 return AjaxResult.failed(NO_TEAM_STR);
@@ -151,7 +151,7 @@ public class ApplyMemberController extends ApplyBaseController{
         }
         MyphLogger.info("修改个人信息 updateInfo 输入参数{}", applyUserDto.toString());
         try {
-            // update团队经理
+            //TODO V2.0 业务员变了，修改团队经理？？？？
             SysTeamDto teamDto = getTeamManage(applyUserDto.getBmId());
             if(null == teamDto) {
                 return AjaxResult.failed(NO_TEAM_STR);

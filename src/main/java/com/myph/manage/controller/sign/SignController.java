@@ -11,6 +11,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import com.myph.employee.constants.EmployeeMsg;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -182,7 +183,7 @@ public class SignController extends BaseController {
 		}
 		model.addAttribute("page", pageResult.getData());
 		model.addAttribute("queryDto", queryDto);
-		MyphLogger.info("结束开始申请单待签约查询：/sign/list.htm|page=" + pageResult);
+		MyphLogger.debug("结束开始申请单待签约查询：/sign/list.htm|page=" + pageResult);
 		return "/apply/sign/sign_list";
 	}
 
@@ -200,13 +201,17 @@ public class SignController extends BaseController {
 	private void initSignListParams(Model model, SignQueryDto queryDto, BasePage basePage) {
 		EmployeeInfoDto user = ShiroUtils.getCurrentUser();
 		EmpDetailDto empDetail = ShiroUtils.getEmpDetail();
-		List<OrganizationDto> orgs = ShiroUtils.getStoreInfo();
 		model.addAttribute("user", user);
-		List<Long> storeIds = new ArrayList<Long>();
-		for(OrganizationDto org : orgs){
-			storeIds.add(org.getId());
+		List<OrganizationDto> orgs = ShiroUtils.getStoreInfo();
+		// 查询组织条件为空获取当前组织数据权限
+		if(null == queryDto.getStoreId()) {
+			List<Long> storeIds = new ArrayList<Long>();
+			for(OrganizationDto org : orgs){
+				storeIds.add(org.getId());
+			}
+			queryDto.setStoreIds(storeIds);
 		}
-		queryDto.setStoreIds(storeIds);
+		model.addAttribute("orgs",orgs);
 		model.addAttribute("storeName", empDetail.getStoreName());
 		if (null == basePage.getSortField()) {// 进件日期倒序
 			basePage.setSortField("a.subState DESC,t.passTime");

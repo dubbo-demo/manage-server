@@ -54,7 +54,16 @@ background: #f2dede
 						<div class="control-group span4 ">
 							<label class="help-inline text-right span4">门店：</label> 
 							<div>
-								<input type="text" class="m-wrap span8" readonly="true" value="${(storeName)!''}">
+                                <select data-placeholder="Your Favorite Football Team" name="storeId" class="chosen span6 chzn-done" tabindex="-1">
+                                    <option value="">请选择</option>
+									<#if orgs??>
+									    <#list orgs as o>
+                                            <option value="${o.id}" <#if queryDto.storeId?? && o.id == queryDto.storeId>selected</#if>>${o.orgName}</option>
+									    </#list>
+									</#if>
+
+								</select>
+								<#--<input type="text" class="m-wrap span8" readonly="true" value="${(storeName)!''}">-->
 							</div>
 						</div>
 						<div class="control-group span4 ">

@@ -65,7 +65,7 @@ public class ReceptionManageController {
         EmpDetailDto empDetail = ShiroUtils.getEmpDetail();
         RoleConditionDto rdto = ShiroUtils.getRoleCondition();
 
-        // 渠道
+        // 配有渠道权限数据
         if(null != rdto && null != rdto.getClients() && rdto.getClients().size() == 1) {
             dto.setClientType(rdto.getClients().get(0));
         }

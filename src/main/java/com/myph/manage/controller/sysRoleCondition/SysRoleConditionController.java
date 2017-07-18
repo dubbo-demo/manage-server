@@ -32,9 +32,11 @@ import java.util.List;
 
 /**
  * @author heyx
- * @ClassName: ReceptionController
- * @Description: 申请件
- * @date 2016年9月6日 下午3:56:07
+ * @version V1.0
+ * @Package: com.myph.manage.controller.sysRoleCondition
+ * @company: 麦芽金服
+ * @Description: TODO V2.0 数据权限添加
+ * @date 2017/7/17
  */
 @Controller
 @RequestMapping("/roleCondition")
@@ -42,9 +44,6 @@ public class SysRoleConditionController {
 
     @Autowired
     private OrganizationService OrganizationService;
-
-    @Autowired
-    private ProductService productService;
 
     @Autowired
     private SysRoleConditionService sysRoleConditionService;
@@ -55,69 +54,93 @@ public class SysRoleConditionController {
     // 信息录入公有页面
     @RequestMapping("/init")
     public String newInfoIndex(Model model, Long roleId) {
+        // 获取所有大区
         ServiceResult<List<OrganizationDto>> regionOrg
                 = OrganizationService.selectOrgByOrgType(EmployeeMsg.ORGANIZATION_TYPE.REGION_TYPE.toNumber());
+        // 获取所有门店
         ServiceResult<List<OrganizationDto>> storeOrg
                 = OrganizationService.selectOrgByOrgType(EmployeeMsg.ORGANIZATION_TYPE.STORE_TYPE.toNumber());
-        ServiceResult<List<SysNodeDto>> productList =  nodeService.getListByParent(NodeConstant.PRODUCT_PARENT_CODE);
-        ServiceResult<List<SysRoleConditionDto>> roleList = sysRoleConditionService.selectByRoleId(roleId);
+        // 获取产品类型
+        ServiceResult<List<SysNodeDto>> productList = nodeService.getListByParent(NodeConstant.PRODUCT_PARENT_CODE);
 
+        //获取逾期类型
         ServiceResult<List<SysNodeDto>> overList = nodeService.getListByParent(NodeConstant.OVERDUE_STAGE);
-
-        String orgStr = null;
-        String[] pStr = null;
-        List<String> pList = new ArrayList<String>();
-        List<String> cList = new ArrayList<String>();
-        List<String> sList = new ArrayList<String>();
-        for(SysRoleConditionDto roleC : roleList.getData()) {
-            if(RoleConditionEnum.ORG.getDesc().equals(roleC.getDimension())) {
-                if(StringUtils.isEmpty(orgStr)) {
-                    orgStr = roleC.getConditionCode();
-                } else {
-                    orgStr = orgStr + "," + roleC.getConditionCode();
-                }
-            }
-            if(RoleConditionEnum.PRODUCT.getCode().equals(roleC.getDimension())) {
-                pStr = roleC.getConditionCode() == null ? null : roleC.getConditionCode().split(",");
-                for(String yq : pStr) {
-                    pList.add(roleC.getParentCode()+yq);
-                }
-            }
-            if(RoleConditionEnum.CLIENT.getCode().equals(roleC.getDimension())) {
-                pStr = roleC.getConditionCode() == null ? null : roleC.getConditionCode().split(",");
-                for(String yq : pStr) {
-                    cList.add(roleC.getParentCode()+yq);
-                }
-            }
-            if(RoleConditionEnum.SOURCE.getCode().equals(roleC.getDimension())) {
-                pStr = roleC.getConditionCode() == null ? null : roleC.getConditionCode().split(",");
-                for(String yq : pStr) {
-                    sList.add(roleC.getParentCode()+yq);
-                }
-            }
-        }
-
+        initCondition(roleId, model);
         model.addAttribute("areaList", regionOrg.getData());
         model.addAttribute("shopList", storeOrg.getData());
         model.addAttribute("productList", productList.getData());
-        model.addAttribute("orgs", orgStr == null ? null : orgStr.split(","));
-        model.addAttribute("prds", pList);
-        model.addAttribute("clients", cList);
-        model.addAttribute("sources", sList);
         model.addAttribute("overs", overList.getData());
         return "/role/role_condition";
 
     }
 
     /**
-     *
+     * @Description: 初始化数据权限
+     * @author heyx
+     * @date 2017/7/17
+     * @version V1.0
+     */
+    private void initCondition(Long roleId, Model model) {
+        if (null == roleId) {
+            return;
+        }
+        //获取已经存在的权限数据
+        ServiceResult<List<SysRoleConditionDto>> roleList = null;
+        try {
+            roleList = sysRoleConditionService.selectByRoleId(roleId);
+        } catch (Exception e) {
+            MyphLogger.error("数据权限查询异常,roleId:{}", e, roleId);
+            return;
+        }
+        String orgStr = null;
+        String[] pStr = null;
+        List<String> pList = new ArrayList<String>();
+        List<String> cList = new ArrayList<String>();
+        List<String> sList = new ArrayList<String>();
+        for (SysRoleConditionDto roleC : roleList.getData()) {
+            // 组织权限id集合
+            if (RoleConditionEnum.ORG.getCode().equals(roleC.getDimension())) {
+                if (StringUtils.isEmpty(orgStr)) {
+                    orgStr = roleC.getConditionCode();
+                } else {
+                    orgStr = orgStr + "," + roleC.getConditionCode();
+                }
+            }
+            // 产品与逾期集合
+            if (RoleConditionEnum.PRODUCT.getCode().equals(roleC.getDimension())) {
+                pStr = roleC.getConditionCode() == null ? null : roleC.getConditionCode().split(",");
+                for (String yq : pStr) {
+                    pList.add(roleC.getParentCode() + yq);
+                }
+            }
+            // 渠道集合
+            if (RoleConditionEnum.CLIENT.getCode().equals(roleC.getDimension())) {
+                pStr = roleC.getConditionCode() == null ? null : roleC.getConditionCode().split(",");
+                for (String yq : pStr) {
+                    cList.add(roleC.getParentCode() + yq);
+                }
+            }
+            // 数据源集合
+            if (RoleConditionEnum.SOURCE.getCode().equals(roleC.getDimension())) {
+                pStr = roleC.getConditionCode() == null ? null : roleC.getConditionCode().split(",");
+                for (String yq : pStr) {
+                    sList.add(roleC.getParentCode() + yq);
+                }
+            }
+        }
+        model.addAttribute("orgs", orgStr == null ? null : orgStr.split(","));
+        model.addAttribute("prds", pList);
+        model.addAttribute("clients", cList);
+        model.addAttribute("sources", sList);
+    }
+
+    /**
      * @名称 saveInfo
      * @描述 权限数据保存
      * @返回类型 AjaxResult
      * @日期 2017年7月7日 上午9:54:10
      * @创建人 heyx
      * @更新人 heyx
-     *
      */
     @RequestMapping("/saveInfo")
     @ResponseBody
@@ -129,13 +152,14 @@ public class SysRoleConditionController {
             if (null == jsonStr) {
                 return AjaxResult.formatFromServiceResult(null);
             }
+            // json转换成数据权限集合
             List<SysRoleConditionDto> conditionList = JSONObject.parseArray(jsonStr, SysRoleConditionDto.class);
-            for(SysRoleConditionDto condition : conditionList) {
+            for (SysRoleConditionDto condition : conditionList) {
                 condition.setUpdateUser(operatorName);
             }
-            ServiceResult<Integer> delResult = sysRoleConditionService.deleteRoleId(conditionList.get(0).getRoleId());
+            // 全量新增新数据
             ServiceResult<Integer> addreuslt = sysRoleConditionService.batchAdd(conditionList);
-            if(addreuslt.success()) {
+            if (addreuslt.success()) {
                 return AjaxResult.success();
             }
         } catch (Exception e) {

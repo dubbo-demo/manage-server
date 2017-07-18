@@ -42,166 +42,6 @@
 
 			</div>
             <div class="control-group" style="margin-left: -100px;">
-            <div class="controls">
-                <label class="checkbox" style="width:15%;">
-							<span>
-								<input type="checkbox" name="infoRole" class="checkboxitem" id="infoRoleProduct" value="infoRoleProduct" onchange="changArea(this,'infoRoleProduct')">
-							</span> <b>产品与预期</b>
-                </label>
-                <label class="checkbox" style="width:17%;">
-						<span>
-						</span>
-                </label>
-                <label class="checkbox" style="width:17%;">
-						<span>
-						</span>
-                </label>
-            </div>
-				<#if productList??>
-					<#list productList as p>
-                <div class="controls">
-                    <label class="checkbox" style="width:15%;">
-						<span>
-						</span>
-                    </label>
-					<label class="checkbox" style="width:17%;">
-						<span>
-							<input type="checkbox" name="parentRole" class="checkboxitem"
-								   onchange="changeParentRole(this,'infoRoleProduct','${p.id}')" id="prd${p.id}" parentid="infoRoleProduct" value="${p.id}" data-proid="${p.id}">
-						</span>${p.nodeName}
-					</label>
-                        <#if overs??>
-                            <#assign x=0 />
-                            <#list overs as o>
-                                <#assign x=o_index+1 />
-                                <#if x%4=0>
-                                </div>
-                                <div class="controls">
-                                    <label class="checkbox" style="width:15%;">
-						<span>
-						</span>
-                                    </label>
-                                    <label class="checkbox" style="width:17%;">
-						<span>
-						</span>
-                                    </label>
-                                    <label class="checkbox" style="width:17%;">
-						<span>
-							<input type="checkbox" name="conditionRole" class="checkboxitem"
-                                   onchange="changeConditionRole(this,'infoRoleProduct','${p.id}')" productid="${p.id}" id="prd_${p.id}${o.nodeCode}" parentid="infoRoleProduct" value="${o.nodeCode}">
-						</span>${o.nodeName}
-                                    </label>
-                                <#else>
-                    <label class="checkbox" style="width:17%;">
-						<span>
-							<input type="checkbox" name="conditionRole" class="checkboxitem"
-								   onchange="changeConditionRole(this,'infoRoleProduct','${p.id}')" productid="${p.id}" id="prd_${p.id}${o.nodeCode}" parentid="infoRoleProduct" value="${o.nodeCode}">
-						</span>${o.nodeName}
-                    </label>
-                                </#if>
-                                <#if (overs?size)==(o_index+1)>
-                                </div>
-                                </#if>
-                            </#list>
-                        </#if>
-					</#list>
-				</#if>
-
-    <div class="controls">
-        <label class="checkbox" style="width:15%;">
-						<span>
-						</span>
-        </label>
-        <label class="checkbox" style="width:17%;">
-						<span>
-							<input type="checkbox" name="parentRole" class="checkboxitem"
-                                   onchange="changeParentRole(this,'infoRoleProduct','1111111')" id="prd1111111" parentid="infoRoleProduct" value="1111111" data-proid="1111111">
-						</span>麦芽小贷
-        </label>
-            <#if overs??>
-                <#assign x=0 />
-                <#list overs as o>
-                    <#assign x=o_index+1 />
-                    <#if x%4=0>
-                    </div>
-                    <div class="controls">
-                        <label class="checkbox" style="width:15%;">
-						<span>
-						</span>
-                        </label>
-                        <label class="checkbox" style="width:17%;">
-						<span>
-						</span>
-                        </label>
-                        <label class="checkbox" style="width:17%;">
-						<span>
-							<input type="checkbox" name="conditionRole" class="checkboxitem"
-                                   onchange="changeConditionRole(this,'infoRoleProduct','1111111')" productid="1111111" id="prd_1111111${o.nodeCode}" parentid="infoRoleProduct" value="${o.nodeCode}">
-						</span>${o.nodeName}
-                        </label>
-                    <#else>
-
-                        <label class="checkbox" style="width:17%;">
-						<span>
-							<input type="checkbox" name="conditionRole" class="checkboxitem"
-                                   onchange="changeConditionRole(this,'infoRoleProduct','1111111')" productid="1111111" id="prd_1111111${o.nodeCode}" parentid="infoRoleProduct" value="${o.nodeCode}">
-						</span>${o.nodeName}
-                        </label>
-                    </#if>
-                    <#if (overs?size)==(o_index+1)>
-                    </div>
-                    </#if>
-                </#list>
-            </#if>
-
-            <div class="controls">
-                <label class="checkbox" style="width:15%;">
-						<span>
-						</span>
-                </label>
-                <label class="checkbox" style="width:17%;">
-						<span>
-							<input type="checkbox" name="parentRole" class="checkboxitem"
-                                   onchange="changeParentRole(this,'infoRoleProduct','2222222')" id="prd2222222" parentid="infoRoleProduct" value="2222222" data-proid="2222222">
-						</span>麦芽分期
-                </label>
-        <#if overs??>
-            <#assign x=0 />
-            <#list overs as o>
-                <#assign x=o_index+1 />
-                <#if x%4=0>
-                </div>
-                <div class="controls">
-                    <label class="checkbox" style="width:15%;">
-						<span>
-						</span>
-                    </label>
-                    <label class="checkbox" style="width:17%;">
-						<span>
-						</span>
-                    </label>
-                    <label class="checkbox" style="width:17%;">
-						<span>
-							<input type="checkbox" name="conditionRole" class="checkboxitem"
-                                   onchange="changeConditionRole(this,'infoRoleProduct','2222222')" productid="2222222" id="prd_2222222${o.nodeCode}" parentid="infoRoleProduct" value="${o.nodeCode}">
-						</span>${o.nodeName}
-                    </label>
-                    <#else>
-                    <label class="checkbox" style="width:17%;">
-						<span>
-							<input type="checkbox" name="conditionRole" class="checkboxitem"
-                                   onchange="changeConditionRole(this,'infoRoleProduct','2222222')" productid="2222222" id="prd_2222222${o.nodeCode}" parentid="infoRoleProduct" value="${o.nodeCode}">
-						</span>${o.nodeName}
-                    </label>
-                    </#if>
-                    <#if (overs?size)==(o_index+1)>
-                    </div>
-                    </#if>
-                </#list>
-            </#if>
-
-            </div>
-            <div class="control-group" style="margin-left: -100px;">
                 <div class="controls">
                     <label class="checkbox" style="width:15%;">
 							<span>
@@ -255,6 +95,166 @@
                     </label>
                 </div>
             </div>
+            <div class="control-group" style="margin-left: -100px;">
+                <div class="controls">
+                    <label class="checkbox" style="width:15%;">
+							<span>
+								<input type="checkbox" name="infoRole" class="checkboxitem" id="infoRoleProduct" value="infoRoleProduct" onchange="changArea(this,'infoRoleProduct')">
+							</span> <b>产品与逾期</b>
+                    </label>
+                    <label class="checkbox" style="width:17%;">
+						<span>
+						</span>
+                    </label>
+                    <label class="checkbox" style="width:17%;">
+						<span>
+						</span>
+                    </label>
+                </div>
+            <#if productList??>
+                <#list productList as p>
+                <div class="controls">
+                    <label class="checkbox" style="width:15%;">
+						<span>
+						</span>
+                    </label>
+                    <label class="checkbox" style="width:17%;">
+						<span>
+							<input type="checkbox" name="parentRole" class="checkboxitem"
+                                   onchange="changeParentRole(this,'infoRoleProduct','${p.id}')" id="prd${p.id}" parentid="infoRoleProduct" value="${p.id}" data-proid="${p.id}">
+						</span>${p.nodeName}
+                    </label>
+                    <#if overs??>
+                        <#assign x=0 />
+                        <#list overs as o>
+                            <#assign x=o_index+1 />
+                            <#if x%4=0>
+                            </div>
+                            <div class="controls">
+                                <label class="checkbox" style="width:15%;">
+						<span>
+						</span>
+                                </label>
+                                <label class="checkbox" style="width:17%;">
+						<span>
+						</span>
+                                </label>
+                                <label class="checkbox" style="width:17%;">
+						<span>
+							<input type="checkbox" name="conditionRole" class="checkboxitem"
+                                   onchange="changeConditionRole(this,'infoRoleProduct','${p.id}')" productid="${p.id}" id="prd_${p.id}${o.nodeCode}" parentid="infoRoleProduct" value="${o.nodeCode}">
+						</span>${o.nodeName}
+                                </label>
+                            <#else>
+                                <label class="checkbox" style="width:17%;">
+						<span>
+							<input type="checkbox" name="conditionRole" class="checkboxitem"
+                                   onchange="changeConditionRole(this,'infoRoleProduct','${p.id}')" productid="${p.id}" id="prd_${p.id}${o.nodeCode}" parentid="infoRoleProduct" value="${o.nodeCode}">
+						</span>${o.nodeName}
+                                </label>
+                            </#if>
+                            <#if (overs?size)==(o_index+1)>
+                            </div>
+                            </#if>
+                        </#list>
+                    </#if>
+                </#list>
+            </#if>
+
+            <div class="controls">
+                <label class="checkbox" style="width:15%;">
+						<span>
+						</span>
+                </label>
+                <label class="checkbox" style="width:17%;">
+						<span>
+							<input type="checkbox" name="parentRole" class="checkboxitem"
+                                   onchange="changeParentRole(this,'infoRoleProduct','1111111')" id="prd1111111" parentid="infoRoleProduct" value="1111111" data-proid="1111111">
+						</span>麦芽小贷
+                </label>
+            <#if overs??>
+                <#assign x=0 />
+                <#list overs as o>
+                    <#assign x=o_index+1 />
+                    <#if x%4=0>
+                    </div>
+                    <div class="controls">
+                        <label class="checkbox" style="width:15%;">
+						<span>
+						</span>
+                        </label>
+                        <label class="checkbox" style="width:17%;">
+						<span>
+						</span>
+                        </label>
+                        <label class="checkbox" style="width:17%;">
+						<span>
+							<input type="checkbox" name="conditionRole" class="checkboxitem"
+                                   onchange="changeConditionRole(this,'infoRoleProduct','1111111')" productid="1111111" id="prd_1111111${o.nodeCode}" parentid="infoRoleProduct" value="${o.nodeCode}">
+						</span>${o.nodeName}
+                        </label>
+                    <#else>
+
+                        <label class="checkbox" style="width:17%;">
+						<span>
+							<input type="checkbox" name="conditionRole" class="checkboxitem"
+                                   onchange="changeConditionRole(this,'infoRoleProduct','1111111')" productid="1111111" id="prd_1111111${o.nodeCode}" parentid="infoRoleProduct" value="${o.nodeCode}">
+						</span>${o.nodeName}
+                        </label>
+                    </#if>
+                    <#if (overs?size)==(o_index+1)>
+                    </div>
+                    </#if>
+                </#list>
+            </#if>
+
+            <div class="controls">
+                <label class="checkbox" style="width:15%;">
+						<span>
+						</span>
+                </label>
+                <label class="checkbox" style="width:17%;">
+						<span>
+							<input type="checkbox" name="parentRole" class="checkboxitem"
+                                   onchange="changeParentRole(this,'infoRoleProduct','2222222')" id="prd2222222" parentid="infoRoleProduct" value="2222222" data-proid="2222222">
+						</span>麦芽分期
+                </label>
+            <#if overs??>
+                <#assign x=0 />
+                <#list overs as o>
+                    <#assign x=o_index+1 />
+                    <#if x%4=0>
+                    </div>
+                    <div class="controls">
+                        <label class="checkbox" style="width:15%;">
+						<span>
+						</span>
+                        </label>
+                        <label class="checkbox" style="width:17%;">
+						<span>
+						</span>
+                        </label>
+                        <label class="checkbox" style="width:17%;">
+						<span>
+							<input type="checkbox" name="conditionRole" class="checkboxitem"
+                                   onchange="changeConditionRole(this,'infoRoleProduct','2222222')" productid="2222222" id="prd_2222222${o.nodeCode}" parentid="infoRoleProduct" value="${o.nodeCode}">
+						</span>${o.nodeName}
+                        </label>
+                    <#else>
+                        <label class="checkbox" style="width:17%;">
+						<span>
+							<input type="checkbox" name="conditionRole" class="checkboxitem"
+                                   onchange="changeConditionRole(this,'infoRoleProduct','2222222')" productid="2222222" id="prd_2222222${o.nodeCode}" parentid="infoRoleProduct" value="${o.nodeCode}">
+						</span>${o.nodeName}
+                        </label>
+                    </#if>
+                    <#if (overs?size)==(o_index+1)>
+                    </div>
+                    </#if>
+                </#list>
+            </#if>
+
+            </div>
 		</form>
 <script>
     $(function(){
@@ -268,7 +268,7 @@
       });
         <#if orgs??>
             <#list orgs as org>
-                $.uniform.update($("input[id=shop${org}]:checkbox").prop("checked", true));
+                $.uniform.update($("input[id='shop${org}']:checkbox").prop("checked", true));
             </#list>
         </#if>
 

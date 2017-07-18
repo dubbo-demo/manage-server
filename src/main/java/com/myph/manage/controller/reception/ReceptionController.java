@@ -306,6 +306,7 @@ public class ReceptionController extends ApplyBaseController{
                 return AjaxResult.failed("新增接待信息失败，请用门店账户录入!");
             }
 
+            // 加入团队经理
             SysTeamDto teamDto = getTeamManage(applyReceptionDto.getBmId());
             if(null == teamDto) {
                 return AjaxResult.failed(NO_TEAM_STR);
@@ -395,6 +396,7 @@ public class ReceptionController extends ApplyBaseController{
             if (null == empDetail) {
                 return AjaxResult.failed("修改提交信息失败，请登录账户录入!");
             }
+            //加入团队经理
             SysTeamDto teamDto = getTeamManage(applyReceptionDto.getBmId());
             if(null == teamDto) {
                 return AjaxResult.failed(NO_TEAM_STR);

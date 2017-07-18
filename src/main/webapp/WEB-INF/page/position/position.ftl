@@ -97,12 +97,12 @@
                     <div class="row-fluid">
                     <lable class="dropdown bottom-up">
                         <a class="btn green" href="#" data-toggle="dropdown">菜单角色选择<i class="icon-angle-down"></i></a>
-                        <div class="dropdown-menu menuRole bottom-up dropdown-checkboxes hold-on-click" style="height:150px;margin-left:0px;margin-bottom:-190px;width:100px;overflow-y:auto;overflow-x:auto">
+                        <div class="dropdown-menu menuRole bottom-up dropdown-checkboxes hold-on-click" style="height:250px;margin-left:0px;margin-bottom:-290px;width:100px;overflow-y:auto;overflow-x:auto">
                         </div>
                     </lable>
                     <lable class="dropdown bottom-up">
                         <a class="btn green" href="#" data-toggle="dropdown" style="margin-left:50px;">数据角色选择<i class="icon-angle-down"></i></a>
-                        <div class="dropdown-menu dataRole bottom-up dropdown-checkboxes hold-on-click" style="height:150px;margin-left:50px;margin-bottom:-190px;width:100px;overflow-y:auto;overflow-x:auto">
+                        <div class="dropdown-menu dataRole bottom-up dropdown-checkboxes hold-on-click" style="height:250px;margin-left:50px;margin-bottom:-290px;width:100px;overflow-y:auto;overflow-x:auto">
                         </div>
                     </lable>                       
                     </div>  
@@ -138,12 +138,12 @@
                     <div class="row-fluid">
                     <lable class="dropdown bottom-up">
                         <a class="btn green" href="#" data-toggle="dropdown">菜单角色选择<i class="icon-angle-down"></i></a>
-                        <div class="dropdown-menu auditMenuRole bottom-up dropdown-checkboxes hold-on-click" style="height:150px;margin-left:0px;margin-bottom:-190px;width:100px;overflow-y:auto;overflow-x:auto">
+                        <div class="dropdown-menu auditMenuRole bottom-up dropdown-checkboxes hold-on-click" style="height:250px;margin-left:0px;margin-bottom:-290px;width:100px;overflow-y:auto;overflow-x:auto">
                         </div>
                     </lable>
                     <lable class="dropdown bottom-up">
                         <a class="btn green" href="#" data-toggle="dropdown" style="margin-left:50px;">数据角色选择<i class="icon-angle-down"></i></a>
-                        <div class="dropdown-menu auditDataRole bottom-up dropdown-checkboxes hold-on-click" style="height:150px;margin-left:50px;margin-bottom:-190px;width:100px;overflow-y:auto;overflow-x:auto">
+                        <div class="dropdown-menu auditDataRole bottom-up dropdown-checkboxes hold-on-click" style="height:250px;margin-left:50px;margin-bottom:-290px;width:100px;overflow-y:auto;overflow-x:auto">
                         </div>
                     </lable>                       
                     </div>                       

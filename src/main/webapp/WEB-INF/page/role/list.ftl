@@ -145,7 +145,7 @@
 					aria-hidden="true"></button>
 			<h3>数据权限</h3>
 		</div>
-		<div id="role_condition_content" class="" style=""></div>
+		<div id="role_condition_content" class="" style="height:548px;overflow-y:auto;overflow-x:hidden"></div>
 		<div class="modal-footer">
 			<button type="button" data-dismiss="modal" class="btn">返回</button>
 			<button type="button" class="btn blue" data-dismiss="modal" onclick="submitRoleCondition();">提交</button>
