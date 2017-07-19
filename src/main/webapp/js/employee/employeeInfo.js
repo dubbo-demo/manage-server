@@ -297,6 +297,7 @@ function updateIcmbFlag(){
 		dataType : "json",
 		success : function(result) {
 			if (result.code == 0) {
+				$('.icmbButton').attr("disabled","disabled");
 				BootstrapDialog.alert('操作成功', function(result) {
 					window.location.reload();
 				});
