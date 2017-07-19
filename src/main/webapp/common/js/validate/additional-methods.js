@@ -93,3 +93,30 @@ jQuery.validator.addMethod("compare", function(value, element, param) {
 	var targetValue2 = $("input[name='"+param[1]+"']").val();
 	return (this.optional(element) || parseFloat(targetValue1) > parseFloat(targetValue2));
 }, "必须大于下限");
+
+
+$.validator.addMethod("teamManager", function(value, element) {
+	if($('#bmId').val() == null || $('#bmId').val() == '') {
+		return false;
+	}
+	var b = true;
+	$.ajax({
+		type : "post",//请求方式
+		url : serverPath+'/reception/base/isTeamEmploy.htm',//请求url
+		data : { bmId :$('#bmId').val()},//请求参数
+		dataType : 'json',//返回数据类型
+		async : false, //设为false就是同步请求
+		cache : false,//是否缓存，默认true
+		success : function (res) {//成功事件
+			if (res.code == '0') {
+			} else {
+				b =  false;
+			}
+		},
+		error : function (XMLHttpRequest, textStatus, errorThrown) {//失败事件
+			// 通常情况下textStatus和errorThown只有其中一个有值
+			this; // the options for this ajax request
+		}
+	});
+	return b;
+}, "请将业务员与团队经理关系绑定！");

@@ -66,6 +66,9 @@ $(function() {
 				required : true
 				,phone : true
 			},
+			teamManager : {
+				teamManager : true
+			},
 			bmId : {
 				required : true
 				,bmId : true

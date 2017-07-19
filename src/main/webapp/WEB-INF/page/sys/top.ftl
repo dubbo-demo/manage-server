@@ -92,7 +92,7 @@
     <!-- begin form validate-->
     <script src="${cdnPath}/common/js/common.js"></script>
     <script src="${cdnPath}/common/bootstrap/media/js/jquery.validate.min.js"></script>
-    <script src="${cdnPath}/common/js/validate/additional-methods.js"></script>
+    <script src="${cdnPath}/common/js/validate/additional-methods.js?v=${VERSION_NO}"></script>
     <script src="${cdnPath}/common/js/validate/messages_cn.js"></script>
     <!-- end form validate-->
 

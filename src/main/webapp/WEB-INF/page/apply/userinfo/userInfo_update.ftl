@@ -17,6 +17,7 @@
 									<div class="controls">
 										<input type="hidden" id='bmId' value="${apply.bmId!''}"  name="bmId" class="m-wrap large" />
 										<input type="hidden" id='bmName' name="bmName" value="${apply.bmName!'请选择'}" />
+                                        <input type="input" id='teamManager' name="teamManager" value="" style="width:0px;height:0px;" />
 									</div>
 								</div>
 								<div class="control-group span6 ">

@@ -101,6 +101,17 @@ public class ReceptionController extends ApplyBaseController{
 
     private final static String remarkConfine = "该用户已经被管理员手动设置了禁闭期";
 
+    @RequestMapping("base/isTeamEmploy")
+    @ResponseBody
+    public AjaxResult isTeamEmploy(Long bmId) {
+        // 加入团队经理
+        SysTeamDto teamDto = getTeamManage(bmId);
+        if(null == teamDto) {
+            return AjaxResult.failed(NO_TEAM_STR);
+        }
+        return AjaxResult.success();
+    }
+
     /**
      * 列表
      *

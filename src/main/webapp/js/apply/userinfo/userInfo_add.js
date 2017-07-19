@@ -69,6 +69,9 @@ $(function() {
 				required : true
 				,bmId : true
 			},
+			teamManager : {
+				teamManager : true
+			},
 			customerServiceId : {
 				required : true
 				,customerServiceId : true
