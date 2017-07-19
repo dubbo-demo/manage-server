@@ -51,13 +51,13 @@
                     <label class="checkbox" style="width:17%;">
 						<span>
 							<input type="checkbox" name="clientRole" class="checkboxitem"
-                                   onchange="changePrent(this,'infoRoleClient')" id="clientApp" parentid="infoRoleClient" value="0">
+                                   onchange="changePrent(this,'infoRoleClient')" id="client0" parentid="infoRoleClient" value="0">
 						</span>web
                     </label>
                     <label class="checkbox" style="width:17%;">
 						<span>
 							<input type="checkbox" name="clientRole" class="checkboxitem"
-                                   onchange="changePrent(this,'infoRoleClient')" id="clientWeb" parentid="infoRoleClient" value="1">
+                                   onchange="changePrent(this,'infoRoleClient')" id="client1" parentid="infoRoleClient" value="1">
 						</span>app
                     </label>
                 </div>
@@ -72,25 +72,25 @@
                     <label class="checkbox" style="width:17%;">
 						<span>
 							<input type="checkbox" name="sourceRole" class="checkboxitem"
-                                   onchange="changePrent(this,'infoRoleSource')" id="sourceMYD" parentid="infoRoleSource" value="myd">
+                                   onchange="changePrent(this,'infoRoleSource')" id="sourcemyd" parentid="infoRoleSource" value="myd">
 						</span>麦芽贷
                     </label>
                     <label class="checkbox" style="width:17%;">
 						<span>
 							<input type="checkbox" name="sourceRole" class="checkboxitem"
-                                   onchange="changePrent(this,'infoRoleSource')" id="sourceMYFQ" parentid="infoRoleSource" value="maiyafq">
+                                   onchange="changePrent(this,'infoRoleSource')" id="sourcemaiyafq" parentid="infoRoleSource" value="maiyafq">
 						</span>麦芽分期
                     </label>
                     <label class="checkbox" style="width:17%;">
 						<span>
 							<input type="checkbox" name="sourceRole" class="checkboxitem"
-                                   onchange="changePrent(this,'infoRoleSource')" id="sourceMYPH" parentid="infoRoleSource" value="myph">
+                                   onchange="changePrent(this,'infoRoleSource')" id="sourcemyph" parentid="infoRoleSource" value="myph">
 						</span>麦芽普惠
                     </label>
                     <label class="checkbox" style="width:17%;">
 						<span>
 							<input type="checkbox" name="sourceRole" class="checkboxitem"
-                                   onchange="changePrent(this,'infoRoleSource')" id="sourceFRB" parentid="infoRoleSource" value="frbao">
+                                   onchange="changePrent(this,'infoRoleSource')" id="sourcefrbao" parentid="infoRoleSource" value="frbao">
 						</span>付融宝
                     </label>
                 </div>
@@ -283,13 +283,13 @@
 
     <#if clients??>
         <#list clients as client>
-            $.uniform.update($("input[id='prd_${client}']:checkbox").prop("checked", true));
+            $.uniform.update($("input[id='${client}']:checkbox").prop("checked", true));
         </#list>
     </#if>
 
     <#if sources??>
         <#list sources as s>
-            $.uniform.update($("input[id='prd_${s}']:checkbox").prop("checked", true));
+            $.uniform.update($("input[id='${s}']:checkbox").prop("checked", true));
         </#list>
     </#if>     });
 
@@ -299,7 +299,9 @@
         var shops = '';
         // 数据源
         $("input[name=sourceRole]:checkbox").each(function(i, v) {
-            shops = shops +","+$(this).val();
+            if($(this).attr("checked")) {
+                shops = shops + "," + $(this).val();
+            }
         });
         shops = shops.substr(1);
         sysRoleCs[0] = {};
@@ -315,7 +317,9 @@
 
         // 数据源
         $("input[name=clientRole]:checkbox").each(function(i, v) {
-            shops = shops +","+$(this).val();
+            if($(this).attr("checked")) {
+                shops = shops + "," + $(this).val();
+            }
         });
         shops = shops.substr(1);
         sysRoleCs[1] = {};
