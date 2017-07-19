@@ -51,13 +51,13 @@
                     <label class="checkbox" style="width:17%;">
 						<span>
 							<input type="checkbox" name="clientRole" class="checkboxitem"
-                                   onchange="changePrent(this,'infoRoleClient')" id="clientApp" parentid="infoRoleClient" value="web">
+                                   onchange="changePrent(this,'infoRoleClient')" id="clientApp" parentid="infoRoleClient" value="0">
 						</span>web
                     </label>
                     <label class="checkbox" style="width:17%;">
 						<span>
 							<input type="checkbox" name="clientRole" class="checkboxitem"
-                                   onchange="changePrent(this,'infoRoleClient')" id="clientWeb" parentid="infoRoleClient" value="app">
+                                   onchange="changePrent(this,'infoRoleClient')" id="clientWeb" parentid="infoRoleClient" value="1">
 						</span>app
                     </label>
                 </div>
