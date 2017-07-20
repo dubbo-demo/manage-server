@@ -299,7 +299,9 @@
         var shops = '';
         // 数据源
         $("input[name=sourceRole]:checkbox").each(function(i, v) {
-            shops = shops +","+$(this).val();
+            if($(this).attr("checked")) {
+                shops = shops + "," + $(this).val();
+            }
         });
         shops = shops.substr(1);
         sysRoleCs[0] = {};
@@ -315,7 +317,9 @@
 
         // 数据源
         $("input[name=clientRole]:checkbox").each(function(i, v) {
-            shops = shops +","+$(this).val();
+            if($(this).attr("checked")) {
+                shops = shops + "," + $(this).val();
+            }
         });
         shops = shops.substr(1);
         sysRoleCs[1] = {};
