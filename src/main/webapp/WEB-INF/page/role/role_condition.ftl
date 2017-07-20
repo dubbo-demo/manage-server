@@ -10,7 +10,7 @@
                 <div class="controls">
                     <label class="checkbox" style="width:15%;">
                         <span>
-							<input type="checkbox" name="areaIds" class="checkboxitem" id="area${a.id}" value="${a.orgCode}" data-areaid="${a.id}"  onchange="changArea(this,'${a.id}')"/>
+							<input type="checkbox" name="areaIds" class="checkboxitem" id="area${a.id}" value="${a.id}" data-areaid="${a.id}"  onchange="changArea(this,'${a.id}')"/>
 						</span> <b>${a.orgName}</b>
                     </label>
 						<#assign x=0 />
