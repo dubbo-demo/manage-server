@@ -304,7 +304,7 @@ background: #f2dede
 				//清空除第一条内容的外的其它数据
 				var select_ = $("select[name='areaId']");
 				select_.find("option:gt(0)").remove();
-				if(orgType==2){
+				if(orgType==2 || $.isArray(result.data)){
     				for (var i = 0; i < result.data.length; i++) {
     					var isSelected = result.data[i].id == select_.attr('data-id')?"selected='selected'":"";
     					select_.append(
@@ -351,7 +351,7 @@ background: #f2dede
 				//清空除第一条内容的外的其它数据
 				var select_ = $("select[name='storeId']");
 				select_.find("option:gt(0)").remove();
-				if(orgType==3){
+				if(orgType==3 && !$.isArray(result.data)){
 				    var isSelected = result.data.id == select_.attr('data-id')?"selected='selected'":"";
                         select_.append(
                                 "<option "+isSelected+" value='"
