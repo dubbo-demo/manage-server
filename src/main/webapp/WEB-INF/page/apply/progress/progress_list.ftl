@@ -322,8 +322,10 @@ background: #f2dede
                                     + "</option>");
 				}
 				if(orgType!=2){
-				 select_.find("option:eq(0)").remove();
-				  select_.val(regionId);
+				 	select_.find("option:eq(0)").remove();
+				}
+				if(select_.attr('data-id')==-1) {
+                    select_.prop("selected", 'selected');
 				}
 				initStoreData();
 			},
@@ -369,8 +371,10 @@ background: #f2dede
                     }
 				}		
 				if(orgType==3){
-				  select_.find("option:eq(0)").remove();
-				  select_.val(storeId);
+                    select_.find("option:eq(0)").remove();
+				}
+				if(select_.attr('data-id')==-1) {
+                    select_.prop("selected", 'selected');
 				}
 				$('#searchBtn').attr("disabled",false);
 			},
