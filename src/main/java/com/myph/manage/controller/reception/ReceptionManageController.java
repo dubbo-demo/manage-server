@@ -66,8 +66,11 @@ public class ReceptionManageController {
         RoleConditionDto rdto = ShiroUtils.getRoleCondition();
 
         // 配有渠道权限数据
-        if(null != rdto && null != rdto.getClients() && rdto.getClients().size() == 1) {
-            dto.setClientType(rdto.getClients().get(0));
+        if(null != rdto && null != rdto.getClients()) {
+            model.addAttribute("clients", rdto.getClients());
+            if(rdto.getClients().size() == 1) {
+                dto.setClientType(rdto.getClients().get(0));
+            }
         }
         // 门店级别
         if (null != empDetail && ORGANIZATION_TYPE.STORE_TYPE.toNumber() == user.getOrgType()) {

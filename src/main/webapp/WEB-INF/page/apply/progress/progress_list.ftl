@@ -304,6 +304,7 @@ background: #f2dede
 				//清空除第一条内容的外的其它数据
 				var select_ = $("select[name='areaId']");
 				select_.find("option:gt(0)").remove();
+				var fristOne = false;
 				if(orgType==2 || $.isArray(result.data)){
     				for (var i = 0; i < result.data.length; i++) {
     					var isSelected = result.data[i].id == select_.attr('data-id')?"selected='selected'":"";
@@ -312,6 +313,9 @@ background: #f2dede
     									+ result.data[i].id + "'>"
     									+ result.data[i].orgName
     									+ "</option>");
+						if(regionId == result.data[i].id) {
+                            fristOne = true;
+						}
     				}
 				}else{
                     var isSelected = result.data.id == select_.attr('data-id')?"selected='selected'":"";
@@ -325,7 +329,11 @@ background: #f2dede
 				 	select_.find("option:eq(0)").remove();
 				}
 				if(select_.attr('data-id')==-1) {
-                    select_.prop("selected", 'selected');
+					if(fristOne) {
+                        select_.val(regionId);
+					} else {
+                        select_.prop("selected", 'selected');
+					}
 				}
 				initStoreData();
 			},
