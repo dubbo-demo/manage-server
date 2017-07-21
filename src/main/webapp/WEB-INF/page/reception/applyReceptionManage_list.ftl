@@ -67,7 +67,7 @@
 												</#if>
 												<#list clients as c>
 													<#if c == 0>
-                                                        <option value="0" <#if queryDto.clientType?? && queryDto.clientType == 0>selected</#if> >web</option>
+                                                        <option value="0" <#if queryDto.clientType?? && queryDto.clientType == 0>selected</#if> >线下</option>
 													</#if>
 													<#if c == 1>
                                                         <option value="1" <#if queryDto.clientType?? && queryDto.clientType == 1>selected</#if> >app</option>
@@ -75,7 +75,7 @@
 												</#list>
 											<#else >
                                                 <option value="">请选择</option>
-                                                <option value="0" <#if queryDto.clientType?? && queryDto.clientType == 0>selected</#if> >web</option>
+                                                <option value="0" <#if queryDto.clientType?? && queryDto.clientType == 0>selected</#if> >线下</option>
                                                 <option value="1" <#if queryDto.clientType?? && queryDto.clientType == 1>selected</#if> >app</option>
 											</#if>
 
