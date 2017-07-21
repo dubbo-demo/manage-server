@@ -73,6 +73,10 @@
                                                         <option value="1" <#if queryDto.clientType?? && queryDto.clientType == 1>selected</#if> >app</option>
 													</#if>
 												</#list>
+											<#else >
+                                                <option value="">请选择</option>
+                                                <option value="0" <#if queryDto.clientType?? && queryDto.clientType == 0>selected</#if> >web</option>
+                                                <option value="1" <#if queryDto.clientType?? && queryDto.clientType == 1>selected</#if> >app</option>
 											</#if>
 
 										</select>
