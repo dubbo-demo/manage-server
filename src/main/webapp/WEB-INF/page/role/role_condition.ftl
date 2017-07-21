@@ -303,14 +303,17 @@
                 shops = shops + "," + $(this).val();
             }
         });
-        shops = shops.substr(1);
-        sysRoleCs[0] = {};
-        SysRoleConditionDto.dimension = 'infoRoleSource';
-        SysRoleConditionDto.parentCode = 'source';
-        SysRoleConditionDto.roleId = $("#condition_roleid").val();
-        SysRoleConditionDto.conditionCode = shops;
-        SysRoleConditionDto.delFlag = 1;
-        sysRoleCs[0] = SysRoleConditionDto;
+        var index = 0;
+        if(shops != '') {
+            shops = shops.substr(1);
+            sysRoleCs[index] = {};
+            SysRoleConditionDto.dimension = 'infoRoleSource';
+            SysRoleConditionDto.parentCode = 'source';
+            SysRoleConditionDto.roleId = $("#condition_roleid").val();
+            SysRoleConditionDto.conditionCode = shops;
+            SysRoleConditionDto.delFlag = 1;
+            sysRoleCs[index] = SysRoleConditionDto;
+        }
 
         shops = '';
         SysRoleConditionDto = {};
@@ -321,14 +324,17 @@
                 shops = shops + "," + $(this).val();
             }
         });
-        shops = shops.substr(1);
-        sysRoleCs[1] = {};
-        SysRoleConditionDto.dimension = 'infoRoleClient';
-        SysRoleConditionDto.parentCode = 'client';
-        SysRoleConditionDto.roleId = $("#condition_roleid").val();
-        SysRoleConditionDto.conditionCode = shops;
-        SysRoleConditionDto.delFlag = 1;
-        sysRoleCs[1] = SysRoleConditionDto;
+       if(shops != '') {
+           index++;
+           shops = shops.substr(1);
+           sysRoleCs[index] = {};
+           SysRoleConditionDto.dimension = 'infoRoleClient';
+           SysRoleConditionDto.parentCode = 'client';
+           SysRoleConditionDto.roleId = $("#condition_roleid").val();
+           SysRoleConditionDto.conditionCode = shops;
+           SysRoleConditionDto.delFlag = 1;
+           sysRoleCs[index] = SysRoleConditionDto;
+       }
 
         return sysRoleCs;
     }
