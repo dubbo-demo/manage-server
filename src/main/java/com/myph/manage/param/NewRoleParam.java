@@ -22,6 +22,7 @@ public class NewRoleParam extends BaseInfo{
     private Long id;
     private String roleName;
     private String roleCode;
+    private Integer roleType;
     private Long[] positionIds;
     private Integer status;
     private List<RolePermissionSimpleTreeDto> saves;

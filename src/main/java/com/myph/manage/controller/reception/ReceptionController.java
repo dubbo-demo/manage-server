@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.myph.manage.controller.apply.ApplyBaseController;
+import com.myph.team.dto.SysTeamDto;
+import com.myph.team.service.SysTeamService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -61,7 +64,7 @@ import com.myph.reception.service.ApplyReceptionService;
  */
 @Controller
 @RequestMapping("/reception")
-public class ReceptionController {
+public class ReceptionController extends ApplyBaseController{
 
     @Autowired
     ApplyReceptionService applyReceptionService;
@@ -286,6 +289,8 @@ public class ReceptionController {
         return AjaxResult.success(result.getData());
     }
 
+
+
     /**
      * 新增
      *
@@ -300,6 +305,15 @@ public class ReceptionController {
             if (null == empDetail || null == empDetail.getCityId()) {
                 return AjaxResult.failed("新增接待信息失败，请用门店账户录入!");
             }
+
+            // 加入团队经理
+            SysTeamDto teamDto = getTeamManage(applyReceptionDto.getBmId());
+            if(null == teamDto) {
+                return AjaxResult.failed(NO_TEAM_STR);
+            } else {
+                applyReceptionDto.setTeamManageId(teamDto.getLeaderId());
+                applyReceptionDto.setTeamManageName(teamDto.getLeaderName());
+            }
             applyReceptionDto.setCreateUser(user.getEmployeeName());
             applyReceptionDto.setCityId(empDetail.getCityId());
             applyReceptionDto.setAreaId(empDetail.getRegionId());
@@ -310,6 +324,7 @@ public class ReceptionController {
             if (StringUtils.isNotEmpty(applyReceptionDto.getMemberName())) {
                 applyReceptionDto.setNameSpell(PingYinUtil.getPingYin(applyReceptionDto.getMemberName()).toUpperCase());
             }
+
             ServiceResult<Integer> data = null;
             CityCodeDto cityCodeDto = null;
             if (empDetail != null) {
@@ -380,6 +395,14 @@ public class ReceptionController {
             EmpDetailDto empDetail = ShiroUtils.getEmpDetail();
             if (null == empDetail) {
                 return AjaxResult.failed("修改提交信息失败，请登录账户录入!");
+            }
+            //加入团队经理
+            SysTeamDto teamDto = getTeamManage(applyReceptionDto.getBmId());
+            if(null == teamDto) {
+                return AjaxResult.failed(NO_TEAM_STR);
+            } else {
+                applyReceptionDto.setTeamManageId(teamDto.getLeaderId());
+                applyReceptionDto.setTeamManageName(teamDto.getLeaderName());
             }
             if(null == empDetail.getRegionId()) {
                 OrganizationDto org = organizationService.selectOrganizationById(applyReceptionDto.getStoreId()).getData();

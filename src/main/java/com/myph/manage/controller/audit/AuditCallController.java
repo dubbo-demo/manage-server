@@ -9,9 +9,12 @@
 package com.myph.manage.controller.audit;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,6 +52,7 @@ import com.myph.manage.common.shiro.ShiroUtils;
 import com.myph.manage.controller.BaseController;
 import com.myph.member.base.dto.MemberInfoDto;
 import com.myph.member.base.service.MemberInfoService;
+import com.myph.position.dto.OrgPositionDto;
 import com.myph.common.cache.RedisRootNameSpace;
 import com.myph.common.constant.Constants;
 
@@ -307,9 +311,15 @@ public class AuditCallController extends BaseController {
     // 查询联系人电话
     private List<AuditCallDto> selectPhoneLinkMan(String applyLoanNo) {
         ServiceResult<List<JkApplyLinkmanDto>> linkManResult = contactsService.getApplyLinkmansByAppNo(applyLoanNo);
-        List<AuditCallDto> result = new ArrayList<AuditCallDto>();
+        List<AuditCallDto> data = new ArrayList<AuditCallDto>();
+        Set<AuditCallDto> result = new TreeSet<AuditCallDto>(new Comparator<AuditCallDto>() {
+            @Override
+            public int compare(AuditCallDto dto1, AuditCallDto dto2) {
+                return dto1.getPhone().compareTo(dto2.getPhone());
+            }
+        });
         if (linkManResult.getData() == null) {
-            return result;
+            return data;
         }
         for (JkApplyLinkmanDto jkApplyLinkmanDto : linkManResult.getData()) {
             AuditCallDto auditCallDto = new AuditCallDto();
@@ -363,7 +373,9 @@ public class AuditCallController extends BaseController {
                 continue;
             }
         }
-        return result;
+        //为避免查出重复联系人照成前台校验卡住，对联系人做去重处理。 add by wuyc 20170718
+        data.addAll(result);
+        return data;
     }
 
     // 查询电调记录

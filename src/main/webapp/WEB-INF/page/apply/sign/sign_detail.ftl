@@ -63,6 +63,8 @@
 										<input type="hidden"  name="productType" value='${(productDto.id)!}' />
 										<input type="hidden"  name="applyLoanNo" value='${(applyLoanNo)!}' />
 										<input type="hidden"  name="periods" value='${(appInfo.loanPeriods)!}' />
+                                        <input type="hidden"  name="teamManageId" value='${(appInfo.teamManageId)!}' />
+                                        <input type="hidden"  name="teamManageName" value='${(appInfo.teamManageName)!}' />
 										<input type="hidden"  name="productId" value='${(productDto.id)!}' />
 									</div>
 								</div>

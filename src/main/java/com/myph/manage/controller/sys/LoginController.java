@@ -36,6 +36,7 @@ import com.myph.base.common.SmsTemplateEnum;
 import com.myph.base.dto.MenuDto;
 import com.myph.base.service.MenuService;
 import com.myph.common.constant.Constants;
+import com.myph.common.exception.DataValidateException;
 import com.myph.common.exception.SmsException;
 import com.myph.common.log.MyphLogger;
 import com.myph.common.redis.CacheService;
@@ -130,10 +131,6 @@ public class LoginController {
 				record.setOperatorIp(ShiroUtils.getCurrentUserIp());
 				record.setUserId(employeeId);
 				logService.insert(record);
-				SysUserDto sysUserDto = new SysUserDto();
-				sysUserDto.setEmployeeId(employeeId);
-				sysUserDto.setLastLoginTime(DateUtils.getCurrentDateTime());
-				sysUserService.updateSysUserLastLoginTime(sysUserDto);
 			}
 		} catch (UnknownAccountException e) {
 			result = "用户名或密码不正确";
@@ -254,15 +251,14 @@ public class LoginController {
 				result = ServiceResult.newFailure("用户名不存在");
 				return AjaxResult.formatFromServiceResult(result);
 			}
-			ServiceResult<SysUserDto> sysUserResult = sysUserService.selectSysUserById(employeeInfoDto.getId());
-			SysUserDto sysUserDto = sysUserResult.getData();
-			if (!sysUserResult.success() || sysUserDto == null) {// 账户状态0：禁用
-				result = ServiceResult.newFailure("用户账户不存在，请联系系统管理员");
-				return AjaxResult.formatFromServiceResult(result);
-			} else if (Constants.NO_INT == sysUserDto.getAmountState()) {
-				result = ServiceResult.newFailure("用户账户未被启用，请联系系统管理员");
-				return AjaxResult.formatFromServiceResult(result);
-			}
+			if(employeeInfoDto.getUserFlag() == null || Constants.NO.equals(employeeInfoDto.getUserFlag())){
+			    result = ServiceResult.newFailure("用户账户未被启用，请联系系统管理员");
+                return AjaxResult.formatFromServiceResult(result);
+            }
+			if(employeeInfoDto.getIcmbFlag() == null || Constants.YES.equals(employeeInfoDto.getIcmbFlag())){
+			    result = ServiceResult.newFailure("用户已离职，请联系系统管理员");
+			    return AjaxResult.formatFromServiceResult(result);
+            }
 			result = sendSmsService.sendLoginMessage(phone, SmsTemplateEnum.LOGIN_TEMPLATE);
 			return AjaxResult.formatFromServiceResult(result);
 		} catch (SmsException e) {

@@ -61,9 +61,24 @@
 									<div class="control-group span3 ">
 										<label class="help-inline text-right span4">渠道：</label>
 										<select class="m-wrap span5" id="clientType" name="clientType" value="${queryDto.clientType!}">
-											<option value="">请选择</option>
-											<option value="0">线下</option>
-											<option value="1">app</option>
+											<#if clients??>
+												<#if (clients?size) gt 1>
+                                                    <option value="">请选择</option>
+												</#if>
+												<#list clients as c>
+													<#if c == 0>
+                                                        <option value="0" <#if queryDto.clientType?? && queryDto.clientType == 0>selected</#if> >线下</option>
+													</#if>
+													<#if c == 1>
+                                                        <option value="1" <#if queryDto.clientType?? && queryDto.clientType == 1>selected</#if> >app</option>
+													</#if>
+												</#list>
+											<#else >
+                                                <option value="">请选择</option>
+                                                <option value="0" <#if queryDto.clientType?? && queryDto.clientType == 0>selected</#if> >线下</option>
+                                                <option value="1" <#if queryDto.clientType?? && queryDto.clientType == 1>selected</#if> >app</option>
+											</#if>
+
 										</select>
 									</div>
 									<div class="control-group span3 ">

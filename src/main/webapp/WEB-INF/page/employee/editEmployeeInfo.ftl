@@ -1,6 +1,6 @@
 <#include "/sys/top.ftl">
 <#include "/sys/left.ftl">
-<script src="${cdnPath}/js/employee/editEmployeeInfo.js"></script>
+<script src="${cdnPath}/js/employee/editEmployeeInfo.js?v=${VERSION_NO}"></script>
 <script type="text/javascript">
     var serverPath = "${serverPath}";
     var id = "${item.id}";
@@ -31,6 +31,8 @@
 	<div class="portlet-body form">
 		<form id="tab" action="${serverPath}/employee/updateEmployeeInfo.htm" method="POST" class="form-horizontal">
 		<input type="hidden" name="id" value="${item.id}"/>
+		<input type="hidden" name="oldTeam" value="${item.teamName!}"/>
+		<input type="hidden" name="oldJobLevel" value="${item.jobLevel!}"/>
 		<div class="row-fluid">
 			<div class="control-group span4 ">
 				<label class="control-label">员工姓名<span class="required">*</span></label>

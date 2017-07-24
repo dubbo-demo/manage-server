@@ -141,8 +141,8 @@ public class ContactsInputController extends ApplyBaseController{
             insertOrUpdateJkApplyLinkman(jkApplyLinkmanDto,oldJkApplyLinkmanDto);   
             return AjaxResult.success();
 		} catch (Exception e) {
-			MyphLogger.error("申请件联系人信息保存异常", e);
-			return AjaxResult.failed("服务异常，请稍后重试");
+			MyphLogger.error("数据已更新，请刷新页面后查看", e);
+			return AjaxResult.failed("数据已更新，请刷新页面后查看");
 		}
 	}
 	

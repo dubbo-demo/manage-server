@@ -82,7 +82,7 @@ function edit(event) {
 	var teamId = $("#teamId").val();
 	var jobLevel = $("#jobLevel").val();
 	if (teamId == "" && jobLevel != "") {
-		alert("请选择新团队!");
+		BootstrapDialog.alert("请选择新团队!");
 		return;
 	}
 	var url = serverPath + "/employee/checkEmployeeInfo.htm";
@@ -97,10 +97,10 @@ function edit(event) {
 		if ("0" == result.data) {
 			$("#tab").submit();
 		} else if ("1" == result.data) {
-			alert("该身份证号已存在!");
+			BootstrapDialog.alert("该身份证号已存在!");
 			return;
 		} else if ("2" == result.data) {
-			alert("该手机号已存在!");
+			BootstrapDialog.alert("该手机号已存在!");
 			return;
 		}
 	});

@@ -16,6 +16,8 @@ import com.myph.common.log.MyphLogger;
 import com.myph.common.result.AjaxResult;
 import com.myph.common.result.ServiceResult;
 import com.myph.employee.constants.EmployeeMsg;
+import com.myph.employee.constants.EmployeeMsg.ORGANIZATION_TYPE;
+import com.myph.employee.dto.EmployeeInfoDto;
 import com.myph.employee.service.EmployeeInfoService;
 import com.myph.manage.common.shiro.ShiroUtils;
 import com.myph.organization.dto.OrganizationDto;
@@ -306,6 +308,73 @@ public class OrganizationController {
         } catch (Exception e) {
             MyphLogger.error(e, "获取总部下所有部门信息异常,入参:{}", orgType);
             return AjaxResult.failed("获取总部下所有部门信息异常");
+        }
+    }
+    
+    
+    @RequestMapping("/getRegionInfo")
+    @ResponseBody
+    public AjaxResult getRegionInfo() {
+        try {
+            List<OrganizationDto> result = ShiroUtils.getRegionInfo();
+            return AjaxResult.success(result);
+        } catch (Exception e) {
+            MyphLogger.error("获取当前登录用户数据权限中大区信息异常",e);
+            return AjaxResult.failed("获取当前登录用户数据权限中大区信息异常");
+        }
+    }
+    
+    @RequestMapping("/getStoreInfo")
+    @ResponseBody
+    public AjaxResult getStoreInfo(Long id) {
+        try {
+            List<OrganizationDto> result = ShiroUtils.getStoreInfo(id);
+            return AjaxResult.success(result);
+        } catch (Exception e) {
+            MyphLogger.error("根据大区ID获取当前登录用户数据权限中门店信息",e);
+            return AjaxResult.failed("根据大区ID获取当前登录用户数据权限中门店信息");
+        }
+    }
+    
+    /**
+     * 
+     * @名称 selectEmployeeOrgs 
+     * @描述 根据登录人信息获取可查看的组织（适用员工信息管理）
+     * 1、大区可见所在大区及大区下所有门店、部门
+     * 2、总部可见所有大区、门店、部门
+     * 3、门店可见所在门店及其下部门
+     * @返回类型 AjaxResult     
+     * @日期 2017年7月14日 下午2:58:20
+     * @创建人  吴阳春
+     * @更新人  吴阳春
+     *
+     */
+    @RequestMapping("/selectEmployeeOrgs")
+    @ResponseBody
+    public AjaxResult selectEmployeeOrgs(){
+        try {
+            List<OrganizationDto> result = new ArrayList<OrganizationDto>();
+            EmployeeInfoDto employeeInfoDto = ShiroUtils.getCurrentUser();
+            if(ORGANIZATION_TYPE.REGION_TYPE.toNumber() == employeeInfoDto.getOrgType()){
+                List<OrganizationDto> regionResult = ShiroUtils.getRegionInfo();
+                for(OrganizationDto dto:regionResult){
+                    ServiceResult<List<OrganizationDto>> dtos = organizationService.selectAllOrganizationTree(dto.getId());
+                    result.addAll(dtos.getData());
+                }
+            }else if(ORGANIZATION_TYPE.HQ_TYPE.toNumber() == employeeInfoDto.getOrgType()){
+                ServiceResult<List<OrganizationDto>> dtos = organizationService.selectAllOrgInfo();
+                result.addAll(dtos.getData());
+            }else{
+                List<OrganizationDto> storeResult = ShiroUtils.getStoreInfo();
+                for(OrganizationDto dto:storeResult){
+                    ServiceResult<List<OrganizationDto>> dtos = organizationService.selectAllOrganizationTree(dto.getId());
+                    result.addAll(dtos.getData());
+                }
+            }
+            return AjaxResult.success(result);
+        } catch (Exception e) {
+            MyphLogger.error("根据登录人信息获取可查看的组织异常",e);
+            return AjaxResult.failed("根据登录人信息获取可查看的组织异常");
         }
     }
 }

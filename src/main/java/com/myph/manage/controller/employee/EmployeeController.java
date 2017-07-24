@@ -1,6 +1,8 @@
 package com.myph.manage.controller.employee;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -13,12 +15,15 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.myph.common.constant.Constants;
+import com.myph.common.log.MyphLogger;
 import com.myph.common.result.AjaxResult;
 import com.myph.common.result.ServiceResult;
 import com.myph.common.rom.annotation.BasePage;
 import com.myph.common.rom.annotation.Pagination;
 import com.myph.common.util.PingYinUtil;
 import com.myph.common.util.SensitiveInfoUtils;
+import com.myph.employee.constants.EmployeeMoveTypeEnum;
 import com.myph.employee.constants.EmployeeMsg;
 import com.myph.employee.dto.EmployeeDetailDto;
 import com.myph.employee.dto.EmployeeInfoDto;
@@ -31,6 +36,7 @@ import com.myph.employee.dto.EmpDetailDto;
 import com.myph.organization.dto.OrganizationDto;
 import com.myph.organization.service.OrganizationService;
 import com.myph.position.service.PositionService;
+import com.myph.team.service.SysTeamService;
 import com.myph.user.dto.SysUserDto;
 import com.myph.user.service.SysUserService;
 
@@ -49,16 +55,21 @@ public class EmployeeController {
 
     @Autowired
     private PositionService positionService;
+    
+    @Autowired
+    private SysTeamService sysTeamService;
 
     @RequestMapping("/queryEmployeeInfo")
     public String queryEmployeeInfo(EmployeeDetailDto queryDto, String pageIndex, Model model, Integer pageSize) {
         EmpDetailDto empDetail = ShiroUtils.getEmpDetail();
         EmployeeInfoDto user = ShiroUtils.getCurrentUser();
         Long orgId = 0l;
-        if (user.getOrgType() == 3) {
+        if (user.getOrgType() == EmployeeMsg.ORGANIZATION_TYPE.STORE_TYPE.toNumber()) {
             orgId = empDetail.getStoreId();
-        } else {
+        } else if(user.getOrgType() == EmployeeMsg.ORGANIZATION_TYPE.REGION_TYPE.toNumber()) {
             orgId = empDetail.getRegionId();
+        } else{
+            orgId = 0l;
         }
         if (null == queryDto.getOrgId()) {
             queryDto.setOrgId(orgId);
@@ -171,6 +182,7 @@ public class EmployeeController {
     @RequestMapping("/updateEmployeeInfo")
     public String updateEmployeeInfo(EmployeeDetailDto dto) {
         dto.setNameSpell(PingYinUtil.getPingYin(dto.getEmployeeName()));
+        dto.setUpdateUser(ShiroUtils.getCurrentUser().getEmployeeName());
         employeeInfoRemoteService.updateEmployeeInfo(dto);
         return "redirect:queryEmployeeInfo.htm";
     }
@@ -253,11 +265,6 @@ public class EmployeeController {
         return "redirect:queryEmployeeInfo.htm";
     }
 
-    /**
-     * 新增员工调动记录
-     * 
-     * @return
-     */
     @RequestMapping("/addSysUser")
     public String addSysUser(EmployeeDetailDto dto) {
         SysUserDto sysUserDto = new SysUserDto();
@@ -406,5 +413,65 @@ public class EmployeeController {
         }
         return ids;
     }
+    
+    /**
+     * 
+     * @名称 updateUserflag 
+     * @描述  更新员工启用/禁用状态
+     * @返回类型 AjaxResult     
+     * @日期 2017年7月3日 下午4:21:25
+     * @创建人  吴阳春
+     * @更新人  吴阳春
+     *
+     */
+    @RequestMapping("/updateUserflag")
+    @ResponseBody
+    public AjaxResult updateUserflag(Long id,Integer userFlag) {
+        EmployeeDetailDto employeeDetailDto = new EmployeeDetailDto();
+        employeeDetailDto.setId(id);
+        if(userFlag == Constants.NO_INT){
+            employeeDetailDto.setUserFlag(Constants.YES);
+        }else{
+            employeeDetailDto.setUserFlag(Constants.NO);
+        }
+        employeeDetailDto.setUpdateUser(ShiroUtils.getCurrentUser().getEmployeeName());
+        MyphLogger.info("更新员工启用/禁用状态：{}",employeeDetailDto);
+        employeeInfoRemoteService.updateUserflag(employeeDetailDto);
+        return AjaxResult.success();
+    }
 
+    /**
+     * 
+     * @名称 updateIcmbFlag 
+     * @描述 更新员工离职/在职状态
+     * @返回类型 AjaxResult     
+     * @日期 2017年7月3日 下午4:21:35
+     * @创建人  吴阳春
+     * @更新人  吴阳春
+     *
+     */
+    @RequestMapping("/updateIcmbFlag")
+    @ResponseBody
+    public AjaxResult updateIcmbFlag(Long id,Integer icmbFlag,String icmbTime) {
+        EmployeeDetailDto employeeDetailDto = new EmployeeDetailDto();
+        employeeDetailDto.setId(id);
+        if(icmbFlag == Constants.NO_INT){
+            employeeDetailDto.setIcmbFlag(Constants.YES);
+            employeeDetailDto.setUserFlag(Constants.NO);
+        }else{
+            employeeDetailDto.setIcmbFlag(Constants.NO);
+            employeeDetailDto.setUserFlag(Constants.YES);
+        }
+        employeeDetailDto.setUpdateUser(ShiroUtils.getCurrentUser().getEmployeeName());
+        employeeDetailDto.setIcmbTime(icmbTime);
+        MyphLogger.info("更新员工离职/在职状态：{}",employeeDetailDto);
+        //更新前校验是否为团队经理，团队经理不允许直接离职。
+        ServiceResult<Integer> result = sysTeamService.queryCountByLeaderId(id);
+        if(result.getData() > Constants.NO_INT){
+            return AjaxResult.failed("先解除此员工对应团队负责人关系");
+        }
+        employeeInfoRemoteService.updateIcmbFlag(employeeDetailDto);
+        return AjaxResult.success();
+    }
+    
 }

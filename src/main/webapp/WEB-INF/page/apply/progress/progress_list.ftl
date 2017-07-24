@@ -293,15 +293,8 @@ background: #f2dede
 		initAreaData();
 	}
 	function initAreaData(){
-	var queryData;
-	var url;
-	if(orgType==2){
-	    url=serverPath + "/organization/selectOrgByOrgType.htm";
-		queryData ={"orgType" : 1,	"Time" : new Date().getMilliseconds()}
-	}else{
-	    url=serverPath + "/organization/selectOrganizationById.htm";
-		queryData ={"id":regionId,	"Time" : new Date().getMilliseconds()}
-	};
+	var queryData ={"Time" : new Date().getMilliseconds()};
+	var url=serverPath + "/organization/getRegionInfo.htm";
 		$.ajax({
 			url: url,
 			type:"post",
@@ -311,7 +304,8 @@ background: #f2dede
 				//清空除第一条内容的外的其它数据
 				var select_ = $("select[name='areaId']");
 				select_.find("option:gt(0)").remove();
-				if(orgType==2){
+				var fristOne = false;
+				if(orgType==2 || $.isArray(result.data)){
     				for (var i = 0; i < result.data.length; i++) {
     					var isSelected = result.data[i].id == select_.attr('data-id')?"selected='selected'":"";
     					select_.append(
@@ -319,6 +313,9 @@ background: #f2dede
     									+ result.data[i].id + "'>"
     									+ result.data[i].orgName
     									+ "</option>");
+						if(regionId == result.data[i].id) {
+                            fristOne = true;
+						}
     				}
 				}else{
                     var isSelected = result.data.id == select_.attr('data-id')?"selected='selected'":"";
@@ -329,8 +326,14 @@ background: #f2dede
                                     + "</option>");
 				}
 				if(orgType!=2){
-				 select_.find("option:eq(0)").remove();
-				  select_.val(regionId);
+				 	select_.find("option:eq(0)").remove();
+				}
+				if(select_.attr('data-id')==-1) {
+					if(fristOne) {
+                        select_.val(regionId);
+					} else {
+                        select_.prop("selected", 'selected');
+					}
 				}
 				initStoreData();
 			},
@@ -347,16 +350,8 @@ background: #f2dede
 		if(parentId == "0"){
 			return;
 		}
-		var queryData;
-		var url;
-		if(orgType==3)
-		{
-		    url=serverPath + "/organization/selectOrganizationById.htm";
-			queryData ={"id":storeId,	"Time" : new Date().getMilliseconds()}
-		}else{
-		    url=serverPath + "/organization/selectOrgByParentId.htm";
-			queryData ={"parentId" : parentId,	"Time" : new Date().getMilliseconds()}
-		};
+		var queryData ={"id":parentId, "Time" : new Date().getMilliseconds()}
+		var url=serverPath + "/organization/getStoreInfo.htm";
 		$.ajax({
 			url: url,
 			type:"post",
@@ -366,7 +361,7 @@ background: #f2dede
 				//清空除第一条内容的外的其它数据
 				var select_ = $("select[name='storeId']");
 				select_.find("option:gt(0)").remove();
-				if(orgType==3){
+				if(orgType==3 && !$.isArray(result.data)){
 				    var isSelected = result.data.id == select_.attr('data-id')?"selected='selected'":"";
                         select_.append(
                                 "<option "+isSelected+" value='"
@@ -384,8 +379,10 @@ background: #f2dede
                     }
 				}		
 				if(orgType==3){
-				  select_.find("option:eq(0)").remove();
-				  select_.val(storeId);
+                    select_.find("option:eq(0)").remove();
+				}
+				if(select_.attr('data-id')==-1) {
+                    select_.prop("selected", 'selected');
 				}
 				$('#searchBtn').attr("disabled",false);
 			},

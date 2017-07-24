@@ -24,12 +24,7 @@ function initTreePullDown() {
 // 同步步加载组织结构
 function showOrganization(setting, obj) {
 	var zNodes = new Array();
-	var url;
-	if(null != queryTreeDto.orgId && queryTreeDto.orgId.length > 0){
-		url = treeObject.serverPath + "/organization/selectAllOrganizationTree.htm?id=" + queryTreeDto.orgId;
-	}else{
-		url = treeObject.serverPath + "/organization/selectAllOrgInfo.htm";
-	}
+	var url = treeObject.serverPath + "/organization/selectEmployeeOrgs.htm";
 	var data = {
 		"Time" : new Date().getMilliseconds()
 	};
@@ -46,7 +41,7 @@ function showOrganization(setting, obj) {
 			treeNote.pId = resultData[i].parentId;
 			treeNote.name = resultData[i].orgName;
 			treeNote.level = resultData[i].orgLevel;
-			treeNote.open = true;
+			treeNote.open = false;
 			zNodes.push(treeNote);
 		}
 	});

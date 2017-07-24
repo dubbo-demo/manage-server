@@ -119,7 +119,7 @@ public class ApproveController {
             page.setSubmitDates(DateUtils.addDays(DateUtils.getToday(), -14));
         }
         generateSubStateList(page);
-        MyphLogger.info("查询申请件列表开始");
+        MyphLogger.info("查询申请件列表开始,parm:{}",page.toString());
         //根据teamId获取人员
         if(page.getTeamId() != null && page.getTeamId() != 0){
             ServiceResult<List<EmployeeDetailDto>> employeeResult = employeeInfoService.queryEmployeeInfoByTeamId(page.getTeamId());
@@ -132,11 +132,11 @@ public class ApproveController {
         ServiceResult<Pagination<ApproveDto>> list = approveService.queryPageList(page);
         MyphLogger.info("查询申请件列表结束");
 
-        MyphLogger.info("申请件列表：" + list);
+        MyphLogger.debug("申请件列表：" + list);
 
         MyphLogger.info("数据替换");
         for (ApproveDto e : list.getData().getResult()) {
-        	MyphLogger.info("前数据："+e);
+        	MyphLogger.debug("前数据："+e);
             // 1、补充门店名称
             ServiceResult<OrganizationDto> storeResult = organizationService.selectOrganizationById(e.getStoreId());
             if(null != storeResult.getData()){
@@ -183,7 +183,7 @@ public class ApproveController {
             if(emplyeeResult.success()&&null !=  emplyeeResult.getData()){
                 e.setSuperLastAuditorName((emplyeeResult.getData().getEmployeeName()));
             }
-            MyphLogger.info("后数据："+e);
+            MyphLogger.debug("后数据："+e);
         }
         MyphLogger.info("数据替换结束");
 

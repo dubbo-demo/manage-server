@@ -17,7 +17,7 @@ function showOrganization(setting, obj) {
 			treeNote.name = resultData[i].orgName;
 			treeNote.level = resultData[i].orgLevel;
 			treeNote.type = resultData[i].orgType;
-			treeNote.open = true;
+			treeNote.open = false;
 			zNodes.push(treeNote);
 		}
 		$.fn.zTree.init(obj, setting, zNodes);

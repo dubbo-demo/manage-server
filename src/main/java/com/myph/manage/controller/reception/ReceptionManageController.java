@@ -1,5 +1,6 @@
 package com.myph.manage.controller.reception;
 
+import com.myph.manage.common.shiro.dto.RoleConditionDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -53,7 +54,7 @@ public class ReceptionManageController {
      * 列表
      * 
      * @param model
-     * @param ApplyReceptionDto
+     * @param dto
      * @param basePage
      * @return
      */
@@ -62,6 +63,15 @@ public class ReceptionManageController {
         MyphLogger.info("接待管理列表分页查询条件", dto.toString());
         EmployeeInfoDto user = ShiroUtils.getCurrentUser();
         EmpDetailDto empDetail = ShiroUtils.getEmpDetail();
+        RoleConditionDto rdto = ShiroUtils.getRoleCondition();
+
+        // 配有渠道权限数据
+        if(null != rdto && null != rdto.getClients()) {
+            model.addAttribute("clients", rdto.getClients());
+            if(rdto.getClients().size() == 1) {
+                dto.setClientType(rdto.getClients().get(0));
+            }
+        }
         // 门店级别
         if (null != empDetail && ORGANIZATION_TYPE.STORE_TYPE.toNumber() == user.getOrgType()) {
             model.addAttribute("empStoreId", empDetail.getStoreId());

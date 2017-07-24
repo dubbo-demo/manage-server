@@ -35,11 +35,18 @@ function saveMoveInfo(event) {
 	var moveTime = $("#moveTime").val();
 	var moveRemark = $("#moveRemark").val();
 	if (teamId == "" && jobLevel != "") {
-		alert("请选择新团队!");
+		BootstrapDialog.alert("请选择新团队!");
+		return;
+	}
+	
+	//V2.0若新增、调动为员工为业务经理/团队经理时，团队必填。
+	var positionCode = $("#positionId").find("option:selected").data('code');
+	if(teamId == "" && (positionCode == "GW022" || positionCode == "GW023")){
+		BootstrapDialog.alert("请选择新团队!");
 		return;
 	}
 //	if (teamId != "" && jobLevel == "") {
-//		alert("请选择新星级!");
+//		BootstrapDialog.alert("请选择新星级!");
 //		return;
 //	}
 
@@ -74,7 +81,7 @@ function onClick(e, treeId, treeNode) {
 		return a.id - b.id;
 	});
 	if ("4" != nodes[0].orgType && "5" != nodes[0].orgType) {
-		alert("组织架构只能选部门!");
+		BootstrapDialog.alert("组织架构只能选部门!");
 		return;
 	}
 	for (var i = 0, l = nodes.length; i < l; i++) {
@@ -102,8 +109,8 @@ function onClick(e, treeId, treeNode) {
 			$("#positionId").append("<option value=''>请选择</option>");
 			for (var i = 0; i < resultData.length; i++) {
 				$("#positionId").append(
-						"<option value='" + resultData[i].positionId + "'>"
-								+ resultData[i].positionName + "</option>");
+						"<option value='" + resultData[i].positionId + "' data-code='" + resultData[i].positionCode +"'>"
+						+ resultData[i].positionName + "</option>");
 			}
 		});
 		//默认门店下部门
