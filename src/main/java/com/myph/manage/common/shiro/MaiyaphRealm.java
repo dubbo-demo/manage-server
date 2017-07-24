@@ -247,6 +247,10 @@ public class MaiyaphRealm extends AuthorizingRealm {
         List<SysRoleConditionDto> infoRoleProducts = new ArrayList<SysRoleConditionDto>();
         if (roleConditions.getData() != null) {
             for (SysRoleConditionDto dto : roleConditions.getData()) {
+                //非空校验，避免异常情况
+                if(StringUtils.isBlank(dto.getConditionCode())){
+                    continue;
+                }
                 // 处理组织信息
                 if (dto.getDimension().equals(RoleConditionEnum.ORG.getCode())) {
                     ServiceResult<OrganizationDto> regionResult = organizationService
