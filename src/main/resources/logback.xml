@@ -152,8 +152,8 @@
     <!--输入spring的error -->
     <logger name="com.myph" level="info"/>
     <logger name="com.alibaba.dubbo" level="error"/>
-    <logger name="com.ibatis" level="debug"/>
-    <logger name="org.springframework" level="debug"/>
+    <logger name="com.ibatis" level="error"/>
+    <logger name="org.springframework" level="error"/>
     <logger name="com.ibatis.sqlmap.engine.impl.SqlMapClientDelegate" level="error"/>
     <logger name="org.apache.commons" level="error"/>
     <logger name="catalia" level="error"/>
