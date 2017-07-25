@@ -292,7 +292,8 @@ function updateIcmbFlag(){
 		data : {
 			"id" : $("#icmbShowId").val(),
 			"icmbFlag" : $("#icmbShowFlag").val(),
-			"icmbTime" : $("#icmbTime").val()
+			"icmbTime" : $("#icmbTime").val(),
+			"remark" : $("#remark").val()
 		},
 		dataType : "json",
 		success : function(result) {

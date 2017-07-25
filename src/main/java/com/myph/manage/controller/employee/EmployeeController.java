@@ -452,7 +452,7 @@ public class EmployeeController {
      */
     @RequestMapping("/updateIcmbFlag")
     @ResponseBody
-    public AjaxResult updateIcmbFlag(Long id,Integer icmbFlag,String icmbTime) {
+    public AjaxResult updateIcmbFlag(Long id,Integer icmbFlag,String icmbTime,String remark) {
         EmployeeDetailDto employeeDetailDto = new EmployeeDetailDto();
         employeeDetailDto.setId(id);
         if(icmbFlag == Constants.NO_INT){
@@ -464,6 +464,7 @@ public class EmployeeController {
         }
         employeeDetailDto.setUpdateUser(ShiroUtils.getCurrentUser().getEmployeeName());
         employeeDetailDto.setIcmbTime(icmbTime);
+        employeeDetailDto.setRemark(remark);
         MyphLogger.info("更新员工离职/在职状态：{}",employeeDetailDto);
         //更新前校验是否为团队经理，团队经理不允许直接离职。
         ServiceResult<Integer> result = sysTeamService.queryCountByLeaderId(id);
