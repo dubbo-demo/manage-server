@@ -313,6 +313,7 @@
             SysRoleConditionDto.conditionCode = shops;
             SysRoleConditionDto.delFlag = 1;
             sysRoleCs[index] = SysRoleConditionDto;
+            index++;
         }
 
         shops = '';
@@ -325,7 +326,6 @@
             }
         });
        if(shops != '') {
-           index++;
            shops = shops.substr(1);
            sysRoleCs[index] = {};
            SysRoleConditionDto.dimension = 'infoRoleClient';

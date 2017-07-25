@@ -155,7 +155,11 @@ public class SysRoleConditionController {
             // json转换成数据权限集合
             List<SysRoleConditionDto> conditionList = JSONObject.parseArray(jsonStr, SysRoleConditionDto.class);
             for (SysRoleConditionDto condition : conditionList) {
-                condition.setUpdateUser(operatorName);
+                if(null != condition) {
+                    condition.setUpdateUser(operatorName);
+                } else {
+                    conditionList.remove(condition);
+                }
             }
             // 全量新增新数据
             ServiceResult<Integer> addreuslt = sysRoleConditionService.batchAdd(conditionList);
