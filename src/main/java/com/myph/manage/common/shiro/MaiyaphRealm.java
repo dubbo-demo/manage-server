@@ -326,6 +326,9 @@ public class MaiyaphRealm extends AuthorizingRealm {
             //所在门店权限
             ServiceResult<OrganizationDto> storeResult = organizationService.selectOrganizationById(empDetailDto.getStoreId());
             curOrgs.add(storeResult.getData());
+            //门店对应大区
+            ServiceResult<OrganizationDto> regionResult = organizationService.selectOrganizationById(storeResult.getData().getParentId());
+            curOrgs.add(regionResult.getData());
         }
         return curOrgs;
     }
