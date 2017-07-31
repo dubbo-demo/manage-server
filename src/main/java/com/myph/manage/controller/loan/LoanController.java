@@ -211,7 +211,7 @@ public class LoanController extends BaseController{
                     "申请单号", "银行卡号", "开户行", "产品名称", "借款金额","借款期限", "借款利率",
                     "还款开始时间", "还款结束时间", "服务费", "实际打款金额", "总利息", "每期应收", "首期应收" };// 列名
             String keys[] = { "signTime","areaName","storeName","customerSName","memberName","leaderName","bmName","phone","idCard","contractNo",
-                    "applyLoanNo","bankCardNo","bankName","productName","contractAmount","loanPeriods","interestRate",
+                    "applyLoanNo","bankCardNo","bankName","productName","contractAmount","loanPeriods","totalRate",
                     "beginTime","endTime","serviceRate","repayMoney","interestAmount","everyReapyAmount","firstReapyAmount" };
             String fileName = "放款管理" + new SimpleDateFormat("yyyyMMddhhmmss").format(new Date()).toString();
             // 获取Excel数据
