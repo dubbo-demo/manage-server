@@ -304,11 +304,12 @@ $(function () {
 });
 
 function initPositionsCode(){
+    var parentCode = $("select[name='companyNature']").find("option:selected").attr('data-code');
     $.ajax({
         url : serverPath + "/node/selectNodeList.htm",
         type : "post",
         data : {
-            "parentCode" : $("select[name='companyNature']").find("option:selected").attr('data-code'),
+            "parentCode" : parentCode,
             "Time" : new Date().getMilliseconds()
         },
         dataType : "json",
@@ -318,10 +319,10 @@ function initPositionsCode(){
                 var select_ = $("select[name='positionsCode']");
                 select_.find("option:gt(0)").remove();
                 for (var i = 0; i < result.data.length; i++) {
-                    var isSelected = result.data[i].id == select_
+                    var isSelected = result.data[i].nodeCode == select_
                             .attr('data-id') ? "selected='selected'" : "";
                     select_.append("<option " + isSelected + " value='"
-                            + result.data[i].id + "'>"
+                            + result.data[i].nodeCode + "'>"
                             + result.data[i].nodeName + "</option>");
                 }
             } else {
@@ -335,11 +336,12 @@ function initPositionsCode(){
 }
 
 function initOtherPositionsCode(){
+    var parentCode = $("select[name='otherCompanyNature']").find("option:selected").attr('data-code');
     $.ajax({
         url : serverPath + "/node/selectNodeList.htm",
         type : "post",
         data : {
-            "parentCode" : $("select[name='otherCompanyNature']").find("option:selected").attr('data-code'),
+            "parentCode" : parentCode,
             "Time" : new Date().getMilliseconds()
         },
         dataType : "json",
@@ -349,10 +351,10 @@ function initOtherPositionsCode(){
                 var select_ = $("select[name='otherPositionsCode']");
                 select_.find("option:gt(0)").remove();
                 for (var i = 0; i < result.data.length; i++) {
-                    var isSelected = result.data[i].id == select_
+                    var isSelected = result.data[i].nodeCode == select_
                             .attr('data-id') ? "selected='selected'" : "";
                     select_.append("<option " + isSelected + " value='"
-                            + result.data[i].id + "'>"
+                            + result.data[i].nodeCode + "'>"
                             + result.data[i].nodeName + "</option>");
                 }
             } else {
@@ -366,7 +368,7 @@ function initOtherPositionsCode(){
 }
 
 
-function initCompanyNature() {   
+function initCompanyNature() {  
     var url = serverPath + "/node/selectNodeList.htm";
     var data = {
         "parentCode" : "unitPro",
@@ -378,28 +380,28 @@ function initCompanyNature() {
             var select_ = $("select[name='companyNature']");
             select_.find("option:gt(0)").remove();
             for (var i = 0; i < result.data.length; i++) {
-                var isSelected = result.data[i].id == select_
+                var isSelected = result.data[i].nodeCode == select_
                         .attr('data-id') ? "selected='selected'" : "";
                 select_.append("<option " + isSelected + " value='"
-                        + result.data[i].id + "' data-code='" + result.data[i].nodeCode + "'>"
+                        + result.data[i].nodeCode + "' data-code='" + result.data[i].nodeCode + "'>"
                         + result.data[i].nodeName + "</option>");
             }
             var test = $("select[name='companyNature']").find("option:selected").attr('data-code');
-            if(test != ''){
+            if(test != '' && typeof(test)!="undefined"){
                 initPositionsCode();
             }
            
             var select_ = $("select[name='otherCompanyNature']");
             select_.find("option:gt(0)").remove();
             for (var i = 0; i < result.data.length; i++) {     
-                var isSelected = result.data[i].id == select_
+                var isSelected = result.data[i].nodeCode == select_
                         .attr('data-id') ? "selected='selected'" : "";
                 select_.append("<option " + isSelected + " value='"
-                        + result.data[i].id + "' data-code='" + result.data[i].nodeCode + "'>"
+                        + result.data[i].nodeCode + "' data-code='" + result.data[i].nodeCode + "'>"
                         + result.data[i].nodeName + "</option>");
             }
             var test1 = $("select[name='otherCompanyNature']").find("option:selected").attr('data-code');
-            if(test1 != ''){
+            if(test1 != '' && typeof(test1)!="undefined"){
             initOtherPositionsCode(); 
             }
         } else {
