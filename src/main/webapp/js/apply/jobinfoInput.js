@@ -101,6 +101,7 @@ function jobInfoSave(nextFlag){
 	record.positionsCode = $("select[name='positionsCode']").val();
 	record.businessType = $("select[name='businessType']").val();
 	record.otherBusinessType = $("select[name='otherBusinessType']").val();
+	record.otherPositionsCode = $("select[name='otherPositionsCode']").val();
 	record.salaryWay = $("select[name='salaryWay']").val();
 	var dom = form.find("input");
 	dom.each(function(index, input) {

@@ -153,15 +153,8 @@
 	
 				<label class="control-label">单位性质</label>
 				<div class="controls">
-					<select name="companyNature" class="m-wrap span9">
+					<select name="companyNature" class="m-wrap span9" data-id="${(jobInfo.companyNature)!"0"}" onchange="initPositionsCode()">
 						<option value="">请选择</option>
-						<option value="1">个体户</option>
-						<option value="2">私营企业</option>
-						<option value="3">国有企业</option>
-						<option value="4">事业单位</option>
-						<option value="5">国家机关</option>
-						<option value="6">外资/合资企业</option>
-						<option value="7">其他</option>
 					</select>
 				</div>
 			</div>
@@ -172,16 +165,8 @@
 	
 				<div class="controls">
 	
-					<select name="positionsCode" class="m-wrap span9">
+					<select name="positionsCode" class="m-wrap span9" data-id="${(jobInfo.positionsCode)!"0"}">
 						<option value="">请选择</option>
-						<option value="1">高级资深人员</option>
-						<option value="2">中级技术人员</option>
-						<option value="3">初级/助理人员</option>
-						<option value="4">见习专员</option>
-						<option value="5">高层管理人员</option>
-						<option value="6">中层管理人员</option>
-						<option value="7">基层管理人员</option>
-						<option value="8">普通员工</option>
 					</select>
 	
 				</div>
@@ -289,15 +274,8 @@
 	
 				<div class="controls">
 	
-					<select name="otherCompanyNature" class="m-wrap span9">
+					<select name="otherCompanyNature" class="m-wrap span9" data-id="${(jobInfo.otherCompanyNature)!"0"}" onchange="initOtherPositionsCode()">
 						<option value="">请选择</option>
-						<option value="1">个体户</option>
-						<option value="2">私营企业</option>
-						<option value="3">国有企业</option>
-						<option value="4">事业单位</option>
-						<option value="5">国家机关</option>
-						<option value="6">外资/合资企业</option>
-						<option value="7">其他</option>
 					</select>
 	
 				</div>
@@ -309,9 +287,9 @@
 				<label class="control-label">副业职务</label>
 	
 				<div class="controls">
-	
-					<input type="input" class="span9 m-wrap" value="${(jobInfo.otherPositionsCode)!}" name="otherPositionsCode" />
-	
+                    <select name="otherPositionsCode" class="m-wrap span9" data-id="${(jobInfo.otherPositionsCode)!"0"}">
+                        <option value="">请选择</option>
+                    </select>	
 				</div>
 	
 			</div>
@@ -321,57 +299,155 @@
 <script>
 $(function () {
 	showCitys("#companyAddress","${serverPath}");
+	initCompanyNature();
 	initProductData();
 });
 
-function initProductData() {
-	$.ajax({
-		url : serverPath + "/node/selectNodeList.htm",
-		type : "post",
-		data : {
-			"parentCode" : "industryType",
-			"Time" : new Date().getMilliseconds()
-		},
-		dataType : "json",
-		success : function(result) {
-			if (result.code == 0) {
-				// 清空除第一条内容的外的其它数据
-				
-				var select_ = $("select[name='businessType']");
-				select_.find("option:gt(0)").remove();
-				for (var i = 0; i < result.data.length; i++) {
-					
-					var isSelected = result.data[i].id == select_
-							.attr('data-id') ? "selected='selected'" : "";
-					select_.append("<option " + isSelected + " value='"
-							+ result.data[i].id + "'>"
-							+ result.data[i].nodeName + "</option>");
-				}
-				
-				var select_ = $("select[name='otherBusinessType']");
-				select_.find("option:gt(0)").remove();
-				for (var i = 0; i < result.data.length; i++) {
-					
-					var isSelected = result.data[i].id == select_
-							.attr('data-id') ? "selected='selected'" : "";
-					select_.append("<option " + isSelected + " value='"
-							+ result.data[i].id + "'>"
-							+ result.data[i].nodeName + "</option>");
-				}
-			} else {
-				BootstrapDialog.alert(result.message);
-			}
-		},
-		error : function() {
-			BootstrapDialog.alert("操作失败");
-		}
-	});
+function initPositionsCode(){
+    $.ajax({
+        url : serverPath + "/node/selectNodeList.htm",
+        type : "post",
+        data : {
+            "parentCode" : $("select[name='companyNature']").find("option:selected").attr('data-code'),
+            "Time" : new Date().getMilliseconds()
+        },
+        dataType : "json",
+        success : function(result) {
+            if (result.code == 0) {
+                // 清空除第一条内容的外的其它数据
+                var select_ = $("select[name='positionsCode']");
+                select_.find("option:gt(0)").remove();
+                for (var i = 0; i < result.data.length; i++) {
+                    var isSelected = result.data[i].id == select_
+                            .attr('data-id') ? "selected='selected'" : "";
+                    select_.append("<option " + isSelected + " value='"
+                            + result.data[i].id + "'>"
+                            + result.data[i].nodeName + "</option>");
+                }
+            } else {
+                BootstrapDialog.alert(result.message);
+            }
+        },
+        error : function() {
+            BootstrapDialog.alert("操作失败1");
+        }
+    });
 }
 
- $("select[name='positionsCode']").val("${(jobInfo.positionsCode)!}");
- $("select[name='salaryWay']").val("${(jobInfo.salaryWay)!}");
-$("select[name='companyNature']").val("${(jobInfo.companyNature)!}");
- $("select[name='otherCompanyNature']").val("${(jobInfo.otherCompanyNature)!}");
- 
+function initOtherPositionsCode(){
+    $.ajax({
+        url : serverPath + "/node/selectNodeList.htm",
+        type : "post",
+        data : {
+            "parentCode" : $("select[name='otherCompanyNature']").find("option:selected").attr('data-code'),
+            "Time" : new Date().getMilliseconds()
+        },
+        dataType : "json",
+        success : function(result) {
+            if (result.code == 0) {
+                // 清空除第一条内容的外的其它数据
+                var select_ = $("select[name='otherPositionsCode']");
+                select_.find("option:gt(0)").remove();
+                for (var i = 0; i < result.data.length; i++) {
+                    var isSelected = result.data[i].id == select_
+                            .attr('data-id') ? "selected='selected'" : "";
+                    select_.append("<option " + isSelected + " value='"
+                            + result.data[i].id + "'>"
+                            + result.data[i].nodeName + "</option>");
+                }
+            } else {
+                BootstrapDialog.alert(result.message);
+            }
+        },
+        error : function() {
+            BootstrapDialog.alert("操作失败2");
+        }
+    });
+}
+
+
+function initCompanyNature() {   
+    var url = serverPath + "/node/selectNodeList.htm";
+    var data = {
+        "parentCode" : "unitPro",
+        "Time" : new Date().getMilliseconds()
+    };
+    $.getJSON(url, data, function(result) {
+        if (result.code == 0) {
+            // 清空除第一条内容的外的其它数据
+            var select_ = $("select[name='companyNature']");
+            select_.find("option:gt(0)").remove();
+            for (var i = 0; i < result.data.length; i++) {
+                var isSelected = result.data[i].id == select_
+                        .attr('data-id') ? "selected='selected'" : "";
+                select_.append("<option " + isSelected + " value='"
+                        + result.data[i].id + "' data-code='" + result.data[i].nodeCode + "'>"
+                        + result.data[i].nodeName + "</option>");
+            }
+            var test = $("select[name='companyNature']").find("option:selected").attr('data-code');
+            if(test != ''){
+                initPositionsCode();
+            }
+           
+            var select_ = $("select[name='otherCompanyNature']");
+            select_.find("option:gt(0)").remove();
+            for (var i = 0; i < result.data.length; i++) {     
+                var isSelected = result.data[i].id == select_
+                        .attr('data-id') ? "selected='selected'" : "";
+                select_.append("<option " + isSelected + " value='"
+                        + result.data[i].id + "' data-code='" + result.data[i].nodeCode + "'>"
+                        + result.data[i].nodeName + "</option>");
+            }
+            var test1 = $("select[name='otherCompanyNature']").find("option:selected").attr('data-code');
+            if(test1 != ''){
+            initOtherPositionsCode(); 
+            }
+        } else {
+            BootstrapDialog.alert(result.message);
+        }
+    });       
+}
+
+function initProductData() {
+    var url = serverPath + "/node/selectNodeList.htm";
+    var data = {
+        "parentCode" : "industryType",
+        "Time" : new Date().getMilliseconds()
+    };
+    $.getJSON(url, data, function(result) {
+        if (result.code == 0) {
+            // 清空除第一条内容的外的其它数据
+            
+            var select_ = $("select[name='businessType']");
+            select_.find("option:gt(0)").remove();
+            for (var i = 0; i < result.data.length; i++) {
+                
+                var isSelected = result.data[i].id == select_
+                        .attr('data-id') ? "selected='selected'" : "";
+                select_.append("<option " + isSelected + " value='"
+                        + result.data[i].id + "'>"
+                        + result.data[i].nodeName + "</option>");
+            }
+            
+            var select_ = $("select[name='otherBusinessType']");
+            select_.find("option:gt(0)").remove();
+            for (var i = 0; i < result.data.length; i++) {
+                
+                var isSelected = result.data[i].id == select_
+                        .attr('data-id') ? "selected='selected'" : "";
+                select_.append("<option " + isSelected + " value='"
+                        + result.data[i].id + "'>"
+                        + result.data[i].nodeName + "</option>");
+            }
+        } else {
+            BootstrapDialog.alert(result.message);
+        }
+    });  
+}
+
+
+$("select[name='salaryWay']").val("${(jobInfo.salaryWay)!}");
+
+
  Search.init();
  </script>
