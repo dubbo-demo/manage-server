@@ -69,9 +69,10 @@ public class FrbaoMemberController extends BaseController {
     public String queryPageList(FrbaoLoanMemberDto param, BasePage page, Model model) {
         MyphLogger.info("列表页参数【{}】", param);
         ServiceResult<Pagination<FrbaoLoanMemberDto>> rs = frbaoLoanMemberService.queryListFrbaoPagination(param, page);
-        if(rs.success()) {
+        if (rs.success()) {
             for (FrbaoLoanMemberDto dto : rs.getData().getResult()) {
                 dto.setMonthlySalaryArea(getMonthMoney(dto.getMonthlySalary()));
+                dto.setBankTypeName(getBusinessTypeName(dto.getBusinessType()));
             }
         }
         model.addAttribute("params", param);
@@ -128,7 +129,8 @@ public class FrbaoMemberController extends BaseController {
                 SimpleDateFormat sdf = new SimpleDateFormat(DateUtils.DATE_FORMAT_PATTERN);
                 destMap.put("loanTime", sdf.format(loanTime));
             }
-            destMap.put("monthlySalary",getMonthMoney(dto.getMonthlySalary()));
+            destMap.put("monthlySalary", getMonthMoney(dto.getMonthlySalary()));
+            destMap.put("businessTypeName",getBusinessTypeName(dto.getBusinessType()));
             destList.add(destMap);
         }
         return destList;
@@ -141,21 +143,47 @@ public class FrbaoMemberController extends BaseController {
         if (monthM < 1500) {
             return "";
         }
-        if (monthM >= 1500 && monthM <=1900){
+        if (monthM >= 1500 && monthM <= 1900) {
             return "1500-1999";
         }
-        if (monthM >= 2000 && monthM <=5999){
+        if (monthM >= 2000 && monthM <= 5999) {
             return "2000-5999";
         }
-        if (monthM >= 6000 && monthM <=7999){
+        if (monthM >= 6000 && monthM <= 7999) {
             return "6000-7999";
         }
-        if (monthM >= 8000 && monthM <=10000){
+        if (monthM >= 8000 && monthM <= 10000) {
             return "8000-10000";
         }
-        if (monthM >= 10001 && monthM <=14999){
+        if (monthM >= 10001 && monthM <= 14999) {
             return "10001-14999";
         }
         return ">15000";
+    }
+
+    private String getBusinessTypeName(Long businessType) {
+        if (null == businessType || 125L == businessType || 127L == businessType || 130L == businessType
+                || 148L == businessType || 134L == businessType) {
+            return "个人经营/其它";
+        } else if (128L == businessType || 129L == businessType) {
+            return "计算机/互联网/通信";
+        } else if (123L == businessType || 143L == businessType || 145L == businessType) {
+            return "生产/工艺/制造";
+        } else if (139L == businessType || 146L == businessType || 147L == businessType) {
+            return "医疗/护理/制药";
+        } else if (124L == businessType || 136L == businessType || 142L == businessType) {
+            return "贸易/消费/制造/营运";
+        } else if (141L == businessType) {
+            return "文化/广告/传媒";
+        } else if (140L == businessType) {
+            return "娱乐/艺术/表演";
+        } else if (19L == businessType || 126L == businessType || 144L == businessType
+                || 131L == businessType || 132L == businessType
+                || 137L == businessType || 138L == businessType) {
+            return "房地产/服务业/餐饮";
+        } else if (135L == businessType) {
+            return "教育/培训";
+        }
+        return "个人经营/其它";
     }
 }
