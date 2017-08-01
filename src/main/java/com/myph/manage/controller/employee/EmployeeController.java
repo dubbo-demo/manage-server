@@ -74,7 +74,10 @@ public class EmployeeController {
         if (null == queryDto.getOrgId()) {
             queryDto.setOrgId(orgId);
         }
-
+        // 默认在职
+        if (null == queryDto.getIcmbFlag()){
+            queryDto.setIcmbFlag(Constants.NO);
+        }
         int startNum = 1;
         if (StringUtils.isNoneBlank(pageIndex)) {
             startNum = Integer.parseInt(pageIndex);
