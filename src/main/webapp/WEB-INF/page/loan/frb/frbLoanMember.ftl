@@ -26,7 +26,7 @@ function down(status){
 						href="${serverPath}/index.htm">首页</a> <i class="icon-angle-right"></i>
 					</li>
 					<li><a href="#">财务管理</a> <i class="icon-angle-right"></i></li>
-					<li><a href="#">放款管理</a></li>
+					<li><a href="#">付融宝借款人信息</a></li>
 				</ul>
 			</div>
 		</div>
