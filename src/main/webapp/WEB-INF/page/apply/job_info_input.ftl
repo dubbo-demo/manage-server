@@ -154,7 +154,7 @@
 				<label class="control-label">单位性质</label>
 				<div class="controls">
 					<select name="companyNature" class="m-wrap span9" data-id="${(jobInfo.companyNature)!"0"}" onchange="initPositionsCode()">
-						<option value="">请选择</option>
+						<option value="0">请选择</option>
 					</select>
 				</div>
 			</div>
@@ -166,7 +166,7 @@
 				<div class="controls">
 	
 					<select name="positionsCode" class="m-wrap span9" data-id="${(jobInfo.positionsCode)!"0"}">
-						<option value="">请选择</option>
+						<option value="0">请选择</option>
 					</select>
 	
 				</div>
@@ -275,7 +275,7 @@
 				<div class="controls">
 	
 					<select name="otherCompanyNature" class="m-wrap span9" data-id="${(jobInfo.otherCompanyNature)!"0"}" onchange="initOtherPositionsCode()">
-						<option value="">请选择</option>
+						<option value="0">请选择</option>
 					</select>
 	
 				</div>
@@ -288,7 +288,7 @@
 	
 				<div class="controls">
                     <select name="otherPositionsCode" class="m-wrap span9" data-id="${(jobInfo.otherPositionsCode)!"0"}">
-                        <option value="">请选择</option>
+                        <option value="0">请选择</option>
                     </select>	
 				</div>
 	
@@ -305,6 +305,11 @@ $(function () {
 
 function initPositionsCode(){
     var parentCode = $("select[name='companyNature']").find("option:selected").attr('data-code');
+    if(parentCode == '' || parentCode == '0' || typeof(parentCode) == "undefined"){
+        var select_ = $("select[name='positionsCode']");
+        select_.find("option:gt(0)").remove();    
+        return true;
+    }
     $.ajax({
         url : serverPath + "/node/selectNodeList.htm",
         type : "post",
@@ -337,6 +342,11 @@ function initPositionsCode(){
 
 function initOtherPositionsCode(){
     var parentCode = $("select[name='otherCompanyNature']").find("option:selected").attr('data-code');
+    if(parentCode == '' || parentCode == '0' || typeof(parentCode) == "undefined"){
+        var select_ = $("select[name='otherPositionsCode']");
+        select_.find("option:gt(0)").remove();    
+        return true;
+    }    
     $.ajax({
         url : serverPath + "/node/selectNodeList.htm",
         type : "post",
@@ -387,7 +397,8 @@ function initCompanyNature() {
                         + result.data[i].nodeName + "</option>");
             }
             var test = $("select[name='companyNature']").find("option:selected").attr('data-code');
-            if(test != '' && typeof(test)!="undefined"){
+            debugger;
+            if(test != '' && test != '0' && typeof(test)!="undefined"){
                 initPositionsCode();
             }
            
@@ -401,7 +412,7 @@ function initCompanyNature() {
                         + result.data[i].nodeName + "</option>");
             }
             var test1 = $("select[name='otherCompanyNature']").find("option:selected").attr('data-code');
-            if(test1 != '' && typeof(test1)!="undefined"){
+            if(test1 != '' && test1 != '0' && typeof(test1)!="undefined"){
             initOtherPositionsCode(); 
             }
         } else {
