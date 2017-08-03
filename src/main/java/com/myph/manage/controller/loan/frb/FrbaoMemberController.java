@@ -19,6 +19,8 @@ import com.myph.manage.common.util.BeanUtils;
 import com.myph.manage.controller.BaseController;
 import com.myph.performance.dto.FrbaoLoanMemberDto;
 import com.myph.performance.service.FrbaoLoanMemberService;
+
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -27,6 +29,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import javax.servlet.http.HttpServletResponse;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -57,9 +60,17 @@ public class FrbaoMemberController extends BaseController {
         ServiceResult<Pagination<FrbaoLoanMemberDto>> rs = frbaoLoanMemberService.queryListFrbaoPagination(param, page);
         if (rs.success()) {
             for (FrbaoLoanMemberDto dto : rs.getData().getResult()) {
+                String addr = dto.getLiveAddr();
+                if(StringUtils.isNotBlank(addr)){
+                    String[] addrArray = addr.split("-");
+                    if(addrArray.length > 0){
+                        dto.setLiveProv(addrArray[0]);
+                        dto.setLiveCity(addrArray[1]);
+                    }
+                }
                 dto.setIdCard(SensitiveInfoUtils.maskIdCard(dto.getIdCard()));// 隐藏身份证
                 dto.setMonthlySalaryArea(getMonthMoney(dto.getMonthlySalary()));
-                dto.setBankTypeName(getBusinessTypeName(dto.getBusinessType()));
+                dto.setBusinessTypeName(getBusinessTypeName(dto.getBusinessType()));
             }
         }
         model.addAttribute("params", param);
@@ -74,6 +85,16 @@ public class FrbaoMemberController extends BaseController {
         try {
             // 设置参数查询满足条件的所有数据不分页
             List<FrbaoLoanMemberDto> list = frbaoLoanMemberService.queryListFrbao(param).getData();
+            for(FrbaoLoanMemberDto dto:list){
+                String addr = dto.getLiveAddr();
+                if(StringUtils.isNotBlank(addr)){
+                    String[] addrArray = addr.split("-");
+                    if(addrArray.length > 0){
+                        dto.setLiveProv(addrArray[0]);
+                        dto.setLiveCity(addrArray[1]);
+                    }
+                }  
+            }
             String columnNames[] = {
                     "合同号", "身份证号码", "用户状态", "是否已认证"
                     , "姓名", "性别", "年龄", "国籍", "省份", "城市", "公司性质"
