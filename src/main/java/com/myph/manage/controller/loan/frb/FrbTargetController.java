@@ -19,9 +19,11 @@ import com.myph.common.log.MyphLogger;
 import com.myph.common.result.ServiceResult;
 import com.myph.common.rom.annotation.BasePage;
 import com.myph.common.rom.annotation.Pagination;
+import com.myph.common.util.SensitiveInfoUtils;
 import com.myph.manage.common.util.BeanUtils;
 import com.myph.manage.controller.BaseController;
 import com.myph.performance.dto.FrbTargetDto;
+import com.myph.performance.dto.FrbaoLoanMemberDto;
 import com.myph.performance.param.FrbTargetQueryParam;
 import com.myph.performance.service.FrbTargetService;
 
@@ -41,6 +43,11 @@ public class FrbTargetController extends BaseController{
         MyphLogger.info("付融宝标的信息-列表页参数【{}】",param);
         initQueryDate(param);
         ServiceResult<Pagination<FrbTargetDto>> rs = frbTargetService.queryPageList(param, page);
+        if (rs.success()) {
+            for (FrbTargetDto dto : rs.getData().getResult()) {
+                dto.setIdCard(SensitiveInfoUtils.maskIdCard(dto.getIdCard()));// 隐藏身份证
+            }
+        }
         model.addAttribute("params", param);
         model.addAttribute("page", rs.getData());
         return "/loan/frb/frbTarget";

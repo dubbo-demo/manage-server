@@ -14,6 +14,7 @@ import com.myph.common.result.ServiceResult;
 import com.myph.common.rom.annotation.BasePage;
 import com.myph.common.rom.annotation.Pagination;
 import com.myph.common.util.DateUtils;
+import com.myph.common.util.SensitiveInfoUtils;
 import com.myph.manage.common.util.BeanUtils;
 import com.myph.manage.controller.BaseController;
 import com.myph.performance.dto.FrbaoLoanMemberDto;
@@ -56,6 +57,7 @@ public class FrbaoMemberController extends BaseController {
         ServiceResult<Pagination<FrbaoLoanMemberDto>> rs = frbaoLoanMemberService.queryListFrbaoPagination(param, page);
         if (rs.success()) {
             for (FrbaoLoanMemberDto dto : rs.getData().getResult()) {
+                dto.setIdCard(SensitiveInfoUtils.maskIdCard(dto.getIdCard()));// 隐藏身份证
                 dto.setMonthlySalaryArea(getMonthMoney(dto.getMonthlySalary()));
                 dto.setBankTypeName(getBusinessTypeName(dto.getBusinessType()));
             }
