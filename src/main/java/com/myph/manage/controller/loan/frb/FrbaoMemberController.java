@@ -9,40 +9,24 @@
  */
 package com.myph.manage.controller.loan.frb;
 
-import com.myph.apply.service.ApplyInfoService;
-import com.myph.common.constant.Constants;
 import com.myph.common.log.MyphLogger;
-import com.myph.common.result.AjaxResult;
 import com.myph.common.result.ServiceResult;
 import com.myph.common.rom.annotation.BasePage;
 import com.myph.common.rom.annotation.Pagination;
 import com.myph.common.util.DateUtils;
-import com.myph.common.util.SensitiveInfoUtils;
-import com.myph.constant.FlowStateEnum;
-import com.myph.flow.dto.ContinueActionDto;
-import com.myph.loan.dto.LoanedInfoDto;
-import com.myph.loan.param.QueryListParam;
-import com.myph.loan.service.LoanedService;
-import com.myph.manage.common.shiro.ShiroUtils;
 import com.myph.manage.common.util.BeanUtils;
 import com.myph.manage.controller.BaseController;
-import com.myph.manage.facadeService.FacadeFlowStateExchangeService;
-import com.myph.organization.dto.OrganizationDto;
-import com.myph.organization.service.OrganizationService;
 import com.myph.performance.dto.FrbaoLoanMemberDto;
-import com.myph.performance.service.FinanceManageService;
 import com.myph.performance.service.FrbaoLoanMemberService;
-import com.myph.product.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -68,6 +52,7 @@ public class FrbaoMemberController extends BaseController {
     @RequestMapping("/queryPageList")
     public String queryPageList(FrbaoLoanMemberDto param, BasePage page, Model model) {
         MyphLogger.info("列表页参数【{}】", param);
+        initQueryDate(param);
         ServiceResult<Pagination<FrbaoLoanMemberDto>> rs = frbaoLoanMemberService.queryListFrbaoPagination(param, page);
         if (rs.success()) {
             for (FrbaoLoanMemberDto dto : rs.getData().getResult()) {
@@ -83,6 +68,7 @@ public class FrbaoMemberController extends BaseController {
     @RequestMapping("/exportFinanceInfo")
     public void exportFinanceInfo(HttpServletResponse response, FrbaoLoanMemberDto param) {
         MyphLogger.debug("付融宝借款人信息导出：/loan/frb/loanMember/exportFinanceInfo.htm|param=" + param);
+        initQueryDate(param);
         try {
             // 设置参数查询满足条件的所有数据不分页
             List<FrbaoLoanMemberDto> list = frbaoLoanMemberService.queryListFrbao(param).getData();
@@ -185,5 +171,28 @@ public class FrbaoMemberController extends BaseController {
             return "教育/培训";
         }
         return "个人经营/其它";
+    }
+    
+    /**
+     * 获取前2周时间区间
+     * 
+     * @param queryDto
+     */
+    private void initQueryDate(FrbaoLoanMemberDto param) {
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+        Date today = cal.getTime();
+        cal.add(Calendar.WEEK_OF_YEAR, -2);
+        Date twoWeekBefore = cal.getTime();
+
+        if (null == param.getStartLoanTime()) {
+            param.setStartLoanTime(twoWeekBefore);
+        }
+        if (null == param.getEndLoanTime()) {
+            param.setEndLoanTime(today);
+        }
     }
 }

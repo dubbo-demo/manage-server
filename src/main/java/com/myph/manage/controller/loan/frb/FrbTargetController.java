@@ -2,6 +2,7 @@ package com.myph.manage.controller.loan.frb;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -12,13 +13,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+
 import com.myph.apply.service.ApplyInfoService;
-import com.myph.common.constant.Constants;
 import com.myph.common.log.MyphLogger;
 import com.myph.common.result.ServiceResult;
 import com.myph.common.rom.annotation.BasePage;
 import com.myph.common.rom.annotation.Pagination;
-import com.myph.common.util.DateUtils;
 import com.myph.manage.common.util.BeanUtils;
 import com.myph.manage.controller.BaseController;
 import com.myph.performance.dto.FrbTargetDto;
@@ -39,6 +39,7 @@ public class FrbTargetController extends BaseController{
     @RequestMapping("/queryPageList")
     public String queryPageList(FrbTargetQueryParam param, BasePage page, Model model) {
         MyphLogger.info("付融宝标的信息-列表页参数【{}】",param);
+        initQueryDate(param);
         ServiceResult<Pagination<FrbTargetDto>> rs = frbTargetService.queryPageList(param, page);
         model.addAttribute("params", param);
         model.addAttribute("page", rs.getData());
@@ -48,6 +49,7 @@ public class FrbTargetController extends BaseController{
     @RequestMapping("/exportInfo")
     public void exportInfo( HttpServletResponse response,FrbTargetQueryParam param) {
         MyphLogger.debug("付融宝标的信息导出：/loan/frb/exportInfo.htm|param=" + param);
+        initQueryDate(param);
         try {
             // 设置参数查询满足条件的所有数据不分页
             List<FrbTargetDto> list = frbTargetService.queryFrbTargetInfo(param).getData();
@@ -86,5 +88,28 @@ public class FrbTargetController extends BaseController{
             destList.add(destMap);
         }
         return destList;
+    }
+    
+    /**
+     * 获取前2周时间区间
+     * 
+     * @param queryDto
+     */
+    private void initQueryDate(FrbTargetQueryParam param) {
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+        Date today = cal.getTime();
+        cal.add(Calendar.WEEK_OF_YEAR, -2);
+        Date twoWeekBefore = cal.getTime();
+
+        if (null == param.getLoanDates()) {
+            param.setLoanDates(twoWeekBefore);
+        }
+        if (null == param.getLoanDatee()) {
+            param.setLoanDatee(today);
+        }
     }
 }
