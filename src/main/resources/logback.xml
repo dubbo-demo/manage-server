@@ -165,7 +165,7 @@
     <logger name="java.sql.Connection" level="error"/>
     <logger name="java.sql.PreparedStatement" level="error"/>-->
     <!--定义root 级别 -->
-    <root level="info">
+    <root level="debug">
         <appender-ref ref="platform.async"/>
         <!--&lt;!&ndash; 本地测试开始&ndash;&gt;
         <appender-ref ref="STDOUT"/>-->
