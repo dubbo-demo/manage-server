@@ -302,13 +302,16 @@ public class BillRestServiceImpl implements BillRestService {
                     fristDto.setIndustryType(bnode.getData() == null ? "" : bnode.getData().getNodeName()); //行业类别
                 }
             }
-            fristDto.setUnitProperty(
-                    BillPushConstant.getOtherCompanyNature((memberJobDto.getOtherCompanyNature() == null ?
-                            0 :
-                            memberJobDto.getOtherCompanyNature()))); //单位性质
+            fristDto.setUnitProperty("");
+            if (null != memberJobDto.getCompanyNature()) {
+                bnode = nodeService.selectByPrimaryKey(Long.valueOf(memberJobDto.getCompanyNature()));
+                if (null != bnode) {
+                    fristDto.setPost(bnode.getData() == null ? "" : bnode.getData().getNodeName()); //单位性质
+                }
+            }
             fristDto.setPost(""); //担任职务
             if (null != memberJobDto.getPositionsCode()) {
-                bnode = nodeService.selectByPrimaryKey((long) memberJobDto.getPositionsCode());
+                bnode = nodeService.selectByPrimaryKey(Long.valueOf(memberJobDto.getPositionsCode()));
                 if (null != bnode) {
                     fristDto.setPost(bnode.getData() == null ? "" : bnode.getData().getNodeName()); //担任职务
                 }
