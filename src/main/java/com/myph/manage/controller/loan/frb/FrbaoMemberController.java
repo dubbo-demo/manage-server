@@ -63,7 +63,7 @@ public class FrbaoMemberController extends BaseController {
                 String addr = dto.getLiveAddr();
                 if(StringUtils.isNotBlank(addr)){
                     String[] addrArray = addr.split("-");
-                    if(addrArray.length > 0){
+                    if(addrArray.length > 1){
                         dto.setLiveProv(addrArray[0]);
                         dto.setLiveCity(addrArray[1]);
                     }
