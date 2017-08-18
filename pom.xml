@@ -61,6 +61,10 @@
             <groupId>com.myph</groupId>
             <artifactId>member-service-api</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.myph</groupId>
+            <artifactId>order-service-api</artifactId>
+        </dependency>        
         <!-- begin shiro -->
         <dependency>
             <groupId>org.apache.shiro</groupId>

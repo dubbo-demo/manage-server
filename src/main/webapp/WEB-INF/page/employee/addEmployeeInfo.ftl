@@ -95,6 +95,38 @@ $(function() {
 				</div>
 			</div>
 		</div>
+        <div class="row-fluid">
+            <div class="control-group span4 ">
+                <label class="control-label">银行类别</label>
+                <div class="controls">
+                <select class="m-wrap span12" name="bankType">
+                </select>
+                </div>
+            </div>
+            <div class="control-group span4 ">
+                <label class="control-label">卡号</label>
+                <div class="controls">
+                <input type="text" class="m-wrap span12" id="mobilePhone" name="mobilePhone">
+                </div>
+            </div>
+        </div>		
+        <div class="row-fluid">
+            <div class="control-group span4 ">
+                <label class="control-label">开户行</label>
+                <div class="controls">
+                <input type="text" class="m-wrap span12" id="mobilePhone" name="mobilePhone">
+                </div>
+            </div>
+            <div class="control-group span8 ">
+                <label class="control-label">认证状态</label>
+                <div class="controls">
+                <input type="text" class="m-wrap span3" id="authStatus" name="authStatus">
+                <button class="btn blue" onclick="save(event);return false;">绑卡</button>
+                <button class="btn blue" onclick="save(event);return false;">鉴权</button>
+                <button class="btn blue" onclick="save(event);return false;">解绑</button>
+                </div>
+            </div>
+        </div>          
 		<div class="row-fluid">
 			<div class="control-group span4 ">
 				<label class="control-label">组织架构<span class="required">*</span></label>
