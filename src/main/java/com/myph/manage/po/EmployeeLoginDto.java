@@ -29,5 +29,5 @@ public class EmployeeLoginDto extends BaseInfo {
     private String positionName; // '岗位名称'
     private List<MenuDto> menuDtos;
     private Map<String, List<String>> menuUrlPermissionCode;//菜单URL及其对应的权限CODE
-    
+    private String icmbFlag;// 离职/在职(0 在职，1离职) 催收一期优化新增
 }
