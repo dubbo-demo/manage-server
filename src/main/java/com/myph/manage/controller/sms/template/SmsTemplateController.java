@@ -1,13 +1,16 @@
 package com.myph.manage.controller.sms.template;
 
 import com.myph.common.result.AjaxResult;
+import com.myph.common.result.ServiceResult;
 import com.myph.common.rom.annotation.BasePage;
+import com.myph.common.rom.annotation.Pagination;
 import com.myph.manage.controller.BaseController;
 import com.myph.sms.template.dto.SmsTemplate;
 import com.myph.sms.template.dto.SmsTemplateQuery;
 import com.myph.sms.template.service.SmsTemplateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -17,7 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
  * @auther Gong.Xiaozhi
  * @since 2017/8/17
  */
-@RequestMapping("/sms-templcate")
+@RequestMapping("/sms-template")
 @Controller
 public class SmsTemplateController extends BaseController {
 
@@ -32,8 +35,11 @@ public class SmsTemplateController extends BaseController {
      * @return
      */
     @RequestMapping("/list")
-    public String listSmsTemplates(SmsTemplateQuery query, BasePage basePage) {
-        return "";
+    public String listSmsTemplates(SmsTemplateQuery query, BasePage basePage, Model model) {
+        ServiceResult<Pagination<SmsTemplate>> serviceResult =
+                smsTemplateService.querySmsTemplateList(query, basePage);
+        model.addAttribute("page", serviceResult.getData());
+        return "/smsTemplate/list";
     }
 
     /**
