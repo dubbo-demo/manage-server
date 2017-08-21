@@ -115,7 +115,7 @@
 						<tr>
 							<td>${record_index+1}</td>
 							<td>${record.contractNo!}</td>
-							<td>${record.period!}</td>
+							<td>${record.repayPeriod!}/${record.periods!}</td>
 							<td>${record.billNo!}</td>
 							<td>${record.initialPrincipal!}</td>
                             <td>${record.principal!}</td>
@@ -124,10 +124,10 @@
                             <td>${record.endPrincipal!}</td>
                             <td>${record.returnAmount!}</td>
                             <td>${record.aheadAmount!}</td>
-                            <td>${record.alsoPenalty!}+${record.alsoLateFee!}+${record.alsoPrincipal!}+${record.alsoInterest!}</td>
-                            <td>${record.penalty!}-${record.alsoPenalty!}-${record.reductionPenalty!}</td>
-                            <td>${record.lateFee!}-${record.alsoLateFee!}-${record.reductionLateFee!}</td>
-                            <td>${record.reapyAmount!}+${record.penalty!}+${record.lateFee!}-${record.alsoPenalty!}-${record.alsoLateFee!}-${record.alsoPrincipal!}-${record.alsoInterest!}-${record.reductionPenalty!}-${record.reductionLateFee!}-${record.reductionPrincipal!}-${record.reductionInterest!}</td>
+                            <td>${record.alsoRepay!}</td>
+                            <td>${record.lastPenalty!}</td>
+                            <td>${record.lastLateFee!}</td>
+                            <td>${record.surplusRepay!}</td>
                             <td>${record.agreeRepayDate!}</td>
                             <td>${record.overdueDay!}</td>
                             <td>${record.stateDesc!}</td>

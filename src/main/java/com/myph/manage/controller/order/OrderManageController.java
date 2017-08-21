@@ -9,63 +9,39 @@
 package com.myph.manage.controller.order;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.myph.apply.dto.ApplyInfoDto;
-import com.myph.apply.dto.ApplyManageInfoDto;
-import com.myph.apply.service.ApplyInfoService;
 import com.myph.common.log.MyphLogger;
-import com.myph.common.result.AjaxResult;
 import com.myph.common.result.ServiceResult;
 import com.myph.common.rom.annotation.BasePage;
 import com.myph.common.rom.annotation.Pagination;
-import com.myph.common.util.SensitiveInfoUtils;
-import com.myph.constant.ApplyUtils;
-import com.myph.constant.FlowStateEnum;
 import com.myph.constant.OrderTypeEnum;
-import com.myph.constant.StateListUtils;
-import com.myph.constant.bis.ApplyBisStateEnum;
-import com.myph.employee.dto.EmployeeDetailDto;
-import com.myph.employee.dto.EmployeeInfoDto;
-import com.myph.employee.service.EmployeeInfoService;
-import com.myph.flow.dto.AbandonActionDto;
-import com.myph.flow.dto.RejectActionDto;
-import com.myph.manage.common.constant.Constant;
-import com.myph.manage.common.shiro.ShiroUtils;
+import com.myph.manage.common.util.BeanUtils;
 import com.myph.manage.controller.BaseController;
-import com.myph.manage.facadeService.FacadeFlowStateExchangeService;
-import com.myph.organization.dto.OrganizationDto;
-import com.myph.organization.service.OrganizationService;
 import com.myph.performance.dto.FrbTargetDto;
 import com.myph.performance.dto.OrderManageDto;
 import com.myph.performance.param.FrbTargetQueryParam;
 import com.myph.performance.param.OrderQueryParam;
+import com.myph.performance.service.OrderManageService;
 
 @Controller
 @RequestMapping("/order")
 public class OrderManageController extends BaseController {
-
+    
     @Autowired
-    private ApplyInfoService applyInfoService;
-
-    @Autowired
-    private OrganizationService organizationService;
-
-    @Autowired
-    private EmployeeInfoService employeeInfoService;
-
-    @Autowired
-    private FacadeFlowStateExchangeService facadeFlowStateExchangeService;
+    private OrderManageService orderManageService;
 
     /**
      * 
@@ -81,7 +57,7 @@ public class OrderManageController extends BaseController {
     public String list(OrderQueryParam param, BasePage page, Model model) {
         MyphLogger.info("付融宝标的信息-列表页参数【{}】", param);
         initQueryDate(param);
-        ServiceResult<Pagination<OrderManageDto>> rs = null;// frbTargetService.queryPageList(param, page);
+        ServiceResult<Pagination<OrderManageDto>> rs =  orderManageService.queryPageList(param, page);
         if (rs.success()) {
             for (OrderManageDto dto : rs.getData().getResult()) {
                 // 设置页面显示的状态
@@ -147,12 +123,53 @@ public class OrderManageController extends BaseController {
         cal.set(Calendar.DATE, 1);// 设为当前月的1号
         Date date = cal.getTime();
 
-        // 初始化查询外访进件日期
         if (null == queryDto.getAgreeRepayDates()) {
             queryDto.setAgreeRepayDates(date);
         }
         if (null == queryDto.getAgreeRepayDatee()) {
             queryDto.setAgreeRepayDatee(today);
         }
+    }
+    
+    
+    @RequestMapping("/export")
+    public void exportInfo( HttpServletResponse response,OrderQueryParam param) {
+        MyphLogger.debug("付融宝标的信息导出：/order/export.htm|param=" + param);
+        initQueryDate(param);
+        try {
+            // 设置参数查询满足条件的所有数据不分页
+            List<OrderManageDto> list = orderManageService.queryOrderManageInfo(param).getData();
+            String columnNames[] = {"合同编号", "身份证号码", "借款金额","还款方式", "借款时长", "借款时长单位", "借款描述", 
+                    "借款用途", "保障方式", "服务费（代扣金额）", "放款金额" };// 列名
+            String keys[] = { "contractNo","idCard","contractAmount","payMethod","periods","periodsUnit","loanPurposes",
+                    "purpose","supportMethod","serviceRate","repayMoney" };
+            String fileName = "付融宝标的信息" + new SimpleDateFormat("yyyyMMddhhmmss").format(new Date()).toString();
+            // 获取Excel数据
+            List<Map<String, Object>> excelList = getExcelMapList(list);
+            // 导出Excel数据
+            exportExcel(response, fileName, columnNames, keys, excelList);
+        } catch (Exception e) {
+            MyphLogger.error(e, "异常[结束付融宝标的信息导出：/loan/frb/exportInfo.htm]");
+        }
+        MyphLogger.debug("结束付融宝标的信息导出：/loan/frb/exportInfo.htm");
+    }
+    
+    /**
+     * 获取Excel数据
+     * 
+     * @param list
+     * @return
+     */
+    private List<Map<String, Object>> getExcelMapList(List<OrderManageDto> list) {
+        List<Map<String, Object>> destList = new ArrayList<Map<String, Object>>();
+        if (null == list) {
+            return destList;
+        }
+        Map<String, Object> destMap = null;
+        for (OrderManageDto dto : list) {
+            destMap = BeanUtils.transBeanToMap(dto);
+            destList.add(destMap);
+        }
+        return destList;
     }
 }
