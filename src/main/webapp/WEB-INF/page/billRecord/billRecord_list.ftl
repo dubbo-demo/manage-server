@@ -45,26 +45,52 @@
 							<@p.pageForm value=page  type="sort"/>
 								<input type="hidden" id="pageIndex" name="pageIndex" value='1'/>
 								<div class="row-fluid">
-									<div class="control-group span3 ">
-										<label class="help-inline text-right span4">申请件单号：</label>
-										<input type="text" class="m-wrap span5" name="applyLoanNo" value="${(queryDto.applyLoanNo)!''}">
+									<div class="control-group span4 ">
+										<label class="help-inline text-right span4">合同号：</label>
+										<input type="text" class="m-wrap span5" name="contractNo" value="${(queryDto.contractNo)!''}">
 									</div>
-									<div class="control-group span3 ">
-										<label class="help-inline text-right span4">客户：</label>
-										<input type="text" class="m-wrap span5" name="memberName" value="${(queryDto.memberName)!''}">
+									<div class="control-group span4 ">
+										<label class="help-inline text-right span4">客户身份证号：</label>
+										<input type="text" class="m-wrap span5" name="userName" value="${(queryDto.userName)!''}">
 									</div>
-									<div class="control-group span3 ">
-										<label class="help-inline text-right span4">业务经理：</label>
-										<input type="text" class="m-wrap span5" name="bmName" value="${(queryDto.bmName)!''}">
-									</div>
-									<div class="control-group span3 ">
-										<label class="help-inline text-right span4">门店：</label>
-										<input type="hidden" id="empStoreId" value="${empStoreId!}">
-										<input type="hidden" id="storeId2" value="${queryDto.storeId!}">
-										<select class="m-wrap span5" id="storeId" name="storeId" value="">
+									<div class="control-group span4 ">
+										<label class="help-inline text-right span4">状态：</label>
+										<select class="m-wrap span5" id="state" name="state" value="2">
+										<#if states?? >
+											<#list states?keys as key>
+                                                <option value="">${states[key]}</option>
+											</#list>
+										</#if>
 										</select>
 									</div>
 								</div>
+                                <div class="row-fluid">
+                                    <div class="control-group span4 ">
+                                        <label class="help-inline text-right span4">组织：</label>
+                                        <input type="hidden" id="empStoreId" value="${empStoreId!}">
+                                        <input type="hidden" id="storeId2" value="${queryDto.storeId!}">
+                                        <select class="m-wrap span5" id="storeId" name="storeId" value="">
+                                        </select>
+                                    </div>
+                                    <div class="control-group span4 ">
+                                        <label class="help-inline text-right span4">代扣日期：</label>
+                                        <div class="input-append date date-picker" data-date="${(queryDto.passTimeStart?string('yyyy-MM-dd'))!}"
+                                             data-date-format="yyyy-mm-dd" data-date-viewmode="years">
+                                            <input name="passTimeStart" class="m-wrap span8 date-picker" size="16" type="text"
+                                                   data-date-format="yyyy-mm-dd"  value="${(queryDto.passTimeStart?string('yyyy-MM-dd'))!}"/>
+                                            <span class="add-on"><i class="icon-calendar"></i></span>
+                                        </div>
+                                        <span style="margin-left:-28px">--</span>
+                                        <div class="input-append date date-picker" data-date="${(queryDto.passTimeEnd?string('yyyy-MM-dd'))!}"
+                                             data-date-format="yyyy-mm-dd" data-date-viewmode="years">
+                                            <input name="passTimeEnd" class="m-wrap span8 date-picker" size="16" type="text"
+                                                   data-date-format="yyyy-mm-dd"  value="${(queryDto.passTimeEnd?string('yyyy-MM-dd'))!}" />
+                                            <span class="add-on"><i class="icon-calendar"></i></span>
+                                        </div>
+                                    </div>
+                                    <div class="control-group span4 ">
+                                    </div>
+                                </div>
 								<div class="row-fluid">
 									<div class="control-group span4 ">
 										<button type="button" onclick="search()" class="btn blue">查询</button>
@@ -105,8 +131,6 @@
 							<td>${item.contractNo! }</td>
 							<td>${item.repayPeriod! }/${item.periods! }</td>
 							<td>${item.billNo! }</td>
-                            <td>${item.payTypeName! }</td>
-                            <td>${item.billNo! }</td>
                             <td>${item.payTypeName! }</td>
                             <td>${item.payAmount! }</td>
 							<td>${(item.username)!""}</td>
