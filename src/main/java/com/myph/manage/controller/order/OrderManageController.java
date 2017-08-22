@@ -28,6 +28,9 @@ import com.myph.common.result.ServiceResult;
 import com.myph.common.rom.annotation.BasePage;
 import com.myph.common.rom.annotation.Pagination;
 import com.myph.constant.OrderTypeEnum;
+import com.myph.employee.dto.EmpDetailDto;
+import com.myph.employee.dto.EmployeeInfoDto;
+import com.myph.manage.common.shiro.ShiroUtils;
 import com.myph.manage.common.util.BeanUtils;
 import com.myph.manage.controller.BaseController;
 import com.myph.performance.dto.FrbTargetDto;
@@ -39,7 +42,7 @@ import com.myph.performance.service.OrderManageService;
 @Controller
 @RequestMapping("/order")
 public class OrderManageController extends BaseController {
-    
+
     @Autowired
     private OrderManageService orderManageService;
 
@@ -57,27 +60,28 @@ public class OrderManageController extends BaseController {
     public String list(OrderQueryParam param, BasePage page, Model model) {
         MyphLogger.info("付融宝标的信息-列表页参数【{}】", param);
         initQueryDate(param);
-        ServiceResult<Pagination<OrderManageDto>> rs =  orderManageService.queryPageList(param, page);
+        ServiceResult<Pagination<OrderManageDto>> rs = orderManageService.queryPageList(param, page);
         if (rs.success()) {
             for (OrderManageDto dto : rs.getData().getResult()) {
                 // 设置页面显示的状态
-                if(dto.getRepayState() == 0 && dto.getOverdueState() == 0 && dto.getIsEffective() ==1){
+                if (dto.getRepayState() == 0 && dto.getOverdueState() == 0) {
                     dto.setState(OrderTypeEnum.WAIT_REPLAY.getType());
                     dto.setStateDesc(OrderTypeEnum.WAIT_REPLAY.getName());
                 }
-                if(dto.getRepayState() == 0 && dto.getOverdueState() == 1 && dto.getIsEffective() ==1){
+                if (dto.getRepayState() == 0 && dto.getOverdueState() == 1) {
                     dto.setState(OrderTypeEnum.OVERDUE_NO_REPLAY.getType());
                     dto.setStateDesc(OrderTypeEnum.OVERDUE_NO_REPLAY.getName());
                 }
-                if(dto.getRepayState() == 2 && dto.getOverdueState() == 1 && dto.getIsEffective() ==1){
+                if (dto.getRepayState() == 2 && dto.getOverdueState() == 1) {
                     dto.setState(OrderTypeEnum.OVERDUE_PART_REPLAY.getType());
                     dto.setStateDesc(OrderTypeEnum.OVERDUE_PART_REPLAY.getName());
                 }
-                if(dto.getRepayState() == 1 && dto.getOverdueState() == 0 && dto.getIsEffective() ==1){
+                if (dto.getRepayState() == 1 && dto.getOverdueState() == 0) {
                     dto.setState(OrderTypeEnum.SQUARE.getType());
                     dto.setStateDesc(OrderTypeEnum.SQUARE.getName());
                 }
-                if(dto.getRepayState() == 0 && dto.getOverdueState() == 0 && dto.getIsEffective() ==1 && dto.getLastPayTime().getTime() < dto.getAgreeRepayDate().getTime()){
+                if (dto.getRepayState() == 0 && dto.getOverdueState() == 0 && dto.getLastPayTime() != null
+                        && dto.getLastPayTime().getTime() < dto.getAgreeRepayDate().getTime()) {
                     dto.setState(OrderTypeEnum.AHEAD_SQUARE.getType());
                     dto.setStateDesc(OrderTypeEnum.AHEAD_SQUARE.getName());
                 }
@@ -102,7 +106,10 @@ public class OrderManageController extends BaseController {
                 dto.setSurplusRepay(surplusRepay);
             }
         }
-        model.addAttribute("empDetail", param);
+        EmpDetailDto empDetail = ShiroUtils.getEmpDetail();
+        EmployeeInfoDto user = ShiroUtils.getCurrentUser();
+        model.addAttribute("empDetail", empDetail);
+        model.addAttribute("orgType", user.getOrgType());
         model.addAttribute("params", param);
         model.addAttribute("page", rs.getData());
         return "/order/orderManage";
@@ -130,19 +137,18 @@ public class OrderManageController extends BaseController {
             queryDto.setAgreeRepayDatee(today);
         }
     }
-    
-    
+
     @RequestMapping("/export")
-    public void exportInfo( HttpServletResponse response,OrderQueryParam param) {
+    public void exportInfo(HttpServletResponse response, OrderQueryParam param) {
         MyphLogger.debug("付融宝标的信息导出：/order/export.htm|param=" + param);
         initQueryDate(param);
         try {
             // 设置参数查询满足条件的所有数据不分页
             List<OrderManageDto> list = orderManageService.queryOrderManageInfo(param).getData();
-            String columnNames[] = {"合同编号", "身份证号码", "借款金额","还款方式", "借款时长", "借款时长单位", "借款描述", 
-                    "借款用途", "保障方式", "服务费（代扣金额）", "放款金额" };// 列名
-            String keys[] = { "contractNo","idCard","contractAmount","payMethod","periods","periodsUnit","loanPurposes",
-                    "purpose","supportMethod","serviceRate","repayMoney" };
+            String columnNames[] = { "合同编号", "身份证号码", "借款金额", "还款方式", "借款时长", "借款时长单位", "借款描述", "借款用途", "保障方式",
+                    "服务费（代扣金额）", "放款金额" };// 列名
+            String keys[] = { "contractNo", "idCard", "contractAmount", "payMethod", "periods", "periodsUnit",
+                    "loanPurposes", "purpose", "supportMethod", "serviceRate", "repayMoney" };
             String fileName = "付融宝标的信息" + new SimpleDateFormat("yyyyMMddhhmmss").format(new Date()).toString();
             // 获取Excel数据
             List<Map<String, Object>> excelList = getExcelMapList(list);
@@ -153,7 +159,7 @@ public class OrderManageController extends BaseController {
         }
         MyphLogger.debug("结束付融宝标的信息导出：/loan/frb/exportInfo.htm");
     }
-    
+
     /**
      * 获取Excel数据
      * 

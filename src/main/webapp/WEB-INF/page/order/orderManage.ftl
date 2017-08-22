@@ -44,12 +44,11 @@
                             </select>   
                         </div>                                                                  
                     </div>					
-					<div class="control-group span4 ">
+					<div class="row-fluid">
                         <div class="control-group span4 ">
                             <label class="help-inline text-right span4">大区：</label>
                             <div class="">
                             <select name="areaId" class="m-wrap span8" data-id="${(queryDto.areaId)!-1}" onchange="initStoreData()">
-                                <option value="-1">请选择</option>
                             </select>
                             </div>
                         </div>
@@ -162,10 +161,11 @@
 
 <#include "/sys/bottom.ftl">
 <script>
+debugger;
     $(function(){
         init();
     });
-    
+    var orgType="${(orgType)!}"; //组织类型1:大区 2：总部 3：门店
     var regionId="${(empDetail.regionId)!}";//大区id
     var storeId="${(empDetail.storeId)!}";//门店id
 
