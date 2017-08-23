@@ -16,7 +16,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import javax.jws.soap.InitParam;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
@@ -29,18 +28,17 @@ import com.myph.common.log.MyphLogger;
 import com.myph.common.result.ServiceResult;
 import com.myph.common.rom.annotation.BasePage;
 import com.myph.common.rom.annotation.Pagination;
+import com.myph.constant.BillChangeTypeEnum;
 import com.myph.constant.OrderTypeEnum;
 import com.myph.constant.OverdueStateEnum;
 import com.myph.constant.RepayStateEnum;
-import com.myph.employee.dto.EmpDetailDto;
-import com.myph.employee.dto.EmployeeInfoDto;
+import com.myph.hkBillUpdateLog.dto.HkBillUpdateLogDto;
+import com.myph.hkBillUpdateLog.service.HkBillUpdateLogService;
 import com.myph.manage.common.shiro.ShiroUtils;
 import com.myph.manage.common.util.BeanUtils;
 import com.myph.manage.controller.BaseController;
 import com.myph.organization.dto.OrganizationDto;
-import com.myph.performance.dto.FrbTargetDto;
 import com.myph.performance.dto.OrderManageDto;
-import com.myph.performance.param.FrbTargetQueryParam;
 import com.myph.performance.param.OrderQueryParam;
 import com.myph.performance.service.OrderManageService;
 
@@ -50,6 +48,9 @@ public class OrderManageController extends BaseController {
 
     @Autowired
     private OrderManageService orderManageService;
+    
+    @Autowired
+    private HkBillUpdateLogService hkBillUpdateLogService;
 
     /**
      * 
@@ -129,8 +130,30 @@ public class OrderManageController extends BaseController {
         model.addAttribute("page", rs.getData());
         return "/order/orderManage";
     }
+    
+    /**
+     * 
+     * @名称 hkBillUpdateLog 
+     * @描述 账单变更记录详情 
+     * @返回类型 String     
+     * @日期 2017年8月23日 上午11:43:43
+     * @创建人  吴阳春
+     * @更新人  吴阳春
+     *
+     */
     @RequestMapping("/hkBillUpdateLog")
     public String hkBillUpdateLog(String billNo, BasePage page, Model model) {
+        MyphLogger.info(" 账单变更记录详情参数【{}】", billNo);
+        ServiceResult<List<HkBillUpdateLogDto>> rs = hkBillUpdateLogService.queryList(billNo);
+        for (HkBillUpdateLogDto dto : rs.getData()) {
+            //计算变更金额
+            BigDecimal changeMoney = dto.getAlsoInterest().add(dto.getAlsoLateFee()).add(dto.getAlsoPenalty()).add(dto.getAlsoPrincipal());
+            dto.setChangeMoney(changeMoney);
+            //设置变更类型描述
+            dto.setChangeTypeDesc(BillChangeTypeEnum.getDescByCode(dto.getChangeType()));
+        }
+        model.addAttribute("page", rs.getData());
+   //     model.addAttribute("billNo", billNo);
         return "/order/hkBillUpdateLog";
     }
     
