@@ -24,6 +24,7 @@ import com.myph.fileRelation.dto.JkAppFileDto;
 import com.myph.fileRelation.dto.JkAppFileRelationDto;
 import com.myph.fileRelation.service.JkAppFileRelationService;
 import com.myph.manage.common.constant.ClientType;
+import com.myph.manage.common.constant.RepayUpLoadFileTypeEnum;
 import com.myph.manage.common.shiro.ShiroUtils;
 import com.myph.member.base.dto.MemberInfoDto;
 import com.myph.member.base.service.MemberInfoService;
@@ -797,4 +798,118 @@ public class FileUploadController {
             }
         }
     }
+    
+    /**
+     * 
+     * @名称 fileUploadForRepay 
+     * @描述 代扣文件查看、上传
+     * @返回类型 String     
+     * @日期 2017年8月23日 下午7:46:25
+     * @创建人  吴阳春
+     * @更新人  吴阳春
+     * 代扣等相关附件与账单编号关联
+     */
+    @RequestMapping("/fileUploadForRepay")
+    public String fileUploadForRepay(Model model, FileUploadDto fileUploadDto) {
+        try {
+            // 查询文件基本信息
+            ServiceResult<List<FileDto>> fileDtoListResult = fileInfoService
+                    .selectByApplyLoanNo(fileUploadDto.getBillNo());
+            List<FileDto> fileDtoList = fileDtoListResult.getData();
+            fileUploadDto.setFileDtoList(fileDtoList);
+            model.addAttribute("fileUploadDto", fileUploadDto);
+            return "productFile/fileUploadForRepay";
+        } catch (Exception e) {
+            MyphLogger.error(e, "文件上传异常");
+            return "error/500";
+        }
+    }
+    
+    
+    @RequestMapping("/upLoadFileForRepay")
+    @ResponseBody
+    public void upLoadFileForRepay(HttpServletRequest req, HttpServletResponse resp,
+            @RequestParam("files[]") CommonsMultipartFile[] files) {
+        try {
+            for (int i = 0; i < files.length; i++) {
+                // 校验文件后缀，不能为zip或rar
+                String fileName = files[i].getOriginalFilename();
+                String extName = "";
+                if (fileName.lastIndexOf(".") >= 0) {
+                    extName = fileName.substring(fileName.lastIndexOf(".") + 1);
+                }
+                if ("zip".equals(extName) || "rar".equals(extName)) {
+                    MyphLogger.error("不可上传压缩包文件");
+                    Long fileSize = 0l;
+                    JSONArray ja = new JSONArray();
+                    JSONObject json = new JSONObject();
+                    json.put("name", fileName);
+                    json.put("size", fileSize);
+                    json.put("error", "不可上传压缩包文件");
+                    ja.add(json);
+                    JSONObject js = new JSONObject();
+                    js.put("files", ja);
+                    resp.getWriter().print(js.toString());
+                    return;
+                }
+                // UUID作为key
+                String rowKey = UUID.randomUUID().toString().replaceAll("-", "");
+                byte[] bufferResult = IOUtils.toByteArray(files[i].getInputStream());
+                Long fileSize = (long) bufferResult.length;
+                // 将文件存入大数据
+                HbaseUtils.put(rowKey, bufferResult);
+                // 将文件与大数据关系存入申请附件关联表
+                FileDto record = new FileDto();
+                record.setApplyLoanNo(req.getParameter("billNo"));
+                record.setFileName(fileName);
+                record.setFileFormart(extName);
+                record.setFileSize(fileSize);
+                record.setFileStr(rowKey);
+                record.setUploadState(0l);
+                Integer uploadType = Integer.valueOf(req.getParameter("uploadType"));
+                record.setUploadType(RepayUpLoadFileTypeEnum.getDescByCode(uploadType));
+                record.setUploadId(0l);
+                fileInfoService.insertSelective(record);
+                String operatorName = ShiroUtils.getCurrentUserName();
+                Long operatorId = ShiroUtils.getCurrentUserId();
+                MyphLogger.info("文件上传成功,入参:{},{},{},{},当前操作人:{},操作人编号:{}", req.getParameter("applyLoanNo"), fileName,
+                        rowKey, uploadType, operatorName, operatorId);
+                /*
+                 * 注：插件需要服务器端返回JSON格式的字符串，且必须以下面的格式来返回，一个字段都不能少 如果上传失败，那么则须用特定格式返回信息： "name": "picture1.jpg", "size":
+                 * 902604, "error": "Filetype not allowed" 另外，files必须为一个JSON数组，哪怕上传的是一个文件
+                 */
+                JSONArray ja = new JSONArray();
+                JSONObject json = new JSONObject();
+                json.put("name", fileName);
+                json.put("size", fileSize);
+                json.put("url", "");
+                json.put("thumbnailUrl", "");
+                json.put("deleteUrl", "");
+                json.put("deleteType", "DELETE");
+                ja.add(json);
+                JSONObject js = new JSONObject();
+                js.put("files", ja);
+                resp.getWriter().print(js.toString());
+            }
+        } catch (Exception e) {
+            MyphLogger.error(e, "文件上传异常,入参:{}", req.getParameter("applyLoanNo"));
+        }
+    }
+    
+
+    @RequestMapping("/checkFileForRepay")
+    @ResponseBody
+    public AjaxResult checkFileForRepay(String billNo,String uploadType) {
+        try {
+            ServiceResult<Integer> result = fileInfoService.selectCountByBillNoAndUploadType(billNo,uploadType);
+            if(result.getData() > 0){
+                return AjaxResult.success(true);
+            }
+            return AjaxResult.success(false);
+        } catch (Exception e) {
+            MyphLogger.error(e, "文件校验异常,入参:{},{}", billNo,uploadType);
+            return AjaxResult.failed("文件校验异常");
+        }
+    }
+
 }

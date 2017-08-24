@@ -153,7 +153,7 @@ public class OrderManageController extends BaseController {
             dto.setChangeTypeDesc(BillChangeTypeEnum.getDescByCode(dto.getChangeType()));
         }
         model.addAttribute("page", rs.getData());
-   //     model.addAttribute("billNo", billNo);
+        model.addAttribute("billNo", billNo);
         return "/order/hkBillUpdateLog";
     }
     

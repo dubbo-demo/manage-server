@@ -21,7 +21,7 @@
 			<form id="searchForm" class="form-horizontal" method="post">
 				<p>
 					<a href="javascript:back()" class="btn blue">返回</a>
-                    <a href="javascript:showFile()" class="btn blue">附件</a>
+                    <a href="${serverPath}/productFile/fileUploadForRepay.htm?billNo=${billNo}&isView=0" target='_blank' class="btn blue">附件</a>
 				</p>
 			</form>
 			</div>
@@ -64,15 +64,13 @@
 <#include "/sys/bottom.ftl">
 <script>
     function back() {
-        ChkUtil.form_trim($("#searchForm"));
         $("#searchForm").attr("action", "${ctx}/order/list.htm");
         $("#searchForm").submit();
     }
 
     
     function showFile() {
-        ChkUtil.form_trim($("#searchForm"));
-        $("#searchForm").attr("action", "${ctx}/order/export.htm");
+        $("#searchForm").attr("action", "${ctx}/productFile/fileUploadForRepay.htm");
         $("#searchForm").submit();
     }
 </script>
