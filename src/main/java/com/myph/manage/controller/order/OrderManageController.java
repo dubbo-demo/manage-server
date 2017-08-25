@@ -29,7 +29,6 @@ import com.myph.common.result.ServiceResult;
 import com.myph.common.rom.annotation.BasePage;
 import com.myph.common.rom.annotation.Pagination;
 import com.myph.constant.BillChangeTypeEnum;
-import com.myph.constant.OrderTypeEnum;
 import com.myph.constant.OverdueStateEnum;
 import com.myph.constant.RepayStateEnum;
 import com.myph.hkBillUpdateLog.dto.HkBillUpdateLogDto;
@@ -70,38 +69,8 @@ public class OrderManageController extends BaseController {
         ServiceResult<Pagination<OrderManageDto>> rs = orderManageService.queryPageList(param, page);
         if (rs.success()) {
             for (OrderManageDto dto : rs.getData().getResult()) {
-                /*
-                 * 设置页面显示的状态 
-                 * 待还款 =未还款+未逾期 
-                 * 逾期未还款=未还款+逾期 
-                 * 逾期部分还款=部分还款+逾期
-                 * 结清=已还款 
-                 * 提前结清=已还款+实际还款时间<协议还款时间
-                 */
-                if (dto.getRepayState() == RepayStateEnum.NO_REPAY.getCode()
-                        && dto.getOverdueState() == OverdueStateEnum.NO_OVERDUE.getCode()) {
-                    dto.setState(OrderTypeEnum.WAIT_REPLAY.getType());
-                    dto.setStateDesc(OrderTypeEnum.WAIT_REPLAY.getName());
-                }
-                if (dto.getRepayState() == RepayStateEnum.NO_REPAY.getCode()
-                        && dto.getOverdueState() == OverdueStateEnum.YES_OVERDUE.getCode()) {
-                    dto.setState(OrderTypeEnum.OVERDUE_NO_REPLAY.getType());
-                    dto.setStateDesc(OrderTypeEnum.OVERDUE_NO_REPLAY.getName());
-                }
-                if (dto.getRepayState() == RepayStateEnum.PART_REPAY.getCode()
-                        && dto.getOverdueState() == OverdueStateEnum.YES_OVERDUE.getCode()) {
-                    dto.setState(OrderTypeEnum.OVERDUE_PART_REPLAY.getType());
-                    dto.setStateDesc(OrderTypeEnum.OVERDUE_PART_REPLAY.getName());
-                }
-                if (dto.getRepayState() == RepayStateEnum.ALREADY_REPAY.getCode()) {
-                    dto.setState(OrderTypeEnum.SQUARE.getType());
-                    dto.setStateDesc(OrderTypeEnum.SQUARE.getName());
-                }
-                if (dto.getRepayState() == RepayStateEnum.ALREADY_REPAY.getCode() && dto.getLastPayTime() != null
-                        && dto.getLastPayTime().getTime() < dto.getAgreeRepayDate().getTime()) {
-                    dto.setState(OrderTypeEnum.AHEAD_SQUARE.getType());
-                    dto.setStateDesc(OrderTypeEnum.AHEAD_SQUARE.getName());
-                }
+                dto.setState(dto.getRepayState());
+                dto.setStateDesc(RepayStateEnum.getDescByCode(dto.getRepayState()));
                 // 设置页面显示的期数：当前期数/总期数
                 String strPeriod = String.valueOf(dto.getRepayPeriod()) + "/" + String.valueOf(dto.getPeriods());
                 dto.setStrPeriod(strPeriod);
@@ -231,38 +200,8 @@ public class OrderManageController extends BaseController {
         }
         Map<String, Object> destMap = null;
         for (OrderManageDto dto : list) {
-            /*
-             * 设置页面显示的状态 
-             * 待还款 =未还款+未逾期 
-             * 逾期未还款=未还款+逾期 
-             * 逾期部分还款=部分还款+逾期
-             * 结清=已还款 
-             * 提前结清=已还款+实际还款时间<协议还款时间
-             */
-            if (dto.getRepayState() == RepayStateEnum.NO_REPAY.getCode()
-                    && dto.getOverdueState() == OverdueStateEnum.NO_OVERDUE.getCode()) {
-                dto.setState(OrderTypeEnum.WAIT_REPLAY.getType());
-                dto.setStateDesc(OrderTypeEnum.WAIT_REPLAY.getName());
-            }
-            if (dto.getRepayState() == RepayStateEnum.NO_REPAY.getCode()
-                    && dto.getOverdueState() == OverdueStateEnum.YES_OVERDUE.getCode()) {
-                dto.setState(OrderTypeEnum.OVERDUE_NO_REPLAY.getType());
-                dto.setStateDesc(OrderTypeEnum.OVERDUE_NO_REPLAY.getName());
-            }
-            if (dto.getRepayState() == RepayStateEnum.PART_REPAY.getCode()
-                    && dto.getOverdueState() == OverdueStateEnum.YES_OVERDUE.getCode()) {
-                dto.setState(OrderTypeEnum.OVERDUE_PART_REPLAY.getType());
-                dto.setStateDesc(OrderTypeEnum.OVERDUE_PART_REPLAY.getName());
-            }
-            if (dto.getRepayState() == RepayStateEnum.ALREADY_REPAY.getCode()) {
-                dto.setState(OrderTypeEnum.SQUARE.getType());
-                dto.setStateDesc(OrderTypeEnum.SQUARE.getName());
-            }
-            if (dto.getRepayState() == RepayStateEnum.ALREADY_REPAY.getCode() && dto.getLastPayTime() != null
-                    && dto.getLastPayTime().getTime() < dto.getAgreeRepayDate().getTime()) {
-                dto.setState(OrderTypeEnum.AHEAD_SQUARE.getType());
-                dto.setStateDesc(OrderTypeEnum.AHEAD_SQUARE.getName());
-            }
+            dto.setState(dto.getRepayState());
+            dto.setStateDesc(RepayStateEnum.getDescByCode(dto.getRepayState()));
             // 设置页面显示的期数：当前期数/总期数
             String strPeriod = String.valueOf(dto.getRepayPeriod()) + "/" + String.valueOf(dto.getPeriods());
             dto.setStrPeriod(strPeriod);

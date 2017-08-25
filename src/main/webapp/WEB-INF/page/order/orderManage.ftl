@@ -36,11 +36,9 @@
                         <div class="">
                             <select class="m-wrap span8" name="state">
                                 <option value="-1">请选择</option>
-                                <option value="0">待还款</option>
-                                <option value="1">逾期未还款</option>
-                                <option value="2">逾期部分还款</option>
-                                <option value="3">结清</option>
-                                <option value="4">提前结清</option>
+                                <option value="10">未还款</option>
+                                <option value="20">部分还款</option>
+                                <option value="30">结清</option>
                             </select>   
                         </div>                                                                  
                     </div>					
