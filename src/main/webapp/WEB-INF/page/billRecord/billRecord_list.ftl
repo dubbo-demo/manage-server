@@ -1,6 +1,6 @@
 <#include "/sys/top.ftl">
 <#include "/sys/left.ftl">
-<script src="${cdnPath}/js/reception/list.js?v=${VERSION_NO}"></script>
+<#--<script src="${cdnPath}/js/reception/list.js?v=${VERSION_NO}"></script>-->
 <script>
 	var orgType="${orgType!}"; //组织类型1:大区 2：总部 3：门店
 	var regionId="${regionId!}";//大区id
@@ -19,6 +19,9 @@
             $(n).val($.trim(value));
         })
     }
+    $(function() {
+        $("#state").val(${queryDto.state!});
+    });
 </script>
 <div class="page-content">
 				<div class="container-fluid">
@@ -41,7 +44,7 @@
 					</div>
 				<div>
 				<div class="portlet-body form">
-							<form action="${serverPath}/reception/list.htm" id="searchForm" class="form-horizontal" method="post">
+							<form action="${serverPath}/hKBillRecord/list.htm" id="searchForm" class="form-horizontal" method="post">
 							<@p.pageForm value=page  type="sort"/>
 								<input type="hidden" id="pageIndex" name="pageIndex" value='1'/>
 								<div class="row-fluid">
@@ -51,14 +54,15 @@
 									</div>
 									<div class="control-group span4 ">
 										<label class="help-inline text-right span4">客户身份证号：</label>
-										<input type="text" class="m-wrap span5" name="userName" value="${(queryDto.userName)!''}">
+										<input type="text" class="m-wrap span5" name="idCardNo" value="${(queryDto.idCardNo)!''}">
 									</div>
 									<div class="control-group span4 ">
 										<label class="help-inline text-right span4">状态：</label>
-										<select class="m-wrap span5" id="state" name="state" value="2">
+										<select class="m-wrap span5" id="state" name="state">
+                                            <option value="">请选择</option>
 										<#if states?? >
-											<#list states?keys as key>
-                                                <option value="">${states[key]}</option>
+											<#list states?values as item>
+                                                <option value="${item.getCode()!}">${item.getDesc()!}</option>
 											</#list>
 										</#if>
 										</select>
@@ -67,24 +71,28 @@
                                 <div class="row-fluid">
                                     <div class="control-group span4 ">
                                         <label class="help-inline text-right span4">组织：</label>
-                                        <input type="hidden" id="empStoreId" value="${empStoreId!}">
-                                        <input type="hidden" id="storeId2" value="${queryDto.storeId!}">
                                         <select class="m-wrap span5" id="storeId" name="storeId" value="">
+                                            <option value="">请选择</option>
+										<#if orgs??>
+											<#list orgs as o>
+                                                <option value="${o.id}" <#if queryDto.storeId?? && o.id == queryDto.storeId>selected</#if>>${o.orgName}</option>
+											</#list>
+										</#if>
                                         </select>
                                     </div>
                                     <div class="control-group span4 ">
                                         <label class="help-inline text-right span4">代扣日期：</label>
-                                        <div class="input-append date date-picker" data-date="${(queryDto.passTimeStart?string('yyyy-MM-dd'))!}"
+                                        <div class="input-append date date-picker" data-date="${(queryDto.beginPayTime?string('yyyy-MM-dd'))!}"
                                              data-date-format="yyyy-mm-dd" data-date-viewmode="years">
-                                            <input name="passTimeStart" class="m-wrap span8 date-picker" size="16" type="text"
-                                                   data-date-format="yyyy-mm-dd"  value="${(queryDto.passTimeStart?string('yyyy-MM-dd'))!}"/>
+                                            <input name="beginPayTime" class="m-wrap span8 date-picker" size="16" type="text"
+                                                   data-date-format="yyyy-mm-dd"  value="${(queryDto.beginPayTime?string('yyyy-MM-dd'))!}"/>
                                             <span class="add-on"><i class="icon-calendar"></i></span>
                                         </div>
                                         <span style="margin-left:-28px">--</span>
-                                        <div class="input-append date date-picker" data-date="${(queryDto.passTimeEnd?string('yyyy-MM-dd'))!}"
+                                        <div class="input-append date date-picker" data-date="${(queryDto.endPayTime?string('yyyy-MM-dd'))!}"
                                              data-date-format="yyyy-mm-dd" data-date-viewmode="years">
-                                            <input name="passTimeEnd" class="m-wrap span8 date-picker" size="16" type="text"
-                                                   data-date-format="yyyy-mm-dd"  value="${(queryDto.passTimeEnd?string('yyyy-MM-dd'))!}" />
+                                            <input name="endPayTime" class="m-wrap span8 date-picker" size="16" type="text"
+                                                   data-date-format="yyyy-mm-dd"  value="${(queryDto.endPayTime?string('yyyy-MM-dd'))!}" />
                                             <span class="add-on"><i class="icon-calendar"></i></span>
                                         </div>
                                     </div>
@@ -94,7 +102,7 @@
 								<div class="row-fluid">
 									<div class="control-group span4 ">
 										<button type="button" onclick="search()" class="btn blue">查询</button>
-										<a class="btn blue" href="javascript:page_jump('${serverPath}/reception/addForm.htm')">下载</a>
+										<a class="btn blue" href="javascript:page_jump('${serverPath}/hKBillRecord/exportPayRecordInfo.htm')">下载</a>
 									</div>
 								</div>
 							</form>
@@ -129,7 +137,7 @@
 						<tr class="odd gradeX" id="${item.id!}">
 							<td>${item_index+1 }</td>
 							<td>${item.contractNo! }</td>
-							<td>${item.repayPeriod! }/${item.periods! }</td>
+							<td>${item.repayPeriodName!"" }</td>
 							<td>${item.billNo! }</td>
                             <td>${item.payTypeName! }</td>
                             <td>${item.payAmount! }</td>
@@ -139,14 +147,10 @@
                             <td>${(item.reservedPhone)!""}</td>
                             <td>${(item.idCardNo)!""}</td>
                             <td>${(item.createUser)!""}</td>
-							<#if item.isAdvanceSettle?? && item.isAdvanceSettle == 1>
-                                <td>否</td>
-							<#else>
-                                <td>是</td>
-							</#if>
+							<td>${(item.isAdvanceSettleName)!""}</td>
 							<td>${item.createTime?datetime}</td>
                             <td>${(item.stateName)!""}</td>
-                            <td>备注</td>
+                            <td>${item.payDesc!""}</td>
 						</tr>
 					</#list>
 			

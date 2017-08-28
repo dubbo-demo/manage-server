@@ -1,25 +1,4 @@
-/**
- * 
- */
 package com.myph.manage.controller.sign;
-
-import java.io.UnsupportedEncodingException;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-
-import com.myph.employee.constants.EmployeeMsg;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.myph.apply.dto.ApplyInfoDto;
 import com.myph.apply.dto.ApplyUserDto;
@@ -46,6 +25,9 @@ import com.myph.compliance.dto.JkComplianceDto;
 import com.myph.constant.ApplyUtils;
 import com.myph.constant.FlowStateEnum;
 import com.myph.constant.bis.SignBisStateEnum;
+import com.myph.contract.dto.JkContractDto;
+import com.myph.contract.service.JkContractService;
+import com.myph.employee.dto.EmpDetailDto;
 import com.myph.employee.dto.EmployeeInfoDto;
 import com.myph.employee.service.EmployeeInfoService;
 import com.myph.flow.dto.AbandonActionDto;
@@ -54,7 +36,6 @@ import com.myph.flow.dto.RejectActionDto;
 import com.myph.idgenerator.service.IdGeneratorService;
 import com.myph.manage.common.constant.Constant;
 import com.myph.manage.common.shiro.ShiroUtils;
-import com.myph.employee.dto.EmpDetailDto;
 import com.myph.manage.controller.BaseController;
 import com.myph.manage.facadeService.FacadeFlowStateExchangeService;
 import com.myph.node.dto.SysNodeDto;
@@ -66,14 +47,28 @@ import com.myph.product.service.ProductService;
 import com.myph.repaymentPlan.dto.JkRepaymentPlanDto;
 import com.myph.repaymentPlan.service.JkRepaymentPlanService;
 import com.myph.sign.dto.ContractModelView;
-import com.myph.sign.dto.JkContractDto;
 import com.myph.sign.dto.JkSignDto;
 import com.myph.sign.dto.SignQueryDto;
-import com.myph.sign.service.ContractService;
 import com.myph.sign.service.SignService;
 import com.myph.sysParamConfig.service.SysParamConfigService;
 import com.myph.visit.dto.VisitDetailDto;
 import com.myph.visit.service.VisitService;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 
 /**
  * 签约
@@ -122,7 +117,7 @@ public class SignController extends BaseController {
 	private ProductService productService;
 
 	@Autowired
-	private ContractService contractService;
+	private JkContractService contractService;
 
 	@Autowired
 	private IdGeneratorService generatorService;
@@ -489,7 +484,12 @@ public class SignController extends BaseController {
 								|| SignBisStateEnum.BACK_INIT.getCode().equals(applyInfoDto.getSubState())))) {
 					return AjaxResult.failed("该申请单已签约！");
 				}
-				serviceResult = signService.insertAllData(isUpdate, jkSignDto, applyInfo, jkContractDto,
+				if (isUpdate) {
+					contractService.updateSelective(jkContractDto);
+				} else {
+					contractService.insertSelective(jkContractDto, operatorName);
+				}
+				serviceResult = signService.insertAllData(isUpdate, jkSignDto, applyInfo,
 						ShiroUtils.getCurrentUserName());
 
 				if (!serviceResult.success()) {
@@ -533,7 +533,7 @@ public class SignController extends BaseController {
 
 	private void constructParams(JkContractDto jkContractDto, ProductDto productDto, String productName) {
 		jkContractDto.setTotalRate(productDto.getServiceRate());// 综合服务费率
-		jkContractDto.setPenalty(productDto.getPenaltyRate());// 罚息比例
+		jkContractDto.setPenaltyRate(productDto.getPenaltyRate());// 罚息比例
 		jkContractDto.setRepayRate(productDto.getPreRepayRate());// 提前还款费率
 		jkContractDto.setProductId(productDto.getId());
 		jkContractDto.setProductName(productName);
