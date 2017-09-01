@@ -1,38 +1,3 @@
-//$(function() {
-//	$("form").validate({
-//		rules : {
-//			employeeName : {
-//				required : true,
-//				maxlength : 6
-//			},
-//			identityNumber : {
-//				required : true,
-//				idCard : true
-//			},
-//			mobilePhone : {
-//				required : true,
-//				phone : true
-//			},
-//			orgName : {
-//				required : true
-//			},
-//			positionId : {
-//				required : true
-//			},
-//			entryTime : {
-//				required : true,
-//				maxlength : 10
-//			}
-//		},
-//		submitHandler : function(form) { // 表单提交句柄,为一回调函数，带一个参数：form
-//			form.submit(); // 提交表单
-//		}
-//	});
-//
-//	initTreePullDown(treeObject.treePullDown);
-//
-//});
-
 function save(event) {
 	// 阻止冒泡
 	ChkUtil.stopBubbleEvent(event);
@@ -57,10 +22,6 @@ function save(event) {
 		BootstrapDialog.alert("请选择新团队!");
 		return;
 	}
-//	if (teamId != "" && jobLevel == "") {
-//		BootstrapDialog.alert("请选择新星级!");
-//		return;
-//	}
 
 	var url = serverPath + "/employee/checkEmployeeInfo.htm";
 	var data = {
@@ -180,3 +141,140 @@ function onClick(e, treeId, treeNode) {
 		$("#jobLevel").append("<option value=''>请选择</option>");
 	}
 }
+
+function bindCard(event){
+	ChkUtil.stopBubbleEvent(event);
+	//校验必填项
+	var bankNo = $("#bankNo").find("option:selected").val();
+	if(bankNo == '' || $("#bankCardNo").val() == '' || $('#accountBankName').val() == '' || $('#mobile').val() == '' || $('#employeeName').val() == '' || $('#identityNumber').val() == '' ){
+		BootstrapDialog.alert("请填写必填项!");
+		return;
+	}
+	//拼装入参调用绑卡接口	
+	var options = {
+			url : serverPath + "/card/bindCard.htm",
+			type : 'post',
+			dataType : 'json',
+			data : {
+				'memberId':$('#mobilePhone').val(),
+				'bankCardNo':$('#bankCardNo').val(),
+				'accountBankName':$('#accountBankName').val(),
+				'bankNo':bankNo,
+				'mobile':$('#mobile').val(),
+				'accountName':$('#employeeName').val(),
+				'idCardNo':$('#identityNumber').val(),		
+				"Time" : new Date().getMilliseconds()
+			},
+			success : function(data) {
+				if(result.code == 0){
+					BootstrapDialog.alert("绑卡成功！");
+				}else{
+					BootstrapDialog.alert(result.message);
+				}
+			}
+		};
+		$.ajax(options);	
+}
+
+function authentication(event){
+	ChkUtil.stopBubbleEvent(event);
+	//拼装入参调用绑卡接口
+	var options = {
+			url : serverPath + "/card/authentication.htm",
+			type : 'post',
+			dataType : 'json',
+			data : {
+				'memberId':$('#mobilePhone').val(),
+				'bankCardNo':$('#bankCardNo').val(),	
+				"Time" : new Date().getMilliseconds()
+			},
+			success : function(data) {
+				if(result.code == 0){
+					BootstrapDialog.alert("鉴权成功！");
+				}else{
+					BootstrapDialog.alert(result.message);
+				}
+			}
+		};
+		$.ajax(options);	
+}
+
+function removeBindCard(event){
+	ChkUtil.stopBubbleEvent(event);
+	//拼装入参调用绑卡接口
+	var options = {
+			url : serverPath + "/card/removeBindCard.htm",
+			type : 'post',
+			dataType : 'json',
+			data : {
+				'memberId':$('#mobilePhone').val(),
+				'bankCardNo':$('#bankCardNo').val(),	
+				"Time" : new Date().getMilliseconds()
+			},
+			success : function(data) {
+				if(result.code == 0){
+					BootstrapDialog.alert("解绑成功！");
+				}else{
+					BootstrapDialog.alert(result.message);
+				}
+			}
+		};
+		$.ajax(options);		
+}
+
+function test1(event){
+	ChkUtil.stopBubbleEvent(event);
+	//拼装入参调用绑卡接口
+	var url = serverPath + "/card/test1.htm";
+	var data = {	
+		"Time" : new Date().getMilliseconds()
+	};
+	$.getJSON(url, data, function(result) {
+		if(result.code == 0){
+			BootstrapDialog.alert("鉴权成功！");
+		}else{
+			BootstrapDialog.alert(result.message);
+		}
+	});
+}
+
+
+function getBankList(){
+	var url = serverPath + "/card/getListAll.htm";
+	var data = {
+	"Time" : new Date().getMilliseconds()
+	};
+	$.getJSON(url, data, function(result) {
+	var resultData = result.data;
+	$("#bankNo").empty();
+	$("#bankNo").append("<option value=''>请选择</option>");
+	for (var i = 0; i < resultData.length; i++) {
+		$("#bankNo").append(
+				"<option value='" + resultData[i].sbankno +"'>"
+						+ resultData[i].sname + "</option>");
+	}
+	});
+	var options = {
+			url : serverPath + "/card/getListAll.htm",
+			type : 'post',
+			dataType : 'json',
+			data : {
+				"Time" : new Date().getMilliseconds()
+			},
+			success : function(data) {
+				var resultData = result.data;
+				$("#bankNo").empty();
+				$("#bankNo").append("<option value=''>请选择</option>");
+				for (var i = 0; i < resultData.length; i++) {
+					$("#bankNo").append(
+							"<option value='" + resultData[i].sbankno +"'>"
+									+ resultData[i].sname + "</option>");
+				}
+			}
+		};
+		$.ajax(options);
+}
+
+$(function() {
+	getBankList();
+});
