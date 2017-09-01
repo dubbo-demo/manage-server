@@ -192,13 +192,5 @@ public class CardController {
         }
         dto.setSFromIp(ShiroUtils.getCurrentUserIp());
     }
-    
-    @RequestMapping("/test1")
-    @ResponseBody
-    public AjaxResult test1() {
-        ServiceResult<List<UserCardInfoDto>> result = cardService.queryUserCardInfo("13914488520");
-        ServiceResult<CardInfoDto> result2 = cardService.checkCardBin("6217856100061767379");
-        return AjaxResult.success();
-    }
 
 }

@@ -222,23 +222,6 @@ function removeBindCard(event){
 		$.ajax(options);		
 }
 
-function test1(event){
-	ChkUtil.stopBubbleEvent(event);
-	//拼装入参调用绑卡接口
-	var url = serverPath + "/card/test1.htm";
-	var data = {	
-		"Time" : new Date().getMilliseconds()
-	};
-	$.getJSON(url, data, function(result) {
-		if(result.code == 0){
-			BootstrapDialog.alert("鉴权成功！");
-		}else{
-			BootstrapDialog.alert(result.message);
-		}
-	});
-}
-
-
 function getBankList(){
 	var url = serverPath + "/card/getListAll.htm";
 	var data = {

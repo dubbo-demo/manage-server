@@ -131,7 +131,6 @@ $(function() {
                 <button class="btn blue" onclick="bindCard(event);return false;">绑卡</button>
                 <button class="btn blue" onclick="authentication(event);return false;">鉴权</button>
                 <button class="btn blue" onclick="removeBindCard(event);return false;">解绑</button>
-                <button class="btn blue" onclick="test1(event);return false;">测试</button>
                 </div>
             </div>
         </div>          
