@@ -39,6 +39,11 @@ public class AntiXssFilter implements Filter {
         HttpServletRequest req = (HttpServletRequest) request;
         Map<String, String[]> parameterMap = req.getParameterMap();
         String method = req.getMethod();
+        String url = req.getRequestURI();
+        if("/sms-template/updateOrSaveSmsTemplate.htm".equals(url)){
+            chain.doFilter(request, response);
+            return;
+        }
         for (Object key : parameterMap.keySet()) {
             String[] val = (String[]) parameterMap.get(key);
             for (String v : val) {

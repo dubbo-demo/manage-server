@@ -12,7 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
  * 短信模板相关内容
@@ -39,6 +41,7 @@ public class SmsTemplateController extends BaseController {
         ServiceResult<Pagination<SmsTemplate>> serviceResult =
                 smsTemplateService.querySmsTemplateList(query, basePage);
         model.addAttribute("page", serviceResult.getData());
+        model.addAttribute("query", query);
         return "/smsTemplate/list";
     }
 
@@ -68,5 +71,28 @@ public class SmsTemplateController extends BaseController {
             return AjaxResult.failed("删除短信模板失败，模板id为null");
         }
         return null;
+    }
+    /**
+     * 删除某个短信模板
+     *
+     * @param tplId
+     * @return
+     */
+    @RequestMapping("/getOne/{tplId}")
+    @ResponseBody
+    public AjaxResult getOne(@PathVariable("tplId") Long tplId) {
+        if (tplId == null) {
+            return AjaxResult.failed("删除短信模板失败，模板id为null");
+        }
+        ServiceResult<SmsTemplate> serviceResult =
+                smsTemplateService.getOne(tplId);
+        return AjaxResult.formatFromServiceResult(serviceResult);
+    }
+    @RequestMapping("/updateOrSaveSmsTemplate")
+    @ResponseBody
+    public AjaxResult updateOrSaveSmsTemplate(SmsTemplate vo){
+        ServiceResult<Integer> serviceResult =
+                smsTemplateService.updateOrSaveSmsTemplate(vo);
+        return AjaxResult.formatFromServiceResult(serviceResult);
     }
 }
