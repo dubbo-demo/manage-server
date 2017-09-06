@@ -244,7 +244,7 @@ function getBankList(){
 			data : {
 				"Time" : new Date().getMilliseconds()
 			},
-			success : function(data) {
+			success : function(result) {
 				var resultData = result.data;
 				$("#bankNo").empty();
 				$("#bankNo").append("<option value=''>请选择</option>");
@@ -258,6 +258,35 @@ function getBankList(){
 		$.ajax(options);
 }
 
+function queryUserCardInfo(){
+	//拼装入参调用绑卡接口
+	var options = {
+			url : serverPath + "/card/queryUserCardInfo.htm",
+			type : 'post',
+			dataType : 'json',
+			data : {
+				'phone':$('#mobilePhone').val(),
+				"Time" : new Date().getMilliseconds()
+			},
+			success : function(result) {
+				if(result.code == 0){
+					var data = result.data;
+					if(data != null){
+						$('#bankNo').val(data.bankNo);
+						$('#bankCardNo').val(data.bankCardNo);
+						$('#accountBankName').val(data.accountBankName);
+						$('#mobile').val(data.mobile);
+						$('#authStatus').val(data.authStatus);
+					}
+				}else{
+					BootstrapDialog.alert(result.message);
+				}
+			}
+		};
+		$.ajax(options);		
+}
+
 $(function() {
 	getBankList();
+	queryUserCardInfo();
 });
