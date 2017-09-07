@@ -25,6 +25,8 @@
         <param-value>
             classpath:spring/applicationContext-*.xml
             classpath:spring/dubbo-consumer-parent.xml
+            classpath:spring/rocketmq-consumer.xml
+            classpath:spring/rocketmq-producer.xml            
         </param-value>
     </context-param>
 
