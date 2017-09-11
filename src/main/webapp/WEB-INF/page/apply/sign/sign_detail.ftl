@@ -47,7 +47,6 @@
 								</div>
 							</div>
   							<hr>
-							<!--<input type="hidden"  name="id" value='${(visit.id)!''}' />-->
 							<div class="row-fluid">
 								<div class="control-group span4 ">
 									<label class="control-label">申请单号</label>
@@ -102,7 +101,7 @@
 								<div class="control-group span4 ">
 									<label class="control-label">手机号</label>
 									<div class="controls">
-										<span class="text">${(appInfo.phone)!}</span>
+										<span class="text" id = "phone">${(appInfo.phone)!}</span>
 									</div>
 								</div>
 								<div class="control-group span4 ">
@@ -172,11 +171,9 @@
 							</div>
 							<div class="row-fluid">
 								<div class="control-group span4 ">
-									<label class="control-label">银行类别</label>
+									<label class="control-label">开户行</label>
 									<div class="controls">
-										<select name="bankType" class="m-wrap span9  js_input" data-id="${(jkContractDto.bankType)!"0"}">
-											<option value="">请选择</option>
-										</select>
+										<input disabled="disabled" type="text" class="span9 m-wrap" value="${(bankInfo.sname)!}" name="bankName" />
 									</div>
 								</div>
 								<div class="control-group span4 ">
@@ -192,23 +189,15 @@
 								<div class="control-group span4 ">
 									<label class="control-label">银行卡号</label>
 									<div class="controls">
-										<input type="text" class="span9 m-wrap js_input" value="${(jkContractDto.bankCardNo)!}" name="bankCardNo" onkeyup="value=value.replace(/[^\d{1,}\.\d{1,}|\d{1,}]/g,'')"/>
+										<input disabled="disabled" type="text" class="span9 m-wrap js_input" value="${(userCardInfo.bankCardNo)!}" name="bankCardNo" onkeyup="value=value.replace(/[^\d{1,}\.\d{1,}|\d{1,}]/g,'')"/>
 									</div>
 								</div>
 								<div class="control-group span4 ">
 									<label class="control-label">开户城市</label>
 									<div class="controls">
-										<input type="text" class="span9 m-wrap js_input" id = "bankCityID" name="bankCity" placeholder = "请选择" value="${(jkContractDto.bankCity)!''}" readonly />
+										<input disabled="disabled" type="text" class="span9 m-wrap js_input" name="bankCity" value="${(userCardInfo.bankAccountCity)!''}" />
 									</div>
 								</div>
-							</div>
-							<div class="row-fluid">
-								<div class="control-group span4 ">
-									<label class="control-label">开户行</label>
-									<div class="controls">
-										<input type="text" class="span9 m-wrap  js_input" value="${(jkContractDto.bankName)!}" name="bankName" />
-									</div>
-								</div>   
 							</div>
 							<div class="row-fluid">
 								<div class="control-group span4 ">
@@ -221,28 +210,34 @@
 										</select>
 									</div>
 								</div>
+								<div class="control-group span4 ">
+									<label class="control-label" style="color: red;"><#if userCardInfo??><#if userCardInfo.authStatus == "0">未通过鉴权<#else>已通过鉴权</#if> </#if></label>
+									<div class="controls">
+									<#if userCardInfo??><#if userCardInfo.authStatus == "0"><input type="button" class="btn blue"  value="鉴权"  onclick="_authentication()"/></#if> </#if>
+									</div>
+								</div>
 							</div>
 							<div class="row-fluid">
 								<div class="control-group span4 ">
 									<label class="control-label">备注</label>
-									<div class="controls">
-										<textarea name="remark" rows="4" class="m-wrap span9  js_input" value = "">${(jkSignDto.remark)!}</textarea>
+                                    <div class="controls">
+									<textarea name="remark" rows="4" class="m-wrap span9  js_input" value = "">${(jkSignDto.remark)!}</textarea>
 									</div>
 								</div>
 							</div>
 						</form>
-						<div class="form-actions">
-							<input type="button" class="btn blue" onclick="exportMain(event)"
-								value="导出" />						
-							<input type="button" class="btn blue" onclick="upload(event)"
-								value="上传附件" />
-							<input type="button" class="btn blue" onclick="save(event)"
-								value="保存" />
-							<input type="button" class="btn blue" onclick="submit(event)"
-								value="提交" /> 
-						    <a href="javascript:page_back('${serverPath}/sign/list.htm')" class="btn">返回</a>
-						</div>
 					</div>
+                    <div class="form-actions" style="margin-top: 0px;margin-bottom: 0px;">
+                        <input type="button" class="btn blue" onclick="exportMain(event)"
+                               value="导出" <#if userCardInfo??><#if userCardInfo.authStatus == "0">disabled="disabled"</#if></#if>/>
+                        <input type="button" class="btn blue" onclick="upload(event)"
+                               value="上传附件" />
+                        <input type="button" class="btn blue" onclick="save(event)"
+                               value="保存" />
+                        <input type="button" class="btn blue" onclick="submit(event)"
+                               value="提交" <#if userCardInfo??><#if userCardInfo.authStatus == "0">disabled="disabled"</#if></#if>/>
+                        <a href="javascript:page_back('${serverPath}/sign/list.htm')" class="btn">返回</a>
+                    </div>
 				</div>
 			</div>
 		</div>
@@ -283,6 +278,11 @@
 	var isUpLoanLimit = false;
 	var isFlag = false;
 	$(function(){
+	    <#if !(bankInfo??)>
+            BootstrapDialog.alert("请先绑定银行卡信息！",function(){
+                history.go(-1);
+			});
+		</#if>
 		$("select[name='signResult']").val("${(jkSignDto.signResult)!''}");
 		var date = new Date();
 		date.setDate(date.getDate()-1);//设置天数 -1 天 
@@ -328,7 +328,28 @@
 			}
 		});
 	});
-	
+	function _authentication() {
+        $.ajax({
+            url : '${serverPath}/card/authentication.htm',
+            type : 'post',
+            data : {
+                bizPartner : 'myph',
+                memberId : $("#phone").text(),
+                bankCardNo: $("input[name='bankCardNo']").val()
+            },
+            dataType : 'json',
+            success : function(res) {
+                if (res.code == 0) {
+                   window.location.reload();
+                } else {
+                    BootstrapDialog.alert(res.message);
+                }
+            },
+            error:function(){
+                BootstrapDialog.alert("系统异常");
+            }
+        });
+    }
 	function getServiceRate() {
 		$('.repayMoneyUpMsg').remove();
 		var reapyMoney = $('#tab input[name=repayMoney]').val();
@@ -382,18 +403,7 @@
 				$(this).removeClass("error");
 			}
 		});
-		var f3 = false;
-		var bankCity = $('#bankCityID').val();
-		if(bankCity == "" || bankCity == '请选择') {
-			$('#bankCityID').addClass("error");
-			$('#bankCityID').parent().append("<label class='error bankcity_class'>这是必填字段</label>");
-			f3 = true;
-		} else {
-			$('#bankCityID').removeClass("error");
-			$('#bankcity_class').remove();
-		}
-		
-		if(f1 == true || f2 == true || f3 == true) {
+		if(f1 == true || f2 == true) {
 			return false;
 		}
 		var isGo = false;

@@ -38,10 +38,14 @@ import com.myph.manage.common.constant.Constant;
 import com.myph.manage.common.shiro.ShiroUtils;
 import com.myph.manage.controller.BaseController;
 import com.myph.manage.facadeService.FacadeFlowStateExchangeService;
+import com.myph.member.card.dto.UserCardInfoDto;
+import com.myph.member.card.service.CardService;
 import com.myph.node.dto.SysNodeDto;
 import com.myph.node.service.NodeService;
 import com.myph.organization.dto.OrganizationDto;
 import com.myph.organization.service.OrganizationService;
+import com.myph.payBank.dto.SysPayBankDto;
+import com.myph.payBank.service.SysPayBankService;
 import com.myph.product.dto.ProductDto;
 import com.myph.product.service.ProductService;
 import com.myph.repaymentPlan.dto.JkRepaymentPlanDto;
@@ -148,7 +152,10 @@ public class SignController extends BaseController {
 
 	@Autowired
 	private FacadeFlowStateExchangeService facadeFlowStateExchangeService;
-
+	@Autowired
+	private CardService cardService;
+	@Autowired
+	SysPayBankService sysPayBankService;
 	/**
 	 * 
 	 * @名称 list
@@ -348,7 +355,25 @@ public class SignController extends BaseController {
 			if (nodeDto != null) {
 				applyInfo.setLoanPurposes(nodeDto.getNodeName());
 			}
-
+			// 查询银行卡信息
+			ServiceResult<List<UserCardInfoDto>> result = cardService.queryUserCardInfo(applyUserDto.getPhone());
+			if(result.success()){
+				if(null!=result.getData()&&result.getData().size() > 0){
+					for(UserCardInfoDto dto:result.getData()){
+						if(dto.getIDKFlag().equals(Constants.YES_INT)){
+							model.addAttribute("userCardInfo", dto);
+							//通过银行卡信息去查询银行名称
+							ServiceResult<SysPayBankDto> bankResult = sysPayBankService.selectBySbankNo(dto.getBankNo());
+							if(bankResult.success()){
+								model.addAttribute("bankInfo",bankResult.getData());
+							}
+							break;
+						}
+					}
+				}
+			}else{
+				MyphLogger.error(result.getMessage());
+			}
 			model.addAttribute("loanUpMax", loanUpMax);
 			model.addAttribute("jkSignDto", jkSignDto);
 			model.addAttribute("productDto", productDto);
@@ -357,6 +382,7 @@ public class SignController extends BaseController {
 			model.addAttribute("appInfo", applyInfo);
 			model.addAttribute("applyUserDto", applyUserDto);
 			model.addAttribute("subState", subState);
+
 		} catch (Exception e) {
 			MyphLogger.error(e, "进入合同详情页服务异常");
 		}
@@ -429,6 +455,32 @@ public class SignController extends BaseController {
 	public AjaxResult sign(JkContractDto jkContractDto) {
 		if (null == jkContractDto) {
 			return AjaxResult.failed("请求参数不能为空");
+		}
+		//新加检验++++罗荣+++++2017-09-08   通过合同号查询放款计划表中，首期 期初本金 与放款时间
+		ServiceResult<JkRepaymentPlanDto> repaymentResult = repaymentPlanService.queryFirstBillByContractNo(jkContractDto.getContractNo());
+		//判断放款金额+服务是否恒等于首期金额 期初本金
+		if(repaymentResult.success()){
+			JkRepaymentPlanDto dto= repaymentResult.getData();
+			BigDecimal initialPrincipal = dto.getInitialPrincipal();
+			if(null!=initialPrincipal){
+				if(initialPrincipal.compareTo(jkContractDto.getRepayMoney().add(jkContractDto.getServiceRate())) != 0){
+					return AjaxResult.failed("放款金额加服务费不等于期初本金["+initialPrincipal.toString()+"]");
+				}
+			}else{
+				MyphLogger.error("提交异常,合同号[{}]第一期期初本金为空", jkContractDto.getContractNo());
+				return AjaxResult.failed("期初本金为空");
+			}
+			//判断放款日期的后一个月，是否恒等于 放款计划第一期的协议还款日期
+			Date loanTime = jkContractDto.getLoanTime();
+			//加一个月
+			Date newLoanTime= DateUtils.add(loanTime,Calendar.MONTH,1);
+			//如果不等于则返回一个提示
+			if(!newLoanTime.equals(dto.getAgreeRepayDate())){
+				return AjaxResult.failed("放款日期后一个月不等于协议还款日期");
+			}
+		}else{
+			MyphLogger.error("提交异常,合同号[{}]第一期还款信息不存在", jkContractDto.getContractNo());
+			return AjaxResult.failed("请先导出生成还款信息！");
 		}
 		String operatorName = ShiroUtils.getCurrentUserName();
 		Long operatorId = ShiroUtils.getCurrentUserId();
