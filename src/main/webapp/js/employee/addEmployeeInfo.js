@@ -166,8 +166,10 @@ function bindCard(event){
 				"Time" : new Date().getMilliseconds()
 			},
 			success : function(data) {
-				if(result.code == 0){
+				if(data.code == 0){
 					BootstrapDialog.alert("绑卡成功！");
+					$('#authentication').show();
+					$('#removeBindCard').show();
 				}else{
 					BootstrapDialog.alert(result.message);
 				}
@@ -189,8 +191,9 @@ function authentication(event){
 				"Time" : new Date().getMilliseconds()
 			},
 			success : function(data) {
-				if(result.code == 0){
+				if(data.code == 0){
 					BootstrapDialog.alert("鉴权成功！");
+					$('#authStatus').val('已认证');
 				}else{
 					BootstrapDialog.alert(result.message);
 				}
@@ -201,10 +204,34 @@ function authentication(event){
 
 function removeBindCard(event){
 	ChkUtil.stopBubbleEvent(event);
+	//解绑前先校验是否可解绑，根据身份证查账单还款记录，有代偿未完结不允许解绑
+	var count = 0;
+	var options = {
+			url : serverPath + "/hKBillRecord/queryCountByIdCardNo.htm",
+			type : 'post',
+			async:false,
+			dataType : 'json',
+			data : {	
+				"Time" : new Date().getMilliseconds()
+			},
+			success : function(data) {
+				if(data.code == 0){
+					count = data.data;
+				}else{
+					BootstrapDialog.alert(result.message);
+				}
+			}
+		};
+		$.ajax(options);
+	if(count != 0){
+		BootstrapDialog.alert("存在处理中的还款记录，请先结清再解绑");
+		return;
+	}
 	//拼装入参调用绑卡接口
 	var options = {
 			url : serverPath + "/card/removeBindCard.htm",
 			type : 'post',
+			async:false,
 			dataType : 'json',
 			data : {
 				'memberId':$('#mobilePhone').val(),
@@ -212,7 +239,7 @@ function removeBindCard(event){
 				"Time" : new Date().getMilliseconds()
 			},
 			success : function(data) {
-				if(result.code == 0){
+				if(data.code == 0){
 					BootstrapDialog.alert("解绑成功！");
 				}else{
 					BootstrapDialog.alert(result.message);
@@ -288,5 +315,6 @@ function queryUserCardInfo(){
 
 $(function() {
 	getBankList();
-	queryUserCardInfo();
+	$('#authentication').hide();
+	$('#removeBindCard').hide();
 });

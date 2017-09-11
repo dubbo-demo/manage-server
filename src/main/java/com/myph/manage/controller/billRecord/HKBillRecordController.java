@@ -1,11 +1,13 @@
 package com.myph.manage.controller.billRecord;
 
 import com.myph.common.log.MyphLogger;
+import com.myph.common.result.AjaxResult;
 import com.myph.common.result.ServiceResult;
 import com.myph.common.rom.annotation.BasePage;
 import com.myph.common.rom.annotation.Pagination;
 import com.myph.common.util.DateUtils;
 import com.myph.constant.HkBIllRecordStateEnum;
+import com.myph.employee.dto.EmployeeInfoDto;
 import com.myph.hkrecord.service.HkBillRepayRecordService;
 import com.myph.manage.common.shiro.ShiroUtils;
 import com.myph.manage.common.util.BeanUtils;
@@ -21,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletResponse;
 import java.text.SimpleDateFormat;
@@ -133,5 +136,25 @@ public class HKBillRecordController extends BaseController{
             destList.add(destMap);
         }
         return destList;
+    }
+    
+    
+    /**
+     * 
+     * @名称 queryCountByIdCardNo 
+     * @描述 根据身份证查询处理中的代偿还款记录
+     * @返回类型 AjaxResult     
+     * @日期 2017年9月11日 下午1:51:26
+     * @创建人  吴阳春
+     * @更新人  吴阳春
+     *
+     */
+    @RequestMapping("/queryCountByIdCardNo")
+    @ResponseBody
+    public AjaxResult queryCountByIdCardNo() {
+        //获取当前登录人身份证号
+        EmployeeInfoDto employeeInfoDto = ShiroUtils.getCurrentUser();
+        String IdCardNo = '';
+        return AjaxResult.success();
     }
 }

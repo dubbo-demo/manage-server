@@ -127,10 +127,10 @@ $(function() {
             <div class="control-group span8 ">
                 <label class="control-label">认证状态</label>
                 <div class="controls">
-                <input type="text" class="m-wrap span3" id="authStatus" name="authStatus" readOnly>
+                <input type="text" class="m-wrap span3" id="authStatus" name="authStatus" readOnly>未认证</input>
                 <button class="btn blue" onclick="bindCard(event);return false;">绑卡</button>
-                <button class="btn blue" onclick="authentication(event);return false;">鉴权</button>
-                <button class="btn blue" onclick="removeBindCard(event);return false;">解绑</button>
+                <button class="btn blue authentication" type="hidden" onclick="authentication(event);return false;">鉴权</button>
+                <button class="btn blue removeBindCard" type="hidden" onclick="removeBindCard(event);return false;">解绑</button>
                 </div>
             </div>
         </div>          
