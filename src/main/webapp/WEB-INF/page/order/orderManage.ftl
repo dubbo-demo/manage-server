@@ -131,19 +131,19 @@
                             <td>${record.stateDesc!}</td>
                             <td>
                                 <@shiro.hasPermission name="order:withhold">
-                                <a data-target="#withholdShow" data-toggle="modal" href="" class="withholdShow" data-id='${record.billNo!}'>代扣</a>
+                                <a data-target="#withholdShow" data-toggle="modal" href="" class="withholdShow" data-paytype="4" data-billno='${record.billNo!}'>代扣</a>
                                 </@shiro.hasPermission>
                                 <@shiro.hasPermission name="order:compensate">
-                                <a data-target="#compensateShow" data-toggle="modal" href="" class="compensateShow" data-id='${record.billNo!}'>代偿</a>
+                                <a data-target="#compensateShow" data-toggle="modal" href="" class="compensateShow" data-paytype="5" data-billno='${record.billNo!}'>代偿</a>
                                 </@shiro.hasPermission>
                                 <@shiro.hasPermission name="order:reduction">
-                                <a data-target="#reductionShow" data-toggle="modal" href="" class="reductionShow" data-id='${record.billNo!}'>减免</a>
+                                <a data-target="#reductionShow" data-toggle="modal" href="" class="reductionShow" data-paytype="1" data-billno='${record.billNo!}'>减免</a>
                                 </@shiro.hasPermission>
                                 <@shiro.hasPermission name="order:earlySettlement">
-                                <a data-target="#earlySettlementShow" data-toggle="modal" href="" class="earlySettlementShow" data-id='${record.billNo!}'>提前结清</a>
+                                <a data-target="#earlySettlementShow" data-toggle="modal" href="" class="earlySettlementShow" data-paytype="4" data-billno='${record.billNo!}'>提前结清</a>
                                 </@shiro.hasPermission>
                                 <@shiro.hasPermission name="order:toPublic">
-                                <a data-target="#toPublicShow" data-toggle="modal" href="" class="toPublicShow" data-id='${record.billNo!}'>对公</a>
+                                <a data-target="#toPublicShow" data-toggle="modal" href="" class="toPublicShow" data-paytype="1" data-billno='${record.billNo!}'>对公</a>
                                 </@shiro.hasPermission>
                                 <@shiro.hasPermission name="order:detail">
                                 <a href="${serverPath}/order/hkBillUpdateLog.htm?billNo=${record.billNo!}">详情</a>
@@ -157,13 +157,12 @@
 		</div>
 	</div>
 </div>
-
+ <#include "/order/order_model.ftl">
 <#include "/sys/bottom.ftl">
 <script>
     $(function(){
         init();
     });
-
 
     function search() {
         ChkUtil.form_trim($("#searchForm"));

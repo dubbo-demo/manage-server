@@ -1,0 +1,28 @@
+<?xml version= "1.0" encoding ="UTF-8" ?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+         http://www.springframework.org/schema/beans/spring-beans.xsd
+         http://www.springframework.org/schema/context
+         http://www.springframework.org/schema/context/spring-context.xsd
+         http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd"
+>
+
+    <!-- 注意 有多个consumer的话  consumerGroup请各自保持唯一 -->
+    <!--
+        集群消费的demo
+        messageModel不设置 或设置为 CLUSTERING
+        -->
+    <!-- 接收还款中心代扣结果 -->    
+    <bean id="RepaymentResultNotifyConsumer" class="com.maiya.rocketmq.consumer.Consumer" init-method="init"
+          destroy-method="destroy">
+        <property name="namesrvAddr" value="${mq.namesrvAddr}"/>
+        <property name="consumerGroup" value="${mq.RepaymentNotifyConsumerGroup}"/>
+        <property name="topic" value="PAYRESULT_DK"/>
+        <property name="subExpression" value="*"/>
+        <property name="messageListener">       
+            <bean class="com.repayment.listener.RepaymentResultNotifyTpicMsgListener"/>
+        </property>
+    </bean> 
+</beans>

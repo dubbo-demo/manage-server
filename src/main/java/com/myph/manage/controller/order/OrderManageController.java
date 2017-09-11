@@ -66,6 +66,8 @@ public class OrderManageController extends BaseController {
         MyphLogger.info("还款账单明细-列表页参数【{}】", param);
         initQueryDate(param);
         initStoreIdList(param);
+        param.setAgreeRepayDatee(null);
+        param.setAgreeRepayDates(null);
         ServiceResult<Pagination<OrderManageDto>> rs = orderManageService.queryPageList(param, page);
         if (rs.success()) {
             for (OrderManageDto dto : rs.getData().getResult()) {

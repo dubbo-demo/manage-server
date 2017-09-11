@@ -1,0 +1,401 @@
+<!-- 代扣start -->
+<div id="withholdShow" class="modal hide fade" tabindex="-1"
+     data-width="760">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+        <h3>代扣</h3>
+    </div>
+    <div class="modal-body">
+        <div class="row-fluid">
+            <span class="control-label span3">代扣卡</span>
+            <input type="text" name="payTypeName" id="payTypeName" maxlength="10" class="form-control span6" readonly
+                   value="客户卡"/>
+            <input type="hidden" name="billNo" id="billNo" class="form-control span6" value=""/>
+        </div>
+        <div class="row-fluid">
+            <span class="control-label span3">卡类别</span>
+            <input type="text" name="bankTypeName" id="bankTypeName" maxlength="15" class="form-control span6" readonly
+                   value=""/>
+            <input type="hidden" name="bankType" id="bankType" maxlength="15" class="form-control span6" readonly
+                   value=""/>
+        </div>
+        <div class="row-fluid">
+            <span class="control-label span3">卡号</span>
+            <input type="text" name="idBankNo" id="idBankNo" maxlength="20" class="form-control span6" readonly
+                   value=""/>
+        </div>
+        <div class="row-fluid">
+            <span class="control-label span3">姓名</span>
+            <input type="text" name="username" id="username" maxlength="50" class="form-control span6" readonly
+                   value=""/>
+        </div>
+        <div class="row-fluid">
+            <span class="control-label span3">手机号</span>
+            <input type="text" name="reservedPhone" id="reservedPhone" maxlength="11" class="form-control span6"
+                   readonly value=""/>
+        </div>
+        <div class="row-fluid">
+            <span class="control-label span3">还款金额</span>
+            <input type="text" name="payAmount" id="payAmount" maxlength="10" class="form-control span6" value=""/>
+        </div>
+        <div class="row-fluid">
+            <span class="control-label span3"><a href="#">附件上传</a></span>
+        </div>
+        <div class="row-fluid">
+            <span class="control-label span4" id="error"></span>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <a class="btn blue" data-dismiss="modal" onclick="returnBack();" class="btn">返回</a>
+        <button type="button" class="btn blue" onclick="addDataDetail();">提交</button>
+    </div>
+</div>
+<!-- 代扣end -->
+
+<!-- 代偿start -->
+<div id="compensateShow" class="modal hide fade" tabindex="-1"
+     data-width="760">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+        <h3>代扣</h3>
+    </div>
+    <div class="modal-body">
+        <div class="row-fluid">
+            <span class="control-label span3">代扣卡</span>
+            <input type="text" name="payTypeName" id="payTypeName" maxlength="10" class="form-control span6" readonly
+                   value="代偿卡"/>
+        </div>
+        <div class="row-fluid">
+            <span class="control-label span3">卡类别</span>
+            <input type="text" name="bankTypeName" id="bankTypeName" maxlength="15" class="form-control span6" readonly
+                   value=""/>
+            <input type="hidden" name="bankType" id="bankType" maxlength="15" class="form-control span6" value=""/>
+            <input type="hidden" name="billNo" id="billNo" class="form-control span6" value=""/>
+        </div>
+        <div class="row-fluid">
+            <span class="control-label span3">卡号</span>
+            <input type="text" name="idBankNo" id="idBankNo" maxlength="20" class="form-control span6" readonly
+                   value=""/>
+        </div>
+        <div class="row-fluid">
+            <span class="control-label span3">姓名</span>
+            <input type="text" name="username" id="username" maxlength="50" class="form-control span6" readonly
+                   value=""/>
+        </div>
+        <div class="row-fluid">
+            <span class="control-label span3">手机号</span>
+            <input type="text" name="reservedPhone" id="reservedPhone" maxlength="11" class="form-control span6"
+                   readonly value=""/>
+        </div>
+        <div class="row-fluid">
+            <span class="control-label span3">还款金额</span>
+            <input type="text" name="payAmount" id="payAmount" maxlength="10" class="form-control span6" value=""/>
+        </div>
+        <div class="row-fluid">
+            <span class="control-label span3"><a href="#">附件上传</a></span>
+        </div>
+        <div class="row-fluid">
+            <span class="control-label span4" id="error"></span>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <a class="btn blue" data-dismiss="modal" onclick="returnBack();" class="btn">返回</a>
+        <button type="button" class="btn blue" onclick="addDataDetail();">提交</button>
+    </div>
+</div>
+<!-- 代偿end -->
+
+<!-- 减免start -->
+<div id="reductionShow" class="modal hide fade" tabindex="-1"
+     data-width="760">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+        <h3>减免</h3>
+    </div>
+    <div class="modal-body">
+        <div class="row-fluid ">
+            <span class="control-label span3">减免类型</span>
+            <select name="isAdvanceSettle" class="form-control span6" id="isAdvanceSettle">
+                <option value="0" selected>当期减免</option>
+                <option value="1">提前结清减免</option>
+            </select>
+        </div>
+        <div class="row-fluid">
+            <span class="control-label span3">还款金额</span>
+            <input type="text" name="payAmount" id="payAmount" maxlength="10" class="form-control span6" value=""/>
+        </div>
+        <div class="row-fluid">
+            <span class="control-label span3"><a href="#">附件上传</a></span>
+        </div>
+        <div class="row-fluid">
+            <span class="control-label span4" id="error"></span>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <a class="btn blue" data-dismiss="modal" onclick="returnBack();" class="btn">返回</a>
+        <button type="button" class="btn blue" data-isredution="0" onclick="addDataDetail();">提交</button>
+    </div>
+</div>
+<!-- 减免end -->
+
+<!-- 提前结清start -->
+<div id="earlySettlementShow" class="modal hide fade" tabindex="-1"
+     data-width="760">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+        <h3>代扣</h3>
+    </div>
+    <div class="modal-body">
+        <div class="row-fluid ">
+            <span class="control-label span3">代扣卡</span>
+            <select name="payType" class="form-control span6" id="payType"
+                    onchange="changeCardInfo(this,'#earlySettlementShow')">
+                <option value="4" selected>客户卡</option>
+                <option value="5">代偿卡</option>
+            </select>
+        </div>
+        <div class="row-fluid">
+            <span class="control-label span3">卡类别</span>
+            <input type="text" name="bankTypeName" id="bankTypeName" maxlength="15" class="form-control span6" readonly
+                   value=""/>
+            <input type="hidden" name="bankType" id="bankType" maxlength="15" class="form-control span6" readonly
+                   value=""/>
+            <input type="hidden" name="billNo" id="billNo" class="form-control span6" value=""/>
+        </div>
+        <div class="row-fluid">
+            <span class="control-label span3">卡号</span>
+            <input type="text" name="idBankNo" id="idBankNo" maxlength="20" class="form-control span6" readonly
+                   value=""/>
+        </div>
+        <div class="row-fluid">
+            <span class="control-label span3">姓名</span>
+            <input type="text" name="username" id="username" maxlength="50" class="form-control span6" readonly
+                   value=""/>
+        </div>
+        <div class="row-fluid">
+            <span class="control-label span3">手机号</span>
+            <input type="text" name="reservedPhone" id="reservedPhone" maxlength="11" class="form-control span6"
+                   readonly value=""/>
+        </div>
+        <div class="row-fluid">
+            <span class="control-label span3">还款金额</span>
+            <input type="text" name="payAmount" id="payAmount" maxlength="10" class="form-control span6" value=""/>
+        </div>
+        <div class="row-fluid">
+            <span class="control-label span3"><a href="#">附件上传</a></span>
+        </div>
+        <div class="row-fluid">
+            <span class="control-label span4" id="error"></span>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <a class="btn blue" data-dismiss="modal" onclick="returnBack();" class="btn">返回</a>
+        <button type="button" class="btn blue" data-isredution="0" onclick="addDataDetail();">提交</button>
+    </div>
+</div>
+<!-- 提前结清end -->
+
+<!-- 对公start -->
+<div id="toPublicShow" class="modal hide fade" tabindex="-1"
+     data-width="760">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+        <h3>对公还款</h3>
+    </div>
+    <div class="modal-body">
+        <div class="row-fluid">
+            <span class="control-label span3">还款金额</span>
+            <input type="text" name="payAmount" id="payAmount" maxlength="10" class="form-control span6" value=""/>
+        </div>
+    <#--<div class="row-fluid">-->
+    <#--<span class="control-label span3"><a href="#">附件上传</a></span>-->
+    <#--</div>-->
+        <div class="row-fluid">
+            <span class="control-label span4" id="error"></span>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <a class="btn blue" data-dismiss="modal" onclick="returnBack();" class="btn">返回</a>
+        <button type="button" class="btn blue" onclick="addDataDetail();">提交</button>
+    </div>
+</div>
+<!-- 对公end -->
+
+<script>
+    function getPayData(target, payType) {
+        var data = {};
+        // 如果是代扣，代偿
+        if (payType == 4 || payType == 5) { // 代扣
+            data = {
+                "billNo": $("" + target + " input[name=billNo]").val(),
+                "bankTypeName": $("" + target + " input[name=bankTypeName]").val(), //卡类别
+                "bankType": $("" + target + " input[name=bankType]").val(),
+                "idBankNo": $("" + target + " input[name=idBankNo]").val(),//卡号
+                "username": $("" + target + " input[name=username]").val(),//姓名
+                "payType": payType,// 还款方式
+                "payAmount": $("" + target + " input[name=payAmount]").val(),//金额
+                "reservedPhone": $("" + target + " input[name=reservedPhone]").val(),//手机号
+                "Time": new Date().getMilliseconds()
+            };
+        } else if(payType == 2) { //减免
+            data = {
+                "billNo": $("" + target + " input[name=billNo]").val(),
+                "isAdvanceSettle": $("" + target + " input[name=isAdvanceSettle]").val(),
+                "initialAmount": $("" + target + " input[name=payAmount]").val(),//金额
+                "Time": new Date().getMilliseconds()
+            };
+        } else  { // 对公
+            data = {
+                "billNo": $("" + target + " input[name=billNo]").val(),
+                "payAmount": $("" + target + " input[name=payAmount]").val(),//金额
+                "Time": new Date().getMilliseconds()
+            };
+        }
+
+        return data;
+    }
+
+    /**
+     *
+     * @param e this
+     * @param target model标记
+     * @param isAdvanceSettleEnum 是否提前结清
+     * @param payType 支付类型
+     */
+    function payMade(e, target, isAdvanceSettleEnum, payType) {
+        var url_this;
+
+        if (payType == 4) { // 代扣
+            url_this = serverPath + '/repayMade/manMadeRepay.htm';
+        } else if (payType == 5) { // 代偿
+            url_this = serverPath + '/repayMade/userMadeRepay.htm';
+        } else if (payType == 2) { // 减免
+            var isAdvanceSettle_this = $("" + target + " input[name=isAdvanceSettle]").val()
+            url_this = serverPath + '/repayMade/redutionMadeRepay.htm';
+        } else if (payType == 14) { //提前结清代扣
+            url_this = serverPath + '/repayMade/advanceSettleMadeRepay.htm';
+        } else if (payType == 1) { //对公
+            url_this = serverPath + '/repayMade/ddd.htm';
+        }
+        // 禁用按钮
+        $(target + ' .blue').attr('disabled', "true");
+        $.post(url_this, getPayData(target, payType, isRedution), function (res) {
+            // 释放按钮
+            $(target + ' .blue').removeAttr("disabled");
+            if (res.code == '0') {
+                BootstrapDialog.alert(msg, function () {
+                    window.location.href = serverPath + "/reception/list.htm";
+                });
+            } else {
+                BootstrapDialog.alert(res.message);
+            }
+        }, "json")
+    }
+    ;
+    }
+
+    $(function () {
+        $("*[data-paytype]").click(function (e) {
+            $("" + target + " input[name=billNo]").val("");
+            var billNo = $(this).data("billno");
+            var payType = $(this).data("paytype");
+            var target = $(this).data("target");
+            console.log(billNo)
+            $("" + target + " input[name=billNo]").val(billNo);
+            getCardInfo(payType, target);
+        });
+    });
+    function addDataDetail() {
+        var addDataDetailResult = '';
+        if ($("#addNum").val() == '' || $("#addCode").val() == '' || $("#addName").val() == '') {
+            $("#error").html('<font color="red">请输入必选项</font>');
+            $("#error").css("display", "block");
+            return false;
+        }
+        //校验重复
+        $.ajax({
+            url: serverPath + "/dataDetail/addDataDetail.htm",
+            type: "post",
+            data: {
+                "Time": new Date().getMilliseconds()
+            },
+            dataType: "json",
+            success: function (result) {
+                if (addDataDetailResult == 7) {
+                    $("#error").html('<font color="red">名称和编号和位号重复</font>');
+                    $("#error").css("display", "block");
+                    return false;
+                }
+            },
+            error: function () {
+                BootstrapDialog.alert("操作失败");
+            }
+        });
+    }
+
+    function changeCardInfo(e, target) {
+        var paytype_this = $(e).val();
+        getCardInfo(paytype_this, target);
+    }
+    function removeCardInfo(target) {
+        //卡类别
+        $("" + target + " input[name=bankTypeName]").val("");
+
+        $("" + target + " input[name=bankType]").val("");
+
+        //卡号
+        $("" + target + " input[name=idBankNo]").val("");
+
+        //姓名
+        $("" + target + " input[name=username]").val("");
+
+        //手机号
+        $("" + target + " input[name=reservedPhone]").val("");
+    }
+    function getCardInfo(payType, target) {
+        removeCardInfo(target);
+        var billNo_this = $("" + target + " input[name=billNo]").val();
+        var url = serverPath + "/repayMade/manMadeRepayCard.htm";
+        var data = {
+            "billNo": billNo_this,
+            "payType": payType,
+            "Time": new Date().getMilliseconds()
+        };
+        $.getJSON(url, data, function (result) {
+            var cardData = result.data;
+            console.log(cardData);
+            if (null == cardData) {
+                return;
+            }
+            if (payType == 4) {
+                //卡类别
+                $("" + target + " input[name=bankTypeName]").val(cardData.bankTypeName);
+
+                $("" + target + " input[name=bankType]").val(cardData.bankType);
+
+                //卡号
+                $("" + target + " input[name=idBankNo]").val(cardData.bankCardNo);
+
+                //姓名
+                $("" + target + " input[name=username]").val(cardData.memberName);
+
+                //手机号
+                $("" + target + " input[name=reservedPhone]").val(cardData.reservedPhone);
+            } else if (payType == 5) {
+                //卡类别
+                $("" + target + " input[name=bankTypeName]").val(cardData.bankTypeName);
+
+                $("" + target + " input[name=bankType]").val(cardData.bankNo);
+
+                //卡号
+                $("" + target + " input[name=idBankNo]").val(cardData.bankCardNo);
+
+                //姓名
+                $("" + target + " input[name=username]").val(cardData.accountName);
+
+                //手机号
+                $("" + target + " input[name=reservedPhone]").val(cardData.mobile);
+            }
+        });
+    }
+</script>

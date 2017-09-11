@@ -41,8 +41,8 @@
                         <div class="control-group span4 ">
                             <label class="help-inline text-right span4">类型：</label>
                             <select name="isAdvanceSettle"  class="m-wrap span8">
-                                <option value="1" <#if (query.isAdvanceSettle??&&query.isAdvanceSettle== 1)??> selected = selected</#if>>当期减免</option>
-                                <option value="0" <#if (query.isAdvanceSettle??&&query.isAdvanceSettle== 0)> selected = selected</#if>>提前结清减免</option>
+                                <option value="0" <#if (query.isAdvanceSettle??&&query.isAdvanceSettle== 0)??> selected = selected</#if>>当期减免</option>
+                                <option value="1" <#if (query.isAdvanceSettle??&&query.isAdvanceSettle== 1)> selected = selected</#if>>提前结清减免</option>
                             </select>
                         </div>
                     </div>
@@ -127,7 +127,7 @@
                         <td>${(record.endPrincipal)!}</td>
                         <td>${(record.returnAmount)!}</td>
                         <td>${(record.aheadAmount)!}</td>
-                        <td><#if record.isAdvanceSettle == 1>
+                        <td><#if record.isAdvanceSettle == 0>
                             当期减免
                             <#else>
                             提前结清减免
