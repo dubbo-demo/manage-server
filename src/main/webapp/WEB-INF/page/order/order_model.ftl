@@ -11,6 +11,7 @@
             <input type="text" name="payTypeName" id="payTypeName" maxlength="10" class="form-control span6" readonly
                    value="客户卡"/>
             <input type="hidden" name="billNo" id="billNo" class="form-control span6" value=""/>
+            <input type="hidden" name="idCardNo" id="idCardNo" class="form-control span6" value=""/>
         </div>
         <div class="row-fluid">
             <span class="control-label span3">卡类别</span>
@@ -38,16 +39,16 @@
             <span class="control-label span3">还款金额</span>
             <input type="text" name="payAmount" id="payAmount" maxlength="10" class="form-control span6" value=""/>
         </div>
-        <div class="row-fluid">
-            <span class="control-label span3"><a href="#">附件上传</a></span>
-        </div>
+        <#--<div class="row-fluid">-->
+            <#--<span class="control-label span3"><a href="#">附件上传</a></span>-->
+        <#--</div>-->
         <div class="row-fluid">
             <span class="control-label span4" id="error"></span>
         </div>
     </div>
     <div class="modal-footer">
         <a class="btn blue" data-dismiss="modal" onclick="returnBack();" class="btn">返回</a>
-        <button type="button" class="btn blue" onclick="addDataDetail();">提交</button>
+        <button type="button" class="btn blue" onclick="payMade(this, '#withholdShow', false, 4);">提交</button>
     </div>
 </div>
 <!-- 代扣end -->
@@ -71,6 +72,7 @@
                    value=""/>
             <input type="hidden" name="bankType" id="bankType" maxlength="15" class="form-control span6" value=""/>
             <input type="hidden" name="billNo" id="billNo" class="form-control span6" value=""/>
+            <input type="hidden" name="idCardNo" id="idCardNo" class="form-control span6" value=""/>
         </div>
         <div class="row-fluid">
             <span class="control-label span3">卡号</span>
@@ -100,7 +102,7 @@
     </div>
     <div class="modal-footer">
         <a class="btn blue" data-dismiss="modal" onclick="returnBack();" class="btn">返回</a>
-        <button type="button" class="btn blue" onclick="addDataDetail();">提交</button>
+        <button type="button" class="btn blue" onclick="payMade(this, '#compensateShow', false, 5);">提交</button>
     </div>
 </div>
 <!-- 代偿end -->
@@ -133,7 +135,7 @@
     </div>
     <div class="modal-footer">
         <a class="btn blue" data-dismiss="modal" onclick="returnBack();" class="btn">返回</a>
-        <button type="button" class="btn blue" data-isredution="0" onclick="addDataDetail();">提交</button>
+        <button type="button" class="btn blue" data-isredution="0" onclick="payMade(this, '#reductionShow', false, 2);">提交</button>
     </div>
 </div>
 <!-- 减免end -->
@@ -161,6 +163,7 @@
             <input type="hidden" name="bankType" id="bankType" maxlength="15" class="form-control span6" readonly
                    value=""/>
             <input type="hidden" name="billNo" id="billNo" class="form-control span6" value=""/>
+            <input type="hidden" name="idCardNo" id="idCardNo" class="form-control span6" value=""/>
         </div>
         <div class="row-fluid">
             <span class="control-label span3">卡号</span>
@@ -190,7 +193,7 @@
     </div>
     <div class="modal-footer">
         <a class="btn blue" data-dismiss="modal" onclick="returnBack();" class="btn">返回</a>
-        <button type="button" class="btn blue" data-isredution="0" onclick="addDataDetail();">提交</button>
+        <button type="button" class="btn blue" data-isredution="0" onclick="payMade(this, '#earlySettlementShow', true, 14);">提交</button>
     </div>
 </div>
 <!-- 提前结清end -->
@@ -216,7 +219,7 @@
     </div>
     <div class="modal-footer">
         <a class="btn blue" data-dismiss="modal" onclick="returnBack();" class="btn">返回</a>
-        <button type="button" class="btn blue" onclick="addDataDetail();">提交</button>
+        <button type="button" class="btn blue" onclick="payMade(this, '#toPublicShow', false, 1);">提交</button>
     </div>
 </div>
 <!-- 对公end -->
@@ -228,16 +231,30 @@
         if (payType == 4 || payType == 5) { // 代扣
             data = {
                 "billNo": $("" + target + " input[name=billNo]").val(),
-                "bankTypeName": $("" + target + " input[name=bankTypeName]").val(), //卡类别
+                "bankName": $("" + target + " input[name=bankTypeName]").val(), //卡类别
                 "bankType": $("" + target + " input[name=bankType]").val(),
                 "idBankNo": $("" + target + " input[name=idBankNo]").val(),//卡号
                 "username": $("" + target + " input[name=username]").val(),//姓名
                 "payType": payType,// 还款方式
+                "idCardNo": $("" + target + " input[name=idCardNo]").val(),//身份证号
                 "payAmount": $("" + target + " input[name=payAmount]").val(),//金额
                 "reservedPhone": $("" + target + " input[name=reservedPhone]").val(),//手机号
                 "Time": new Date().getMilliseconds()
             };
-        } else if(payType == 2) { //减免
+        } else if(payType == 14) { //减免
+            data = {
+                "billNo": $("" + target + " input[name=billNo]").val(),
+                "bankName": $("" + target + " input[name=bankTypeName]").val(), //卡类别
+                "bankType": $("" + target + " input[name=bankType]").val(),
+                "idBankNo": $("" + target + " input[name=idBankNo]").val(),//卡号
+                "username": $("" + target + " input[name=username]").val(),//姓名
+                "payType": $("" + target + " input[name=payType]").val(),// 还款方式
+                "idCardNo": $("" + target + " input[name=idCardNo]").val(),//身份证号
+                "payAmount": $("" + target + " input[name=payAmount]").val(),//金额
+                "reservedPhone": $("" + target + " input[name=reservedPhone]").val(),//手机号
+                "Time": new Date().getMilliseconds()
+            };
+        }else if(payType == 2) { //减免
             data = {
                 "billNo": $("" + target + " input[name=billNo]").val(),
                 "isAdvanceSettle": $("" + target + " input[name=isAdvanceSettle]").val(),
@@ -247,6 +264,7 @@
         } else  { // 对公
             data = {
                 "billNo": $("" + target + " input[name=billNo]").val(),
+                "payType": payType,// 还款方式
                 "payAmount": $("" + target + " input[name=payAmount]").val(),//金额
                 "Time": new Date().getMilliseconds()
             };
@@ -270,28 +288,36 @@
         } else if (payType == 5) { // 代偿
             url_this = serverPath + '/repayMade/userMadeRepay.htm';
         } else if (payType == 2) { // 减免
-            var isAdvanceSettle_this = $("" + target + " input[name=isAdvanceSettle]").val()
+            var isAdvanceSettle_this = $("" + target + " input[name=isAdvanceSettle]").val();
+            if(isAdvanceSettle_this == 1) {
+                isAdvanceSettleEnum = true;
+            }
             url_this = serverPath + '/repayMade/redutionMadeRepay.htm';
         } else if (payType == 14) { //提前结清代扣
             url_this = serverPath + '/repayMade/advanceSettleMadeRepay.htm';
         } else if (payType == 1) { //对公
-            url_this = serverPath + '/repayMade/ddd.htm';
+            url_this = serverPath + '/repayMade/businessRepay.htm';
         }
         // 禁用按钮
         $(target + ' .blue').attr('disabled', "true");
-        $.post(url_this, getPayData(target, payType, isRedution), function (res) {
+        var data = getPayData(target, payType);
+        console.log(data);
+        if(isAdvanceSettleEnum) {
+            data.isAdvanceSettle = 1;
+        } else {
+            data.isAdvanceSettle = 0;
+        }
+        $.post(url_this,data , function (res) {
             // 释放按钮
             $(target + ' .blue').removeAttr("disabled");
             if (res.code == '0') {
-                BootstrapDialog.alert(msg, function () {
-                    window.location.href = serverPath + "/reception/list.htm";
+                BootstrapDialog.alert(res.message, function () {
+                   console.log(1);
                 });
             } else {
                 BootstrapDialog.alert(res.message);
             }
-        }, "json")
-    }
-    ;
+        }, "json");
     }
 
     $(function () {
@@ -300,6 +326,7 @@
             var billNo = $(this).data("billno");
             var payType = $(this).data("paytype");
             var target = $(this).data("target");
+            removeCardInfo(target);
             console.log(billNo)
             $("" + target + " input[name=billNo]").val(billNo);
             getCardInfo(payType, target);
@@ -351,9 +378,13 @@
 
         //手机号
         $("" + target + " input[name=reservedPhone]").val("");
+
+        //账单号
+        $("" + target + " input[name=billNo]").val("");
+
+        $("" + target + " input[name=idCardNo]").val("");//身份证号
     }
     function getCardInfo(payType, target) {
-        removeCardInfo(target);
         var billNo_this = $("" + target + " input[name=billNo]").val();
         var url = serverPath + "/repayMade/manMadeRepayCard.htm";
         var data = {
@@ -381,6 +412,8 @@
 
                 //手机号
                 $("" + target + " input[name=reservedPhone]").val(cardData.reservedPhone);
+
+                $("" + target + " input[name=idCardNo]").val(cardData.idCard);//身分证号
             } else if (payType == 5) {
                 //卡类别
                 $("" + target + " input[name=bankTypeName]").val(cardData.bankTypeName);
@@ -395,6 +428,8 @@
 
                 //手机号
                 $("" + target + " input[name=reservedPhone]").val(cardData.mobile);
+
+                $("" + target + " input[name=idCardNo]").val(cardData.idCardNo);//身分证号
             }
         });
     }

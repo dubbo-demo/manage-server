@@ -162,6 +162,17 @@
             <artifactId>jackson-databind</artifactId>
             <version>2.5.0</version>
         </dependency>
+        <dependency>
+            <groupId>com.repayment</groupId>
+            <artifactId>repayment-debit-interface</artifactId>
+            <exclusions>
+                <exclusion>
+                    <artifactId>repayment-common</artifactId>
+                    <groupId>com.repayment</groupId>
+                </exclusion>
+            </exclusions>
+            <version>${repayMentServiceVersion}</version>
+        </dependency>
     </dependencies>
 
     <build>

@@ -14,15 +14,15 @@
         集群消费的demo
         messageModel不设置 或设置为 CLUSTERING
         -->
-    <!-- 接收还款中心代扣结果 -->    
+    <!-- 接收还款中心代扣结果 -->
     <bean id="RepaymentResultNotifyConsumer" class="com.maiya.rocketmq.consumer.Consumer" init-method="init"
           destroy-method="destroy">
         <property name="namesrvAddr" value="${mq.namesrvAddr}"/>
         <property name="consumerGroup" value="${mq.RepaymentNotifyConsumerGroup}"/>
         <property name="topic" value="PAYRESULT_DK"/>
-        <property name="subExpression" value="*"/>
-        <property name="messageListener">       
-            <bean class="com.repayment.listener.RepaymentResultNotifyTpicMsgListener"/>
+        <property name="subExpression" value="MYPH"/>
+        <property name="messageListener">
+            <bean class="com.myph.manage.rocketmq.listener.RepaymentResultNotifyTpicMsgListener"/>
         </property>
-    </bean> 
+    </bean>
 </beans>
