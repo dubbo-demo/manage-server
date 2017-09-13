@@ -160,6 +160,9 @@ public class CardController {
         if (StringUtils.isBlank(dto.getBankAccountCity())) {
             dto.setBankAccountCity("-");
         }
+        if (StringUtils.isBlank(dto.getBankAccountProvince())) {
+            dto.setBankAccountProvince("-");
+        }
         dto.setSFromIp(ShiroUtils.getCurrentUserIp());
     }
 
