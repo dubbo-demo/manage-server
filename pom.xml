@@ -167,8 +167,8 @@
             <artifactId>repayment-debit-interface</artifactId>
             <exclusions>
                 <exclusion>
-                    <artifactId>repayment-common</artifactId>
-                    <groupId>com.repayment</groupId>
+                    <artifactId>base-util</artifactId>
+                    <groupId>com.maiya</groupId>
                 </exclusion>
             </exclusions>
             <version>${repayMentServiceVersion}</version>
