@@ -20,6 +20,10 @@
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>com.maiyajf</groupId>
+            <artifactId>monitor-client</artifactId>
+        </dependency>
         <!--运行junit单元测试类需要的-->
         <dependency>
             <groupId>junit</groupId>
