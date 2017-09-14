@@ -2,6 +2,7 @@ package com.myph.manage.rocketmq.listener;
 
 import com.alibaba.fastjson.JSON;
 import com.maiya.rocketmq.listener.MessageListener;
+import com.myph.common.constant.ChannelEnum;
 import com.myph.common.constant.Constants;
 import com.myph.common.log.MyphLogger;
 import com.myph.common.result.ServiceResult;
@@ -50,9 +51,9 @@ public class RepaymentResultNotifyTpicMsgListener implements MessageListener {
                 payResultDto = JSON.parseObject(message, PayResultDkMQ.class);
                 // 不在业务方处理锁中
                 if (repaymentLockService
-                        .checkLockDebitBill(payResultDto.getBillId())) {
+                        .checkLockDebitBill(ChannelEnum.MYPH.getCode(),payResultDto.getBillId())) {
                     // 加业务方接受还款中心，处理锁
-                    repaymentLockService.lockDebitBill(payResultDto.getBillId());
+                    repaymentLockService.lockDebitBill(ChannelEnum.MYPH.getCode(),payResultDto.getBillId());
                     MyphLogger.info("普惠接收还款中心代扣结果RepaymentResultNotifyTpicMsgListener,开始消费消息: " + message);
                     HkBillRepayRecordDto dto = new HkBillRepayRecordDto();
                     dto.setBillNo(payResultDto.getBillNo());
@@ -94,7 +95,7 @@ public class RepaymentResultNotifyTpicMsgListener implements MessageListener {
                 return true;
             } finally {
                 // 加业务方接受还款中心，释放锁
-                repaymentLockService.lockDebitBill(payResultDto.getBillId());
+                repaymentLockService.lockDebitBill(ChannelEnum.MYPH.getCode(),payResultDto.getBillId());
             }
         }
         return true;
