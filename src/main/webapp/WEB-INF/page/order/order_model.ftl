@@ -121,6 +121,7 @@
                 <option value="0" selected>当期减免</option>
                 <option value="1">提前结清减免</option>
             </select>
+            <input type="hidden" name="billNo" id="billNo" class="form-control span6" value=""/>
         </div>
         <div class="row-fluid">
             <span class="control-label span3">还款金额</span>
@@ -326,10 +327,22 @@
             var billNo = $(this).data("billno");
             var payType = $(this).data("paytype");
             var target = $(this).data("target");
-            removeCardInfo(target);
-            console.log(billNo)
+            console.log(billNo);
             $("" + target + " input[name=billNo]").val(billNo);
-            getCardInfo(payType, target);
+
+            if (payType == 4) { // 代扣
+                removeCardInfo(target);
+                getCardInfo(payType, target);
+            } else if (payType == 5) { // 代偿
+                removeCardInfo(target);
+                getCardInfo(payType, target);
+            } else if (payType == 2) { // 减免
+            } else if (payType == 14) { //提前结清代扣
+                removeCardInfo(target);
+                getCardInfo(payType, target);
+            } else if (payType == 1) { //对公
+            }
+
         });
     });
     function addDataDetail() {
@@ -362,6 +375,7 @@
 
     function changeCardInfo(e, target) {
         var paytype_this = $(e).val();
+        removeCardInfo(target);
         getCardInfo(paytype_this, target);
     }
     function removeCardInfo(target) {

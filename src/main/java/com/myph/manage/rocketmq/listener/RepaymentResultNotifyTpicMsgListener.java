@@ -7,6 +7,7 @@ import com.myph.common.constant.Constants;
 import com.myph.common.log.MyphLogger;
 import com.myph.common.result.ServiceResult;
 import com.myph.constant.HkBIllRecordStateEnum;
+import com.myph.constant.IsAdvanceSettleEnum;
 import com.myph.hkrecord.dto.HkBillRepayRecordDto;
 import com.myph.hkrecord.service.HkBillRepayRecordService;
 import com.myph.manage.common.constant.Constant;
@@ -73,11 +74,11 @@ public class RepaymentResultNotifyTpicMsgListener implements MessageListener {
                         MyphLogger.info("普惠接收还款中心代扣，parm{},修改还款记录状态为失败 " + message);
                         return true;
                     }
-
+                    dto.setBillId(payResultDto.getBillId());
                     JkRepaymentPlanDto jpDto = jkRepaymentPlanService.queryById(payResultDto.getBillId());
 
                     // 金额大于账单金额，提前结清代扣
-                    if (dto.getPayAmount().compareTo(jpDto.getCalculateRemainRepaymentAmount()) == 1) {
+                    if (dto.getIsAdvanceSettle().equals(IsAdvanceSettleEnum.YES.getCode())) {
                         repayManMadeService.splitAdvanceSettle(dto);
                     } else {
                         // 人工代扣

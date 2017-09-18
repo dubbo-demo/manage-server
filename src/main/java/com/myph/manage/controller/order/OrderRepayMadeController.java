@@ -20,6 +20,7 @@ import com.myph.reduction.dto.HkReductionRecordDto;
 import com.myph.repayManMade.service.RepayManMadeService;
 import com.myph.repaymentPlan.dto.BankCardInfoDto;
 import com.myph.repaymentPlan.service.JkRepaymentPlanService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -79,7 +80,7 @@ public class OrderRepayMadeController extends BaseController {
         // 代偿
         if (payType.equals(BillChangeTypeEnum.PERSON_COMPENSATE.getCode())) {
             EmployeeInfoDto user = ShiroUtils.getCurrentUser();
-            //TODO 获取银行卡信息
+            // 获取银行卡信息
             ServiceResult<List<UserCardInfoDto>> result = cardService.queryUserCardInfo(user.getMobilePhone());
             if (!result.success()) {
                 return AjaxResult.failed(result.getMessage());
@@ -110,11 +111,16 @@ public class OrderRepayMadeController extends BaseController {
     @ResponseBody
     public AjaxResult manMadeRepay(HkBillRepayRecordDto param, Model model) {
         MyphLogger.info("发起人工代扣-参数【{}】", param);
+        // 四要素检查
+        AjaxResult fourInfoCheck = isFourInfoCheck(param);
+        if(!fourInfoCheck.isSuccess()) {
+            return fourInfoCheck;
+        }
         EmployeeInfoDto user = ShiroUtils.getCurrentUser();
         param.setCreateUser(user.getEmployeeName());
         param.setIsAdvanceSettle(IsAdvanceSettleEnum.NO.getCode());
         param.setPayType(PayTypeEnum.PAY_PERSON_KOU.getCode());
-        //TODO 发起人工代扣
+        // 发起人工代扣
         try {
             ServiceResult<String> result = repayManMadeService.repayManMade(param);
             if (!result.success()) {
@@ -143,11 +149,11 @@ public class OrderRepayMadeController extends BaseController {
         param.setIsAdvanceSettle(IsAdvanceSettleEnum.NO.getCode());
         param.setPayType(PayTypeEnum.PAY_MONEY.getCode());
         try {
-            ServiceResult<String> result = jkRepaymentPlanService
+            ServiceResult<String> result = repayManMadeService
                     .businessRepay(param.getBillNo(), param.getPayAmount(), param.getCreateUser());
             if (!result.success()) {
-                AjaxResult.failed(result.getMessage());
                 MyphLogger.info("发起对公-失败【{}】", result.getMessage());
+                return AjaxResult.failed(result.getMessage());
             }
         } catch (BaseException e) {
             MyphLogger.error("发起对公-异常【{}】", e);
@@ -166,11 +172,16 @@ public class OrderRepayMadeController extends BaseController {
     @ResponseBody
     public AjaxResult userMadeRepay(HkBillRepayRecordDto param, Model model) {
         MyphLogger.info("发起人工代偿-参数【{}】", param);
+        // 四要素检查
+        AjaxResult fourInfoCheck = isFourInfoCheck(param);
+        if(!fourInfoCheck.isSuccess()) {
+            return fourInfoCheck;
+        }
         EmployeeInfoDto user = ShiroUtils.getCurrentUser();
         param.setCreateUser(user.getEmployeeName());
         param.setIsAdvanceSettle(IsAdvanceSettleEnum.NO.getCode());
         param.setPayType(PayTypeEnum.PAY_PERSON_KOU.getCode());
-        //TODO 发起人工代扣
+        // 发起人工代偿
         try {
             ServiceResult<String> result = repayManMadeService.repayManMade(param);
             if (!result.success()) {
@@ -179,6 +190,25 @@ public class OrderRepayMadeController extends BaseController {
         } catch (BaseException e) {
             MyphLogger.error("发起人工代偿-异常【{}】", e);
             return AjaxResult.failed("发起人工代偿异常");
+        }
+        return AjaxResult.success();
+    }
+
+    private AjaxResult isFourInfoCheck(HkBillRepayRecordDto param) {
+        if(null == param) {
+            return AjaxResult.failed("发起异常，参数为空");
+        }
+        if(StringUtils.isEmpty(param.getUsername())) {
+            return AjaxResult.failed("发起异常，银行卡持有人姓名为空");
+        }
+        if(StringUtils.isEmpty(param.getIdBankNo())) {
+            return AjaxResult.failed("发起异常，银行卡号为空");
+        }
+        if(StringUtils.isEmpty(param.getIdCardNo())) {
+            return AjaxResult.failed("发起异常，身份证为空");
+        }
+        if(StringUtils.isEmpty(param.getReservedPhone())) {
+            return AjaxResult.failed("发起异常，银行预留手机号为空");
         }
         return AjaxResult.success();
     }
@@ -193,7 +223,12 @@ public class OrderRepayMadeController extends BaseController {
     @ResponseBody
     public AjaxResult advanceSettleMadeRepay(HkBillRepayRecordDto param, Model model) {
         MyphLogger.info("发起提前结清扣款-参数【{}】", param);
-        //TODO 发起人工代扣
+        // 四要素检查
+        AjaxResult fourInfoCheck = isFourInfoCheck(param);
+        if(!fourInfoCheck.isSuccess()) {
+            return fourInfoCheck;
+        }
+        // 发起人工代扣
         try {
             EmployeeInfoDto user = ShiroUtils.getCurrentUser();
             param.setCreateUser(user.getEmployeeName());
@@ -226,9 +261,9 @@ public class OrderRepayMadeController extends BaseController {
             ServiceResult<String> result = null;
             // 判断是否提前结清
             if (param.getIsAdvanceSettle().equals(IsAdvanceSettleEnum.YES.getCode())) {
-                result = repayManMadeService.reductionRepay(param);
-            } else {
                 result = repayManMadeService.reductionRepayAdvanceSettle(param);
+            } else {
+                result = repayManMadeService.reductionRepay(param);
             }
 
             if (!result.success()) {
