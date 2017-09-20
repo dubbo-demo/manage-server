@@ -24,6 +24,7 @@ import com.myph.common.util.NumberToCN;
 import com.myph.compliance.dto.JkComplianceDto;
 import com.myph.constant.ApplyUtils;
 import com.myph.constant.FlowStateEnum;
+import com.myph.constant.IsAdvanceSettleEnum;
 import com.myph.constant.bis.SignBisStateEnum;
 import com.myph.contract.dto.JkContractDto;
 import com.myph.contract.service.JkContractService;
@@ -978,6 +979,7 @@ public class SignController extends BaseController {
 					}
 				}
 				repay.setAheadAmount(aheadAmount);
+				repay.setIsEffective(IsAdvanceSettleEnum.NO.getCode());
 				repayPlans.add(repay);
 			}
 			List<JkRepaymentPlanDto> jkRepayments = repaymentPlanService.selectByApplyLoanNo(applyLoanNo).getData();
