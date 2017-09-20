@@ -149,7 +149,7 @@
 								<div class="control-group span4 ">
 									<label class="control-label">综合服务费</label>
 									<div class="controls">
-										<input type="text" disabled="disabled" class="span9 m-wrap" id = "serviceRate" name="serviceRate" value='${(jkContractDto.serviceRate)!}'/>
+										<input type="text" readonly="readonly" class="span9 m-wrap" id = "serviceRate" name="serviceRate" value='${(jkContractDto.serviceRate)!}'/>
 									</div>
 								</div>
 							</div>
@@ -172,7 +172,7 @@
 								<div class="control-group span4 ">
 									<label class="control-label">开户行</label>
 									<div class="controls">
-										<input disabled="disabled" type="text" class="span9 m-wrap" value="${(bankInfo.sname)!}" name="bankName" />
+										<input readonly="readonly" type="text" class="span9 m-wrap" value="${(bankInfo.sname)!}" name="bankName" />
 									</div>
 								</div>
 								<div class="control-group span4 ">
@@ -188,13 +188,13 @@
 								<div class="control-group span4 ">
 									<label class="control-label">银行卡号</label>
 									<div class="controls">
-										<input disabled="disabled" type="text" class="span9 m-wrap js_input" value="${(userCardInfo.bankCardNo)!}" name="bankCardNo" onkeyup="value=value.replace(/[^\d{1,}\.\d{1,}|\d{1,}]/g,'')"/>
+										<input readonly="readonly" type="text" class="span9 m-wrap js_input" value="${(userCardInfo.bankCardNo)!}" name="bankCardNo" onkeyup="value=value.replace(/[^\d{1,}\.\d{1,}|\d{1,}]/g,'')"/>
 									</div>
 								</div>
 								<div class="control-group span4 ">
 									<label class="control-label">开户城市</label>
 									<div class="controls">
-										<input disabled="disabled" type="text" class="span9 m-wrap js_input" name="bankCity" value="${(userCardInfo.bankAccountCity)!''}" />
+										<input readonly="readonly" type="text" class="span9 m-wrap js_input" name="bankCity" value="${(userCardInfo.bankAccountCity)!''}" />
 									</div>
 								</div>
 							</div>
@@ -277,9 +277,9 @@
 	var isUpLoanLimit = false;
 	var isFlag = false;
 	$(function(){
-	    <#if !(bankInfo??)>
-            BootstrapDialog.alert("请先绑定银行卡信息！",function(){
-                history.go(-1);
+		<#if !(bankInfo??)>
+			BootstrapDialog.alert("请先绑定银行卡信息！",function(){
+				history.go(-1);
 			});
 		</#if>
 		$("select[name='signResult']").val("${(jkSignDto.signResult)!''}");
