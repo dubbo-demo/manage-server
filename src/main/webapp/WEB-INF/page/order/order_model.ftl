@@ -210,6 +210,7 @@
         <div class="row-fluid">
             <span class="control-label span3">还款金额</span>
             <input type="text" name="payAmount" id="payAmount" maxlength="10" class="form-control span6" value=""/>
+            <input type="hidden" name="billNo" id="billNo" class="form-control span6" value=""/>
         </div>
     <#--<div class="row-fluid">-->
     <#--<span class="control-label span3"><a href="#">附件上传</a></span>-->
@@ -226,6 +227,9 @@
 <!-- 对公end -->
 
 <script>
+    function returnBack() {
+        window.location.href = window.location;
+    }
     function getPayData(target, payType) {
         var data = {};
         // 如果是代扣，代偿
@@ -302,12 +306,14 @@
         // 禁用按钮
         $(target + ' .blue').attr('disabled', "true");
         var data = getPayData(target, payType);
-        console.log(data);
+//        console.log(data);
         if(isAdvanceSettleEnum) {
             data.isAdvanceSettle = 1;
         } else {
             data.isAdvanceSettle = 0;
         }
+//        console.log(data);
+//        return;
         $.post(url_this,data , function (res) {
             // 释放按钮
             $(target + ' .blue').removeAttr("disabled");
@@ -327,7 +333,7 @@
             var billNo = $(this).data("billno");
             var payType = $(this).data("paytype");
             var target = $(this).data("target");
-            console.log(billNo);
+//            console.log(billNo);
             $("" + target + " input[name=billNo]").val(billNo);
 
             if (payType == 4) { // 代扣
@@ -345,6 +351,8 @@
 
         });
     });
+
+
     function addDataDetail() {
         var addDataDetailResult = '';
         if ($("#addNum").val() == '' || $("#addCode").val() == '' || $("#addName").val() == '') {
@@ -408,7 +416,7 @@
         };
         $.getJSON(url, data, function (result) {
             var cardData = result.data;
-            console.log(cardData);
+//            console.log(cardData);
             if (null == cardData) {
                 return;
             }

@@ -24,6 +24,7 @@ import com.myph.common.util.NumberToCN;
 import com.myph.compliance.dto.JkComplianceDto;
 import com.myph.constant.ApplyUtils;
 import com.myph.constant.FlowStateEnum;
+import com.myph.constant.IsAdvanceSettleEnum;
 import com.myph.constant.bis.SignBisStateEnum;
 import com.myph.contract.dto.JkContractDto;
 import com.myph.contract.service.JkContractService;
@@ -453,6 +454,7 @@ public class SignController extends BaseController {
 	@RequestMapping("/submitSign")
 	@ResponseBody
 	public AjaxResult sign(JkContractDto jkContractDto) {
+		MyphLogger.debug("提交签约时 合同信息为：【{}】", jkContractDto.getContractNo());
 		if (null == jkContractDto) {
 			return AjaxResult.failed("请求参数不能为空");
 		}
@@ -461,6 +463,10 @@ public class SignController extends BaseController {
 		//判断放款金额+服务是否恒等于首期金额 期初本金
 		if(repaymentResult.success()){
 			JkRepaymentPlanDto dto= repaymentResult.getData();
+			if(null == dto){
+				MyphLogger.error("提交异常,查询还款计划表数据为空【{}】", jkContractDto.getContractNo());
+				return AjaxResult.failed("请先导出账单数据！");
+			}
 			BigDecimal initialPrincipal = dto.getInitialPrincipal();
 			if(null!=initialPrincipal){
 				if(initialPrincipal.compareTo(jkContractDto.getRepayMoney().add(jkContractDto.getServiceRate())) != 0){
@@ -978,6 +984,7 @@ public class SignController extends BaseController {
 					}
 				}
 				repay.setAheadAmount(aheadAmount);
+				repay.setIsEffective(IsAdvanceSettleEnum.NO.getCode());
 				repayPlans.add(repay);
 			}
 			List<JkRepaymentPlanDto> jkRepayments = repaymentPlanService.selectByApplyLoanNo(applyLoanNo).getData();
