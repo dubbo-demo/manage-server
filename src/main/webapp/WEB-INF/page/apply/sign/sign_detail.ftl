@@ -368,7 +368,7 @@
 			success : function(res) {
 				if (res.success) {
 					isUpLoanLimit = true;
-					$('#serviceRate').text(res.data);
+					$('#serviceRate').val(res.data);
 				} else {
 					var msg = res.message;
 					$('#repayMoneyID').addClass('error');
