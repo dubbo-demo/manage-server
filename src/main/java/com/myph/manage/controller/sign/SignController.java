@@ -359,6 +359,7 @@ public class SignController extends BaseController {
 					record.setMemberName(userCardInfoDto.getAccountName());
 					record.setIdCard(userCardInfoDto.getIdCardNo());
 					record.setReservedPhone(userCardInfoDto.getMobile());
+					record.setOrgId(applyInfo.getStoreId());
 					final String operatorName = ShiroUtils.getCurrentUserName();
 					new Thread(new Runnable() {
 						@Override
