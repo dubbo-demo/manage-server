@@ -298,6 +298,30 @@ public class SignController extends BaseController {
 
 			int loanUpMax = productDto.getLoanUpLimit().setScale(0, RoundingMode.DOWN).toString().length();// 贷款额度上限
 
+			// 查询银行卡信息
+			ServiceResult<List<UserCardInfoDto>> result = cardService.queryUserCardInfo(applyUserDto.getPhone());
+			SysPayBankDto bankDto = null;
+			UserCardInfoDto userCardInfoDto = null;
+			if(result.success()){
+				if(null!=result.getData()&&result.getData().size() > 0){
+					for(UserCardInfoDto dto:result.getData()){
+						if(dto.getIDKFlag().equals(Constants.YES_INT)){
+							model.addAttribute("userCardInfo", dto);
+							userCardInfoDto = dto;
+							//通过银行卡信息去查询银行名称
+							ServiceResult<SysPayBankDto> bankResult = sysPayBankService.selectBySbankNo(dto.getBankNo());
+							if(bankResult.success()){
+								model.addAttribute("bankInfo",bankResult.getData());
+								bankDto = bankResult.getData();
+							}
+							break;
+						}
+					}
+				}
+			}else{
+				MyphLogger.error(result.getMessage());
+			}
+
 			// 获取产品期数，月息，综合服务费；计算合同金额、总利息、服务费和还款总额
 			if (productDto != null && jkContractDto != null && jkContractDto.getRepayMoney() != null) {
 				JkContractDto jkcontarct = calculateServiceRate(productDto, jkContractDto.getRepayMoney());
@@ -327,6 +351,14 @@ public class SignController extends BaseController {
 					final JkContractDto record = new JkContractDto();
 					record.setApplyLoanNo(applyLoanNo);
 					record.setContractNo(myphContractNo.toString());
+					record.setBankCardNo(userCardInfoDto.getBankCardNo());
+					record.setBankCity(userCardInfoDto.getBankAccountCity());
+					record.setBankName(bankDto.getSname());
+					record.setBankType(bankDto.getSsimplecode());
+					record.setBankTypeName(bankDto.getSname());
+					record.setMemberName(userCardInfoDto.getAccountName());
+					record.setIdCard(userCardInfoDto.getIdCardNo());
+					record.setReservedPhone(userCardInfoDto.getMobile());
 					final String operatorName = ShiroUtils.getCurrentUserName();
 					new Thread(new Runnable() {
 						@Override
@@ -356,25 +388,7 @@ public class SignController extends BaseController {
 			if (nodeDto != null) {
 				applyInfo.setLoanPurposes(nodeDto.getNodeName());
 			}
-			// 查询银行卡信息
-			ServiceResult<List<UserCardInfoDto>> result = cardService.queryUserCardInfo(applyUserDto.getPhone());
-			if(result.success()){
-				if(null!=result.getData()&&result.getData().size() > 0){
-					for(UserCardInfoDto dto:result.getData()){
-						if(dto.getIDKFlag().equals(Constants.YES_INT)){
-							model.addAttribute("userCardInfo", dto);
-							//通过银行卡信息去查询银行名称
-							ServiceResult<SysPayBankDto> bankResult = sysPayBankService.selectBySbankNo(dto.getBankNo());
-							if(bankResult.success()){
-								model.addAttribute("bankInfo",bankResult.getData());
-							}
-							break;
-						}
-					}
-				}
-			}else{
-				MyphLogger.error(result.getMessage());
-			}
+
 			model.addAttribute("loanUpMax", loanUpMax);
 			model.addAttribute("jkSignDto", jkSignDto);
 			model.addAttribute("productDto", productDto);
@@ -985,6 +999,7 @@ public class SignController extends BaseController {
 				}
 				repay.setAheadAmount(aheadAmount);
 				repay.setIsEffective(IsAdvanceSettleEnum.NO.getCode());
+				repay.setBillNo(contractNo+num);
 				repayPlans.add(repay);
 			}
 			List<JkRepaymentPlanDto> jkRepayments = repaymentPlanService.selectByApplyLoanNo(applyLoanNo).getData();
