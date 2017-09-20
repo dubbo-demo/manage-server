@@ -168,8 +168,9 @@ function bindCard(event){
 			success : function(data) {
 				if(data.code == 0){
 					BootstrapDialog.alert("绑卡成功！");
-					$('#authentication').show();
-					$('#removeBindCard').show();
+					$('.bindCard').hide();
+					$('.authentication').show();
+					$('.removeBindCard').show();
 				}else{
 					BootstrapDialog.alert(result.message);
 				}
@@ -194,6 +195,9 @@ function authentication(event){
 				if(data.code == 0){
 					BootstrapDialog.alert("鉴权成功！");
 					$('#authStatus').val('已认证');
+					$('.bindCard').hide();
+					$('.authentication').hide();
+					$('.removeBindCard').show();
 				}else{
 					BootstrapDialog.alert(result.message);
 				}
@@ -241,6 +245,9 @@ function removeBindCard(event){
 			success : function(data) {
 				if(data.code == 0){
 					BootstrapDialog.alert("解绑成功！");
+					$('.bindCard').show();
+					$('.authentication').hide();
+					$('.removeBindCard').hide();
 				}else{
 					BootstrapDialog.alert(result.message);
 				}
@@ -315,6 +322,7 @@ function queryUserCardInfo(){
 
 $(function() {
 	getBankList();
-	$('#authentication').hide();
-	$('#removeBindCard').hide();
+	$('.bindCard').show();
+	$('.authentication').hide();
+	$('.removeBindCard').hide();
 });
