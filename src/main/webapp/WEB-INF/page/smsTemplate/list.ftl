@@ -91,7 +91,7 @@
                 <div class="row-fluid">
                     <div class="control-group span8 ">
                         <label class="help-inline text-right span4">模板编号：</label>
-                        <input class="m-wrap span8" name="tplCode">
+                        <input class="m-wrap span8" name="tplCode" disabled="disabled">
                     </div>
                 </div>
                 <div class="row-fluid">
@@ -111,7 +111,7 @@
             </div>
         </form>
         <div class="modal-footer">
-            <button type="button" class="btn btn-default" onclick="$('#dialogEdit').modal('show');">关闭</button>
+            <button type="button" class="btn btn-default" onclick="$('#dialogEdit').modal('hide');">关闭</button>
             <button type="button" class="btn btn-primary" onclick="save();">提交</button>
         </div>
     </div><!-- /.modal-content -->

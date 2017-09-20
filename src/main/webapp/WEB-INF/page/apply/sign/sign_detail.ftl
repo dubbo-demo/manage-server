@@ -149,8 +149,7 @@
 								<div class="control-group span4 ">
 									<label class="control-label">综合服务费</label>
 									<div class="controls">
-										<span class="text" id = "serviceRate">${(jkContractDto.serviceRate)!}</span>
-										<input type="hidden"  name="serviceRate" value='${(jkContractDto.serviceRate)!}' />
+										<input type="text" disabled="disabled" class="span9 m-wrap" id = "serviceRate" name="serviceRate" value='${(jkContractDto.serviceRate)!}'/>
 									</div>
 								</div>
 							</div>
