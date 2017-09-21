@@ -354,12 +354,7 @@ public class SignController extends BaseController {
 										record.setReservedPhone(userCardInfoDto.getMobile());
 										record.setOrgId(applyInfo.getStoreId());
 										final String operatorName = ShiroUtils.getCurrentUserName();
-										new Thread(new Runnable() {
-											@Override
-											public void run() {
-												contractService.insertSelective(record, operatorName);
-											}
-										}).start();
+										contractService.insertSelective(record, operatorName);
 									}
 								}
 							}
