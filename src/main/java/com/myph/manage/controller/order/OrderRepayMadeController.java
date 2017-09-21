@@ -127,7 +127,7 @@ public class OrderRepayMadeController extends BaseController {
             }
         } catch (Exception e) {
             MyphLogger.error("发起人工代扣-异常【{}】", e);
-            return AjaxResult.failed(e.getMessage());
+            return AjaxResult.failed("发起人工代扣-异常");
         }
         return AjaxResult.success();
     }
@@ -178,7 +178,7 @@ public class OrderRepayMadeController extends BaseController {
         EmployeeInfoDto user = ShiroUtils.getCurrentUser();
         param.setCreateUser(user.getEmployeeName());
         param.setIsAdvanceSettle(IsAdvanceSettleEnum.NO.getCode());
-        param.setPayType(PayTypeEnum.PAY_PERSON_KOU.getCode());
+        param.setPayType(PayTypeEnum.PAI_PERSON_CHANG.getCode());
         // 发起人工代偿
         try {
             ServiceResult<String> result = repayManMadeService.repayManMade(param);
