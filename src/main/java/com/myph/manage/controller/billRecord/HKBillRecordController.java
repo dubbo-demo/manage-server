@@ -154,7 +154,8 @@ public class HKBillRecordController extends BaseController{
     public AjaxResult queryCountByIdCardNo() {
         //获取当前登录人身份证号
         EmployeeInfoDto employeeInfoDto = ShiroUtils.getCurrentUser();
-        String IdCardNo = "";
-        return AjaxResult.success(0);
+        String idCardNo = employeeInfoDto.getIdentityNumber();
+        ServiceResult<Integer> count = hkBillRepayRecordService.selectCountByIdCardNo(idCardNo);
+        return AjaxResult.success(count.getData());
     }
 }

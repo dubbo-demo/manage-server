@@ -171,6 +171,11 @@ function bindCard(event){
 					$('.bindCard').hide();
 					$('.authentication').show();
 					$('.removeBindCard').show();
+					//绑卡成功的，相关参数不允许修改，解绑后可修改
+					$("#bankNo").attr("disabled",true);
+					$('#bankCardNo').attr("readonly","readonly");
+					$('#accountBankName').attr("readonly","readonly");
+					$('#mobile').attr("readonly","readonly");
 				}else{
 					BootstrapDialog.alert(result.message);
 				}
@@ -244,6 +249,11 @@ function removeBindCard(event){
 			},
 			success : function(data) {
 				if(data.code == 0){
+					//解绑成功的，相关参数允许修改
+					$("#bankNo").attr("disabled",false);
+					$('#bankCardNo').attr("readonly",false);
+					$('#accountBankName').attr("readonly",false);
+					$('#mobile').attr("readonly",false);
 					BootstrapDialog.alert("解绑成功！");
 					$('.bindCard').show();
 					$('.authentication').hide();
