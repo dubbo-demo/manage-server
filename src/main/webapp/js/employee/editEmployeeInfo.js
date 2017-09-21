@@ -74,6 +74,26 @@ $(function() {
 });
 
 function edit(event) {
+	var options = {
+			url : serverPath + "/card/queryUserCardInfo.htm",
+			type : 'post',
+			async:false,
+			dataType : 'json',
+			data : {
+				'phone':$('#mobilePhone').val(),
+				"Time" : new Date().getMilliseconds()
+			},
+			success : function(result) {
+				if(result.code == 0){
+					var data = result.data;
+					if(data != null){
+						BootstrapDialog.alert("当前员工有卡信息，请先解绑");
+						return false;
+					}
+				}
+			}
+		};
+		$.ajax(options);		
 	// 阻止冒泡
 	ChkUtil.stopBubbleEvent(event);
 	var employeeName = $("#employeeName").val();
@@ -190,11 +210,6 @@ function removeBindCard(event){
 			success : function(data) {
 				if(data.code == 0){
 					count = data.data;
-					//解绑成功的，相关参数允许修改
-					$("#bankNo").attr("disabled",false);
-					$('#bankCardNo').attr("readonly",false);
-					$('#accountBankName').attr("readonly",false);
-					$('#mobile').attr("readonly",false);
 				}else{
 					BootstrapDialog.alert(result.message);
 				}
@@ -218,6 +233,11 @@ function removeBindCard(event){
 			},
 			success : function(data) {
 				if(data.code == 0){
+					//解绑成功的，相关参数允许修改
+					$("#bankNo").attr("disabled",false);
+					$('#bankCardNo').attr("readonly",false);
+					$('#accountBankName').attr("readonly",false);
+					$('#mobile').attr("readonly",false);
 					BootstrapDialog.alert("解绑成功！");
 					$('.bindCard').show();
 					$('.authentication').hide();
@@ -313,7 +333,12 @@ function queryUserCardInfo(){
 				}else{
 					BootstrapDialog.alert(result.message);
 				}
-			}
+			},
+		error : function() {
+			$('.bindCard').show();
+			$('.authentication').hide();
+			$('.removeBindCard').hide();
+		}
 		};
 		$.ajax(options);		
 }

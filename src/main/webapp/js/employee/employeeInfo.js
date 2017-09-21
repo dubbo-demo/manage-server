@@ -245,9 +245,31 @@ function onClick(e, treeId, treeNode) {
 }
 
 function updateUserflag(id,userFlag){
+	var options = {
+			url : serverPath + "/card/queryUserCardInfo.htm",
+			type : 'post',
+			async:false,
+			dataType : 'json',
+			data : {
+				'phone':$('#mobilePhone').val(),
+				"Time" : new Date().getMilliseconds()
+			},
+			success : function(result) {
+				if(result.code == 0){
+					var data = result.data;
+					if(data != null){
+						BootstrapDialog.alert("当前员工有卡信息，请先解绑");
+						return false;
+					}
+				}
+			}
+		};
+		$.ajax(options);	
+		
 	$.ajax({
 		url : serverPath + "/employee/updateUserflag.htm",
 		type : "post",
+		async:false,
 		data : {
 			"id" : id,
 			"userFlag" : userFlag,
@@ -286,9 +308,32 @@ function updateIcmbFlag(){
 	if(f) {
 		return false;
 	}
+	
+	var options = {
+			url : serverPath + "/card/queryUserCardInfo.htm",
+			type : 'post',
+			async:false,
+			dataType : 'json',
+			data : {
+				'phone':$('#mobilePhone').val(),
+				"Time" : new Date().getMilliseconds()
+			},
+			success : function(result) {
+				if(result.code == 0){
+					var data = result.data;
+					if(data != null){
+						BootstrapDialog.alert("当前员工有卡信息，请先解绑");
+						return false;
+					}
+				}
+			}
+		};
+		$.ajax(options);
+		
 	$.ajax({
 		url : serverPath + "/employee/updateIcmbFlag.htm",
 		type : "post",
+		async:false,
 		data : {
 			"id" : $("#icmbShowId").val(),
 			"icmbFlag" : $("#icmbShowFlag").val(),
