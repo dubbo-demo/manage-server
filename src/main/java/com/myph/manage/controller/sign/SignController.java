@@ -997,7 +997,7 @@ public class SignController extends BaseController {
 				}
 				repay.setAheadAmount(aheadAmount);
 				repay.setIsEffective(IsAdvanceSettleEnum.NO.getCode());
-				repay.setBillNo(contractNo+num);
+				repay.setBillNo(contractNo+i);
 				repayPlans.add(repay);
 			}
 			List<JkRepaymentPlanDto> jkRepayments = repaymentPlanService.selectByApplyLoanNo(applyLoanNo).getData();
