@@ -58,7 +58,7 @@
      data-width="760">
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
-        <h3>代扣</h3>
+        <h3>代偿</h3>
     </div>
     <div class="modal-body">
         <div class="row-fluid">
@@ -93,9 +93,9 @@
             <span class="control-label span3">还款金额</span>
             <input type="text" name="payAmount" id="payAmount" maxlength="10" class="form-control span6" value=""/>
         </div>
-        <div class="row-fluid">
-            <span class="control-label span3"><a href="#">附件上传</a></span>
-        </div>
+        <#--<div class="row-fluid">-->
+            <#--<span class="control-label span3"><a href="#">附件上传</a></span>-->
+        <#--</div>-->
         <div class="row-fluid">
             <span class="control-label span4" id="error"></span>
         </div>
@@ -127,9 +127,9 @@
             <span class="control-label span3">还款金额</span>
             <input type="text" name="payAmount" id="payAmount" maxlength="10" class="form-control span6" value=""/>
         </div>
-        <div class="row-fluid">
-            <span class="control-label span3"><a href="#">附件上传</a></span>
-        </div>
+        <#--<div class="row-fluid">-->
+            <#--<span class="control-label span3"><a href="#">附件上传</a></span>-->
+        <#--</div>-->
         <div class="row-fluid">
             <span class="control-label span4" id="error"></span>
         </div>
@@ -146,7 +146,7 @@
      data-width="760">
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
-        <h3>代扣</h3>
+        <h3>提前结清代扣</h3>
     </div>
     <div class="modal-body">
         <div class="row-fluid ">
@@ -185,9 +185,9 @@
             <span class="control-label span3">还款金额</span>
             <input type="text" name="payAmount" id="payAmount" maxlength="10" class="form-control span6" value=""/>
         </div>
-        <div class="row-fluid">
-            <span class="control-label span3"><a href="#">附件上传</a></span>
-        </div>
+        <#--<div class="row-fluid">-->
+            <#--<span class="control-label span3"><a href="#">附件上传</a></span>-->
+        <#--</div>-->
         <div class="row-fluid">
             <span class="control-label span4" id="error"></span>
         </div>
@@ -329,26 +329,21 @@
 
     $(function () {
         $("*[data-paytype]").click(function (e) {
-            $("" + target + " input[name=billNo]").val("");
             var billNo = $(this).data("billno");
             var payType = $(this).data("paytype");
             var target = $(this).data("target");
-//            console.log(billNo);
+            if (payType == 4 || payType == 5 || payType == 14) { // 代扣
+                removeCardInfo(target);
+            }
+            $("" + target + " #error").html('');
+            $("" + target + " #error").css("display", "none");
+            $("" + target + " input[name=billNo]").val("");
+//            console.log("billNo",billNo);
             $("" + target + " input[name=billNo]").val(billNo);
 
-            if (payType == 4) { // 代扣
-                removeCardInfo(target);
+            if (payType == 4 || payType == 5 || payType == 14) { // 代扣 ;代偿;提前结清代扣
                 getCardInfo(payType, target);
-            } else if (payType == 5) { // 代偿
-                removeCardInfo(target);
-                getCardInfo(payType, target);
-            } else if (payType == 2) { // 减免
-            } else if (payType == 14) { //提前结清代扣
-                removeCardInfo(target);
-                getCardInfo(payType, target);
-            } else if (payType == 1) { //对公
             }
-
         });
     });
 
@@ -408,6 +403,7 @@
     }
     function getCardInfo(payType, target) {
         var billNo_this = $("" + target + " input[name=billNo]").val();
+        console.log(target,billNo_this);
         var url = serverPath + "/repayMade/manMadeRepayCard.htm";
         var data = {
             "billNo": billNo_this,
@@ -415,44 +411,51 @@
             "Time": new Date().getMilliseconds()
         };
         $.getJSON(url, data, function (result) {
-            var cardData = result.data;
-//            console.log(cardData);
-            if (null == cardData) {
-                return;
-            }
-            if (payType == 4) {
-                //卡类别
-                $("" + target + " input[name=bankTypeName]").val(cardData.bankTypeName);
-
-                $("" + target + " input[name=bankType]").val(cardData.bankType);
-
-                //卡号
-                $("" + target + " input[name=idBankNo]").val(cardData.bankCardNo);
-
-                //姓名
-                $("" + target + " input[name=username]").val(cardData.memberName);
-
-                //手机号
-                $("" + target + " input[name=reservedPhone]").val(cardData.reservedPhone);
-
-                $("" + target + " input[name=idCardNo]").val(cardData.idCard);//身分证号
-            } else if (payType == 5) {
-                //卡类别
-                $("" + target + " input[name=bankTypeName]").val(cardData.bankTypeName);
-
-                $("" + target + " input[name=bankType]").val(cardData.bankNo);
-
-                //卡号
-                $("" + target + " input[name=idBankNo]").val(cardData.bankCardNo);
-
-                //姓名
-                $("" + target + " input[name=username]").val(cardData.accountName);
-
-                //手机号
-                $("" + target + " input[name=reservedPhone]").val(cardData.mobile);
-
-                $("" + target + " input[name=idCardNo]").val(cardData.idCardNo);//身分证号
+            if(result.code == '1') {
+//                BootstrapDialog.alert(result.message);
+                $("#error").html('<font color="red">'+result.message+'</font>');
+                $("#error").css("display", "block");
+            } else {
+                var cardData = result.data;
+                console.log(cardData);
+                addInfoToDiv(payType,cardData,target)
             }
         });
+    }
+
+    function addInfoToDiv(payType,cardData,target) {
+        if (payType == 4) {
+            //卡类别
+            $("" + target + " input[name=bankTypeName]").val(cardData.bankTypeName);
+
+            $("" + target + " input[name=bankType]").val(cardData.bankType);
+
+            //卡号
+            $("" + target + " input[name=idBankNo]").val(cardData.bankCardNo);
+
+            //姓名
+            $("" + target + " input[name=username]").val(cardData.memberName);
+
+            //手机号
+            $("" + target + " input[name=reservedPhone]").val(cardData.reservedPhone);
+
+            $("" + target + " input[name=idCardNo]").val(cardData.idCard);//身分证号
+        } else if (payType == 5) {
+            //卡类别
+            $("" + target + " input[name=bankTypeName]").val(cardData.bankTypeName);
+
+            $("" + target + " input[name=bankType]").val(cardData.bankNo);
+
+            //卡号
+            $("" + target + " input[name=idBankNo]").val(cardData.bankCardNo);
+
+            //姓名
+            $("" + target + " input[name=username]").val(cardData.accountName);
+
+            //手机号
+            $("" + target + " input[name=reservedPhone]").val(cardData.mobile);
+
+            $("" + target + " input[name=idCardNo]").val(cardData.idCardNo);//身分证号
+        }
     }
 </script>

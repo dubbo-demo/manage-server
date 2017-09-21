@@ -67,11 +67,9 @@ public class OrderRepayMadeController extends BaseController {
 
         // 代扣
         if (payType.equals(BillChangeTypeEnum.PERSON_WITHHOLD.getCode())) {
-            List<String> parm = new ArrayList<String>();
-            parm.add(billNo);
-            List<BankCardInfoDto> cards = jkRepaymentPlanService.queryBankCardInfoByBillIds(parm);
-            if (null != cards && !cards.isEmpty()) {
-                return AjaxResult.success(cards.get(0));
+            BankCardInfoDto card = jkRepaymentPlanService.queryBankCardInfoByBillNo(billNo);
+            if (null != card) {
+                return AjaxResult.success(card);
             } else {
                 return AjaxResult.failed("没有找到该账单客户卡信息");
             }
