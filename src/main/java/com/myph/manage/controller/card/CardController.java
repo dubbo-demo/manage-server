@@ -104,7 +104,7 @@ public class CardController {
                     if(dto.getIDKFlag().equals(Constants.YES_INT)){
                         //补充银行名称
                         ServiceResult<SysPayBankDto> sysPayBankResult = sysPayBankService.selectBySbankNo(dto.getBankNo());
-                        dto.setAccountBankName(sysPayBankResult.getData().getSname());
+                        dto.setBankTypeName(sysPayBankResult.getData().getSname());
                         return AjaxResult.success(dto);
                     }
                 }

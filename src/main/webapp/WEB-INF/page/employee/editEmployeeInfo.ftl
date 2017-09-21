@@ -96,6 +96,46 @@
 				</div>
 			</div>
 		</div>
+        <div class="row-fluid">
+            <div class="control-group span4 ">
+                <label class="control-label">银行类别</label>
+                <div class="controls">
+                <select class="m-wrap span12" name="bankNo" id="bankNo">
+                </select>
+                </div>
+            </div>
+            <div class="control-group span4 ">
+                <label class="control-label">卡号</label>
+                <div class="controls">
+                <input type="text" class="m-wrap span12" id="bankCardNo" name="bankCardNo">
+                </div>
+            </div>
+        </div>      
+        <div class="row-fluid">
+            <div class="control-group span4 ">
+                <label class="control-label">开户行</label>
+                <div class="controls">
+                <input type="text" class="m-wrap span12" id="accountBankName" name="accountBankName">
+                </div>
+            </div>
+            <div class="control-group span4 ">
+                <label class="control-label">银行预留手机号</label>
+                <div class="controls">
+                <input type="text" class="m-wrap span12" id="mobile" name="mobile">
+                </div>
+            </div>
+         </div>                
+         <div class="row-fluid">
+            <div class="control-group span8 ">
+                <label class="control-label">认证状态</label>
+                <div class="controls">
+                <input type="text" class="m-wrap span3" id="authStatus" value = "未认证" name="authStatus" readOnly></input>
+                <button class="btn blue bindCard" onclick="bindCard(event);return false;">绑卡</button>
+                <button class="btn blue authentication" onclick="authentication(event);return false;">鉴权</button>
+                <button class="btn blue removeBindCard" onclick="removeBindCard(event);return false;">解绑</button>
+                </div>
+            </div>
+        </div> 		
 		<div class="row-fluid">
 			<div class="control-group span4 ">
 				<label class="control-label">修改人</label>
