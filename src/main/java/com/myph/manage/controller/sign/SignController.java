@@ -25,6 +25,7 @@ import com.myph.compliance.dto.JkComplianceDto;
 import com.myph.constant.ApplyUtils;
 import com.myph.constant.FlowStateEnum;
 import com.myph.constant.IsAdvanceSettleEnum;
+import com.myph.constant.RepayStateEnum;
 import com.myph.constant.bis.SignBisStateEnum;
 import com.myph.contract.dto.JkContractDto;
 import com.myph.contract.service.JkContractService;
@@ -916,7 +917,7 @@ public class SignController extends BaseController {
 				repay = new JkRepaymentPlanDto();
 				repay.setApplyLoanNo(applyLoanNo);
 				repay.setContractNo(contractNo);
-				repay.setRepayState(Constants.NO_INT); // 还款状态
+				repay.setRepayState(RepayStateEnum.NO_REPAY.getCode()); // 还款状态
 				repay.setCreateTime(DateUtils.getCurrentDateTime());
 				repay.setUpdateTime(DateUtils.getCurrentDateTime());
 				repay.setCreateUser(ShiroUtils.getCurrentUserName());
