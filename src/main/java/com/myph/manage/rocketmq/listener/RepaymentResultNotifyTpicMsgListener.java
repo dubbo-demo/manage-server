@@ -63,6 +63,7 @@ public class RepaymentResultNotifyTpicMsgListener implements MessageListener {
                     MyphLogger.info("普惠接收还款中心代扣结果RepaymentResultNotifyTpicMsgListener,开始消费消息: " + message);
                     HkBillRepayRecordDto dto = new HkBillRepayRecordDto();
                     dto.setBillNo(payResultDto.getBillNo());
+                    dto.setId(Long.valueOf(payResultDto.getBusinessId()));
                     // 获取最新还款记录
                     ServiceResult<HkBillRepayRecordDto> repayDto = repayManMadeService.validateRepayInfo(dto);
                     if (!repayDto.success()) {

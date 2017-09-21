@@ -262,7 +262,7 @@
         }else if(payType == 2) { //减免
             data = {
                 "billNo": $("" + target + " input[name=billNo]").val(),
-                "isAdvanceSettle": $("" + target + " input[name=isAdvanceSettle]").val(),
+                "isAdvanceSettle": $("" + target + " #isAdvanceSettle").val(),
                 "initialAmount": $("" + target + " input[name=payAmount]").val(),//金额
                 "Time": new Date().getMilliseconds()
             };
@@ -293,7 +293,7 @@
         } else if (payType == 5) { // 代偿
             url_this = serverPath + '/repayMade/userMadeRepay.htm';
         } else if (payType == 2) { // 减免
-            var isAdvanceSettle_this = $("" + target + " input[name=isAdvanceSettle]").val();
+            var isAdvanceSettle_this = $("" + target + " #isAdvanceSettle").val();
             if(isAdvanceSettle_this == 1) {
                 isAdvanceSettleEnum = true;
             }
