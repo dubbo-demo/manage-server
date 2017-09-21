@@ -16,6 +16,7 @@ import com.myph.repaymentPlan.dto.JkRepaymentPlanDto;
 import com.myph.repaymentPlan.service.JkRepaymentPlanService;
 import com.repayment.collectionTask.dto.PayResultDkMQ;
 import com.repayment.lock.service.RepaymentLockService;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.rocketmq.client.consumer.listener.ConsumeConcurrentlyContext;
 import org.apache.rocketmq.common.message.MessageExt;
 import org.springframework.beans.BeanUtils;
@@ -54,14 +55,18 @@ public class RepaymentResultNotifyTpicMsgListener implements MessageListener {
                 if (repaymentLockService
                         .checkLockDebitBill(ChannelEnum.MYPH.getCode(),payResultDto.getBillId())) {
                     // 加业务方接受还款中心，处理锁
-                    repaymentLockService.lockDebitBill(ChannelEnum.MYPH.getCode(),payResultDto.getBillId());
+                    String lockResult = repaymentLockService.lockDebitBill(ChannelEnum.MYPH.getCode(),payResultDto.getBillId());
+                    if(!StringUtils.isEmpty(lockResult)) {
+                        MyphLogger.info(lockResult);
+                        return true;
+                    }
                     MyphLogger.info("普惠接收还款中心代扣结果RepaymentResultNotifyTpicMsgListener,开始消费消息: " + message);
                     HkBillRepayRecordDto dto = new HkBillRepayRecordDto();
                     dto.setBillNo(payResultDto.getBillNo());
                     // 获取最新还款记录
                     ServiceResult<HkBillRepayRecordDto> repayDto = repayManMadeService.validateRepayInfo(dto);
                     if (!repayDto.success()) {
-                        MyphLogger.error("普惠接收还款中心代扣结果RepaymentResultNotifyTpicMsgListener异常,找不到账单，parm{}", messages);
+                        MyphLogger.info("普惠接收还款中心代扣结果RepaymentResultNotifyTpicMsgListener异常,找不到账单，parm{}", messages);
                         return true;
                     }
                     BeanUtils.copyProperties(repayDto, dto);
