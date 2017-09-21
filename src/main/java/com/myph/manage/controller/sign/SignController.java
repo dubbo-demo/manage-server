@@ -71,6 +71,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -997,7 +998,8 @@ public class SignController extends BaseController {
 				}
 				repay.setAheadAmount(aheadAmount);
 				repay.setIsEffective(IsAdvanceSettleEnum.NO.getCode());
-				repay.setBillNo(contractNo+i);
+				String str = String.format("%02d", i);
+				repay.setBillNo(contractNo+str);
 				repayPlans.add(repay);
 			}
 			List<JkRepaymentPlanDto> jkRepayments = repaymentPlanService.selectByApplyLoanNo(applyLoanNo).getData();
