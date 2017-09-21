@@ -319,10 +319,11 @@
             $(target + ' .blue').removeAttr("disabled");
             if (res.code == '0') {
                 BootstrapDialog.alert(res.message, function () {
-                   console.log(1);
+
                 });
             } else {
-                BootstrapDialog.alert(res.message);
+                $("" + target + " #error").html('<font color="red">'+res.message+'</font>');
+                $("" + target + " #error").css("display", "block");
             }
         }, "json");
     }
@@ -365,8 +366,8 @@
             dataType: "json",
             success: function (result) {
                 if (addDataDetailResult == 7) {
-                    $("#error").html('<font color="red">名称和编号和位号重复</font>');
-                    $("#error").css("display", "block");
+                    $("" + target + " #error").html('<font color="red">名称和编号和位号重复</font>');
+                    $("" + target + " #error").css("display", "block");
                     return false;
                 }
             },
@@ -413,8 +414,8 @@
         $.getJSON(url, data, function (result) {
             if(result.code == '1') {
 //                BootstrapDialog.alert(result.message);
-                $("#error").html('<font color="red">'+result.message+'</font>');
-                $("#error").css("display", "block");
+                $("" + target + " #error").html('<font color="red">'+result.message+'</font>');
+                $("" + target + " #error").css("display", "block");
             } else {
                 var cardData = result.data;
                 console.log(cardData);

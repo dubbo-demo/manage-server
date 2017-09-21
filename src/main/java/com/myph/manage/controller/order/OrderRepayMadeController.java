@@ -125,7 +125,7 @@ public class OrderRepayMadeController extends BaseController {
                 MyphLogger.info("发起人工代扣-失败【{}】", result.getMessage());
                 return AjaxResult.failed(result.getMessage());
             }
-        } catch (BaseException e) {
+        } catch (Exception e) {
             MyphLogger.error("发起人工代扣-异常【{}】", e);
             return AjaxResult.failed(e.getMessage());
         }
@@ -153,7 +153,7 @@ public class OrderRepayMadeController extends BaseController {
                 MyphLogger.info("发起对公-失败【{}】", result.getMessage());
                 return AjaxResult.failed(result.getMessage());
             }
-        } catch (BaseException e) {
+        } catch (Exception e) {
             MyphLogger.error("发起对公-异常【{}】", e);
             return AjaxResult.failed(e.getMessage());
         }
@@ -185,7 +185,7 @@ public class OrderRepayMadeController extends BaseController {
             if (!result.success()) {
                 return AjaxResult.failed(result.getMessage());
             }
-        } catch (BaseException e) {
+        } catch (Exception e) {
             MyphLogger.error("发起人工代偿-异常【{}】", e);
             return AjaxResult.failed("发起人工代偿异常");
         }
@@ -236,7 +236,7 @@ public class OrderRepayMadeController extends BaseController {
             if (!result.success()) {
                 return AjaxResult.failed(result.getMessage());
             }
-        } catch (BaseException e) {
+        } catch (Exception e) {
             MyphLogger.error("发起提前结清扣款-异常【{}】", param, e);
             return AjaxResult.failed("发起提前结清扣款异常");
         }
@@ -267,7 +267,7 @@ public class OrderRepayMadeController extends BaseController {
             if (!result.success()) {
                 return AjaxResult.failed(result.getMessage());
             }
-        } catch (BaseException e) {
+        } catch (Exception e) {
             MyphLogger.error("发起提前结清减免-异常【{}】", param, e);
             return AjaxResult.failed("发起提前结清减免异常");
         }
