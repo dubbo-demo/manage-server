@@ -314,6 +314,54 @@ public class SignController extends BaseController {
 							if(bankResult.success()){
 								model.addAttribute("bankInfo",bankResult.getData());
 								bankDto = bankResult.getData();
+
+								// 获取产品期数，月息，综合服务费；计算合同金额、总利息、服务费和还款总额
+								if (productDto != null && jkContractDto != null && jkContractDto.getRepayMoney() != null) {
+									JkContractDto jkcontarct = calculateServiceRate(productDto, jkContractDto.getRepayMoney());
+									jkContractDto.setServiceRate(jkcontarct.getServiceRate());
+								}
+
+								ServiceResult<JkContractDto> contractResult = contractService.selectByApplyLoanNo(applyLoanNo);
+								if (contractResult.success() && contractResult.getData() != null) {
+									JkContractDto contractDto = contractResult.getData();
+									model.addAttribute("contractNo", contractDto.getContractNo());
+								} else {
+									EmpDetailDto empDetail = ShiroUtils.getEmpDetail();
+									Long cityId = empDetail.getCityId();
+									CityCodeDto cityCodeDto = null;
+									if (cityId != null) {
+										// 获取城市编码
+										cityCodeDto = cityCodeService.selectByPrimaryKey(cityId).getData();
+									}
+									if (cityCodeDto != null) {
+										String cityCode = cityCodeDto.getCityCode();
+										StringBuffer contractNo = new StringBuffer(cityCode);
+										contractNo.append(DateUtils.getCurrentTimeNum());
+										StringBuffer myphContractNo = new StringBuffer("MYPH");
+										String nextVal = generatorService.getNextVal(contractNo.toString(), 4).getData();
+										myphContractNo.append(nextVal);
+										model.addAttribute("contractNo", myphContractNo);
+										final JkContractDto record = new JkContractDto();
+										record.setApplyLoanNo(applyLoanNo);
+										record.setContractNo(myphContractNo.toString());
+										record.setBankCardNo(userCardInfoDto.getBankCardNo());
+										record.setBankCity(userCardInfoDto.getBankAccountCity());
+										record.setBankName(bankDto.getSname());
+										record.setBankType(bankDto.getSsimplecode());
+										record.setBankTypeName(bankDto.getSname());
+										record.setMemberName(userCardInfoDto.getAccountName());
+										record.setIdCard(userCardInfoDto.getIdCardNo());
+										record.setReservedPhone(userCardInfoDto.getMobile());
+										record.setOrgId(applyInfo.getStoreId());
+										final String operatorName = ShiroUtils.getCurrentUserName();
+										new Thread(new Runnable() {
+											@Override
+											public void run() {
+												contractService.insertSelective(record, operatorName);
+											}
+										}).start();
+									}
+								}
 							}
 							break;
 						}
@@ -323,53 +371,6 @@ public class SignController extends BaseController {
 				MyphLogger.error(result.getMessage());
 			}
 
-			// 获取产品期数，月息，综合服务费；计算合同金额、总利息、服务费和还款总额
-			if (productDto != null && jkContractDto != null && jkContractDto.getRepayMoney() != null) {
-				JkContractDto jkcontarct = calculateServiceRate(productDto, jkContractDto.getRepayMoney());
-				jkContractDto.setServiceRate(jkcontarct.getServiceRate());
-			}
-
-			ServiceResult<JkContractDto> contractResult = contractService.selectByApplyLoanNo(applyLoanNo);
-			if (contractResult.success() && contractResult.getData() != null) {
-				JkContractDto contractDto = contractResult.getData();
-				model.addAttribute("contractNo", contractDto.getContractNo());
-			} else {
-				EmpDetailDto empDetail = ShiroUtils.getEmpDetail();
-				Long cityId = empDetail.getCityId();
-				CityCodeDto cityCodeDto = null;
-				if (cityId != null) {
-					// 获取城市编码
-					cityCodeDto = cityCodeService.selectByPrimaryKey(cityId).getData();
-				}
-				if (cityCodeDto != null) {
-					String cityCode = cityCodeDto.getCityCode();
-					StringBuffer contractNo = new StringBuffer(cityCode);
-					contractNo.append(DateUtils.getCurrentTimeNum());
-					StringBuffer myphContractNo = new StringBuffer("MYPH");
-					String nextVal = generatorService.getNextVal(contractNo.toString(), 4).getData();
-					myphContractNo.append(nextVal);
-					model.addAttribute("contractNo", myphContractNo);
-					final JkContractDto record = new JkContractDto();
-					record.setApplyLoanNo(applyLoanNo);
-					record.setContractNo(myphContractNo.toString());
-					record.setBankCardNo(userCardInfoDto.getBankCardNo());
-					record.setBankCity(userCardInfoDto.getBankAccountCity());
-					record.setBankName(bankDto.getSname());
-					record.setBankType(bankDto.getSsimplecode());
-					record.setBankTypeName(bankDto.getSname());
-					record.setMemberName(userCardInfoDto.getAccountName());
-					record.setIdCard(userCardInfoDto.getIdCardNo());
-					record.setReservedPhone(userCardInfoDto.getMobile());
-					record.setOrgId(applyInfo.getStoreId());
-					final String operatorName = ShiroUtils.getCurrentUserName();
-					new Thread(new Runnable() {
-						@Override
-						public void run() {
-							contractService.insertSelective(record, operatorName);
-						}
-					}).start();
-				}
-			}
 			if (applyUserDto != null) {
 				String mailAddress = applyUserDto.getMailAddress();
 				// 邮寄地址:1,现住址;2,公司地址;3,户籍地址
