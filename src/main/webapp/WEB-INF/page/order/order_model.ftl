@@ -47,7 +47,7 @@
         </div>
     </div>
     <div class="modal-footer">
-        <a class="btn blue" data-dismiss="modal" onclick="returnBack();" class="btn">返回</a>
+        <a class="btn blue" data-dismiss="modal" onclick="returnBack('#withholdShow');" class="btn">返回</a>
         <button type="button" class="btn blue" onclick="payMade(this, '#withholdShow', false, 4);">提交</button>
     </div>
 </div>
@@ -101,7 +101,7 @@
         </div>
     </div>
     <div class="modal-footer">
-        <a class="btn blue" data-dismiss="modal" onclick="returnBack();" class="btn">返回</a>
+        <a class="btn blue" data-dismiss="modal" onclick="returnBack('#compensateShow');" class="btn">返回</a>
         <button type="button" class="btn blue" onclick="payMade(this, '#compensateShow', false, 5);">提交</button>
     </div>
 </div>
@@ -135,7 +135,7 @@
         </div>
     </div>
     <div class="modal-footer">
-        <a class="btn blue" data-dismiss="modal" onclick="returnBack();" class="btn">返回</a>
+        <a class="btn blue" data-dismiss="modal" onclick="returnBack('#reductionShow');" class="btn">返回</a>
         <button type="button" class="btn blue" data-isredution="0" onclick="payMade(this, '#reductionShow', false, 2);">提交</button>
     </div>
 </div>
@@ -193,7 +193,7 @@
         </div>
     </div>
     <div class="modal-footer">
-        <a class="btn blue" data-dismiss="modal" onclick="returnBack();" class="btn">返回</a>
+        <a class="btn blue" data-dismiss="modal" onclick="returnBack('#earlySettlementShow');" class="btn">返回</a>
         <button type="button" class="btn blue" data-isredution="0" onclick="payMade(this, '#earlySettlementShow', true, 14);">提交</button>
     </div>
 </div>
@@ -220,15 +220,16 @@
         </div>
     </div>
     <div class="modal-footer">
-        <a class="btn blue" data-dismiss="modal" onclick="returnBack();" class="btn">返回</a>
+        <a class="btn blue" data-dismiss="modal" onclick="returnBack('#toPublicShow');" class="btn">返回</a>
         <button type="button" class="btn blue" onclick="payMade(this, '#toPublicShow', false, 1);">提交</button>
     </div>
 </div>
 <!-- 对公end -->
 
 <script>
-    function returnBack() {
-        window.location.href = window.location;
+    function returnBack(target) {
+//        window.location.href = window.location;
+        $(target).modal('hide');
     }
     function getPayData(target, payType) {
         var data = {};
@@ -253,7 +254,7 @@
                 "bankType": $("" + target + " input[name=bankType]").val(),
                 "idBankNo": $("" + target + " input[name=idBankNo]").val(),//卡号
                 "username": $("" + target + " input[name=username]").val(),//姓名
-                "payType": $("" + target + " input[name=payType]").val(),// 还款方式
+                "payType": $("" + target + " #payType").val(),// 还款方式
                 "idCardNo": $("" + target + " input[name=idCardNo]").val(),//身份证号
                 "payAmount": $("" + target + " input[name=payAmount]").val(),//金额
                 "reservedPhone": $("" + target + " input[name=reservedPhone]").val(),//手机号
@@ -274,7 +275,6 @@
                 "Time": new Date().getMilliseconds()
             };
         }
-
         return data;
     }
 
@@ -313,13 +313,14 @@
             data.isAdvanceSettle = 0;
         }
 //        console.log(data);
+//        returnBack(target);
 //        return;
         $.post(url_this,data , function (res) {
             // 释放按钮
             $(target + ' .blue').removeAttr("disabled");
             if (res.code == '0') {
                 BootstrapDialog.alert(res.message, function () {
-
+                    returnBack(target);
                 });
             } else {
                 $("" + target + " #error").html('<font color="red">'+res.message+'</font>');
