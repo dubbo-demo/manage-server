@@ -1,5 +1,4 @@
  <#include "/sys/top.ftl"> <#include "/sys/left.ftl">
-<script src="${cdnPath}/js/loan/frb/frbTarget.js?v=${VERSION_NO}"></script>
 <div class="page-content">
 	<div class="container-fluid">
 		<div class="row-fluid">
@@ -63,11 +62,11 @@
                             <label class="help-inline text-right span4">应还日期：</label> 
                             <div class="">
                                     <div class="input-append date date-picker" data-date="${(params.agreeRepayDates?string('yyyy-MM-dd'))!}" data-date-format="yyyy-mm-dd" data-date-viewmode="years">
-                                        <input name="signTimeStart" class="m-wrap span8 date-picker" size="16" type="text" data-date-format="yyyy-mm-dd"  value="${(params.agreeRepayDates?string('yyyy-MM-dd'))!}" /><span class="add-on"><i class="icon-calendar"></i></span>
+                                        <input name="agreeRepayDates" class="m-wrap span8 date-picker" size="16" type="text" data-date-format="yyyy-mm-dd"  value="${(params.agreeRepayDates?string('yyyy-MM-dd'))!}" /><span class="add-on"><i class="icon-calendar"></i></span>
                                     </div>      
                                     <span style="margin-left:-28px">--</span>
                                     <div class="input-append date date-picker" data-date="${(params.agreeRepayDatee?string('yyyy-MM-dd'))!}" data-date-format="yyyy-mm-dd" data-date-viewmode="years">
-                                        <input name="signTimeEnd" class="m-wrap span8 date-picker" size="16" type="text" data-date-format="yyyy-mm-dd"  value="${(params.agreeRepayDatee?string('yyyy-MM-dd'))!}" /><span class="add-on"><i class="icon-calendar"></i></span>
+                                        <input name="agreeRepayDatee" class="m-wrap span8 date-picker" size="16" type="text" data-date-format="yyyy-mm-dd"  value="${(params.agreeRepayDatee?string('yyyy-MM-dd'))!}" /><span class="add-on"><i class="icon-calendar"></i></span>
                                     </div>  
                             </div>      
                         </div>
@@ -129,7 +128,7 @@
                             <td><#if record.agreeRepayDate??>${record.agreeRepayDate?datetime}</#if></td>
                             <td>${record.overdueDay!}</td>
                             <td>${record.stateDesc!}</td>
-                            <td>
+                            <td class='a' data-ifShow='${record.ifShow!}'>
                                 <@shiro.hasPermission name="order:withhold">
                                 <a data-target="#withholdShow" data-toggle="modal" href="" class="withholdShow" data-paytype="4" data-billno='${record.billNo!}'>代扣</a>
                                 </@shiro.hasPermission>
@@ -183,6 +182,14 @@
         $("#searchBtn").attr("disabled","disabled");
         //加载大区数据
         initAreaData();
+        $(".a a").each(function () {
+            var ifShow = $(this).parent().data('ifshow');
+            if(ifShow == 0){
+                $(this).removeAttr('onclick');
+                $(this).removeAttr('href');
+                $(this).removeAttr('data-target');
+            }   
+        });
     }
 function initAreaData() {
     $.ajax({

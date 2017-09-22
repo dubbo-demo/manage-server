@@ -24,6 +24,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.myph.common.constant.Constants;
 import com.myph.common.log.MyphLogger;
 import com.myph.common.result.ServiceResult;
 import com.myph.common.rom.annotation.BasePage;
@@ -66,8 +67,6 @@ public class OrderManageController extends BaseController {
         MyphLogger.info("还款账单明细-列表页参数【{}】", param);
         initQueryDate(param);
         initStoreIdList(param);
-        param.setAgreeRepayDatee(null);
-        param.setAgreeRepayDates(null);
         ServiceResult<Pagination<OrderManageDto>> rs = orderManageService.queryPageList(param, page);
         if (rs.success()) {
             for (OrderManageDto dto : rs.getData().getResult()) {
@@ -95,6 +94,12 @@ public class OrderManageController extends BaseController {
                         .subtract(dto.getReductionLateFee()).subtract(dto.getReductionPenalty())
                         .subtract(dto.getReductionPrincipal());
                 dto.setSurplusRepay(surplusRepay);
+                //是否允许操作 未到期账单不允许操作
+                if(dto.getAgreeRepayDate().compareTo(Calendar.getInstance().getTime()) > 0){
+                    dto.setIfShow(Constants.NO_INT);
+                }else{
+                    dto.setIfShow(Constants.YES_INT);
+                }
             }
         }
         model.addAttribute("params", param);
