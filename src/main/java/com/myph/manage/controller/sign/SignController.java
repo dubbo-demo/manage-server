@@ -353,6 +353,8 @@ public class SignController extends BaseController {
 										record.setMemberName(userCardInfoDto.getAccountName());
 										record.setIdCard(userCardInfoDto.getIdCardNo());
 										record.setReservedPhone(userCardInfoDto.getMobile());
+										record.setOverdueScale(productDto.getOverdueScale());
+										record.setRepayRate(productDto.getPreRepayRate());
 										record.setOrgId(applyInfo.getStoreId());
 										final String operatorName = ShiroUtils.getCurrentUserName();
 										contractService.insertSelective(record, operatorName);
