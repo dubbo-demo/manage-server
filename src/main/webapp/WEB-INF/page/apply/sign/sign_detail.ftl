@@ -339,7 +339,9 @@
             dataType : 'json',
             success : function(res) {
                 if (res.code == 0) {
-                   window.location.reload();
+                    BootstrapDialog.alert(res.message,function(){
+                        window.location.reload();
+					});
                 } else {
                     BootstrapDialog.alert(res.message);
                 }
