@@ -63,6 +63,10 @@ public class RepaymentResultNotifyTpicMsgListener implements MessageListener {
                     MyphLogger.info("普惠接收还款中心代扣结果RepaymentResultNotifyTpicMsgListener,开始消费消息: " + message);
                     HkBillRepayRecordDto dto = new HkBillRepayRecordDto();
                     dto.setBillNo(payResultDto.getBillNo());
+                    if(null == payResultDto.getBusinessId()) {
+                        MyphLogger.info("普惠接收还款中心代扣结果失败，还款记录id为空",payResultDto);
+                        return true;
+                    }
                     dto.setId(Long.valueOf(payResultDto.getBusinessId()));
                     // 获取最新还款记录
                     ServiceResult<HkBillRepayRecordDto> repayDto = repayManMadeService.validateRepayInfo(dto);
@@ -70,7 +74,7 @@ public class RepaymentResultNotifyTpicMsgListener implements MessageListener {
                         MyphLogger.info("普惠接收还款中心代扣结果RepaymentResultNotifyTpicMsgListener异常,找不到账单，parm{}", messages);
                         return true;
                     }
-                    BeanUtils.copyProperties(repayDto, dto);
+                    BeanUtils.copyProperties(repayDto.getData(), dto);
                     //更新还款记录状态
                     if(payResultDto.getTradeStatus().equals(Constants.YES)) {
                         dto.setState(HkBIllRecordStateEnum.SUCESS.getCode());
@@ -101,7 +105,7 @@ public class RepaymentResultNotifyTpicMsgListener implements MessageListener {
                         .toJSONString(messageExt) + " message=" + message, e);
                 return true;
             } finally {
-                // 加业务方接受还款中心，释放锁
+//                 加业务方接受还款中心，释放锁
                 repaymentLockService.lockDebitBill(ChannelEnum.MYPH.getCode(),payResultDto.getBillId());
             }
         }
