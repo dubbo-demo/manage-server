@@ -40,7 +40,7 @@ public class AntiXssFilter implements Filter {
         Map<String, String[]> parameterMap = req.getParameterMap();
         String method = req.getMethod();
         String url = req.getRequestURI();
-        if("/sms-template/updateOrSaveSmsTemplate.htm".equals(url)){
+        if(url.contains("/sms-template/updateOrSaveSmsTemplate")){
             chain.doFilter(request, response);
             return;
         }
