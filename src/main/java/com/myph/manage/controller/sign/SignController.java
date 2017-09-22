@@ -998,7 +998,7 @@ public class SignController extends BaseController {
 				}
 				repay.setAheadAmount(aheadAmount);
 				repay.setIsEffective(IsAdvanceSettleEnum.NO.getCode());
-				String str = String.format("%02d", i);
+				String str = String.format("%02d", accumulation);
 				repay.setBillNo(contractNo+str);
 				repayPlans.add(repay);
 			}
