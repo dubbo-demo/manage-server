@@ -34,6 +34,7 @@
 		<input type="hidden" name="id" value="${item.id?c}"/>
 		<input type="hidden" name="employeeId" value="${item.id?c}"/>
 		<input type="hidden" id="orgId" name="orgId"/>
+		<input type="hidden" id="mobilePhone" name="mobilePhone" value="${item.mobilePhone}"/>
 		<input type="hidden" id="parentId" name="parentId"/>
 		<input type="hidden" id="newOrgType" name="newOrgType"/>
 		<input type="hidden" id="newPosition" name="newPosition"/>
