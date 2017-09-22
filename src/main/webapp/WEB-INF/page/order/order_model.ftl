@@ -254,7 +254,7 @@
                 "bankType": $("" + target + " input[name=bankType]").val(),
                 "idBankNo": $("" + target + " input[name=idBankNo]").val(),//卡号
                 "username": $("" + target + " input[name=username]").val(),//姓名
-                "payType": $("" + target + " input[name=payType]").val(),// 还款方式
+                "payType": $("" + target + " #payType").val(),// 还款方式
                 "idCardNo": $("" + target + " input[name=idCardNo]").val(),//身份证号
                 "payAmount": $("" + target + " input[name=payAmount]").val(),//金额
                 "reservedPhone": $("" + target + " input[name=reservedPhone]").val(),//手机号
@@ -275,7 +275,6 @@
                 "Time": new Date().getMilliseconds()
             };
         }
-
         return data;
     }
 
