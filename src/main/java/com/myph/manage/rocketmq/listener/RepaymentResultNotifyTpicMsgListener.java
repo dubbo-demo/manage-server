@@ -44,6 +44,7 @@ public class RepaymentResultNotifyTpicMsgListener implements MessageListener {
     @Override
     public boolean onMessage(List<MessageExt> messages, ConsumeConcurrentlyContext Context) {
         for (MessageExt messageExt : messages) {
+            MyphLogger.info("普惠接收还款中心代扣结果,开始消费消息:{}",messageExt);
             String message = null;
             PayResultDkMQ payResultDto = null;
             try {
