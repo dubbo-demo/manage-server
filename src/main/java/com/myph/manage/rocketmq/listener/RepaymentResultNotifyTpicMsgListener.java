@@ -53,9 +53,9 @@ public class RepaymentResultNotifyTpicMsgListener implements MessageListener {
                 payResultDto = JSON.parseObject(message, PayResultDkMQ.class);
                 // 不在业务方处理锁中
                 if (repaymentLockService
-                        .checkLockDebitBill(ChannelEnum.MYPH.getCode(),payResultDto.getBillId())) {
+                        .checkLockDebitBill(payResultDto.getBillId(),ChannelEnum.MYPH.getCode())) {
                     // 加业务方接受还款中心，处理锁
-                    String lockResult = repaymentLockService.lockDebitBill(ChannelEnum.MYPH.getCode(),payResultDto.getBillId());
+                    String lockResult = repaymentLockService.lockDebitBill(payResultDto.getBillId(),ChannelEnum.MYPH.getCode());
                     if(!StringUtils.isEmpty(lockResult)) {
                         MyphLogger.info(lockResult);
                         return true;
@@ -110,7 +110,7 @@ public class RepaymentResultNotifyTpicMsgListener implements MessageListener {
                 return true;
             } finally {
 //                 加业务方接受还款中心，释放锁
-                repaymentLockService.lockDebitBill(ChannelEnum.MYPH.getCode(),payResultDto.getBillId());
+                repaymentLockService.lockDebitBill(payResultDto.getBillId(),ChannelEnum.MYPH.getCode());
             }
         }
         return true;

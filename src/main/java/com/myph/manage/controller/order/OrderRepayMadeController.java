@@ -27,6 +27,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -97,6 +98,32 @@ public class OrderRepayMadeController extends BaseController {
         }
 
         return AjaxResult.success();
+    }
+
+    /**
+     * @Description: 校验是否允许时间内操作，金额区间
+     * @author heyx
+     * @date 2017/8/29
+     * @version V1.0
+     */
+    @RequestMapping("/isCreatRepay")
+    @ResponseBody
+    public AjaxResult isCreatRepay(String billNo,boolean isReduction,
+            boolean isAdvanceSettle) {
+        MyphLogger.info("校验是否允许时间内操作，金额区间-账单号【{}】，减免：{},是否提前结清：{}", billNo,isReduction,isAdvanceSettle);
+        try {
+            ServiceResult<BigDecimal> result = repayManMadeService
+                    .isCreatRepay(billNo,isReduction,isAdvanceSettle);
+            if (!result.success()) {
+                MyphLogger.info("校验是否允许时间内操作，金额区间-失败【{}】", result.getMessage());
+                return AjaxResult.failed(result.getMessage());
+            } else {
+                return AjaxResult.success(result.getData());
+            }
+        } catch (Exception e) {
+            MyphLogger.error("校验是否允许时间内操作，金额区间-异常【{}】", e);
+            return AjaxResult.failed("校验是否允许时间内操作，金额区间-异常");
+        }
     }
 
     /**
