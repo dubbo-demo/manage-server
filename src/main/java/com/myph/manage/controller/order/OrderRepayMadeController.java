@@ -155,7 +155,7 @@ public class OrderRepayMadeController extends BaseController {
             }
         } catch (Exception e) {
             MyphLogger.error("发起对公-异常【{}】", e);
-            return AjaxResult.failed(e.getMessage());
+            return AjaxResult.failed("发起对公-异常");
         }
         return AjaxResult.success();
     }
