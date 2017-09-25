@@ -99,7 +99,7 @@ public class CardController {
             if(!result.success()){
                 return AjaxResult.failed(result.getMessage());
             }
-            if(result.getData().size() > 0){
+            if(result.getData() != null && result.getData().size() > 0){
                 for(UserCardInfoDto dto:result.getData()){
                     if(dto.getIDKFlag().equals(Constants.YES_INT)){
                         //补充银行名称

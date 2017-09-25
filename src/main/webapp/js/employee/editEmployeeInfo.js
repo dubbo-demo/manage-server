@@ -74,6 +74,7 @@ $(function() {
 });
 
 function edit(event) {
+	var flag = true;
 	var options = {
 			url : serverPath + "/card/queryUserCardInfo.htm",
 			type : 'post',
@@ -88,12 +89,16 @@ function edit(event) {
 					var data = result.data;
 					if(data != null){
 						BootstrapDialog.alert("当前员工有卡信息，请先解绑");
+						flag = false;
 						return false;
 					}
 				}
 			}
 		};
-		$.ajax(options);		
+		$.ajax(options);
+		if(!flag){
+			return false;
+		}
 	// 阻止冒泡
 	ChkUtil.stopBubbleEvent(event);
 	var employeeName = $("#employeeName").val();
@@ -161,8 +166,16 @@ function bindCard(event){
 					$('#accountBankName').attr("readonly","readonly");
 					$('#mobile').attr("readonly","readonly");
 				}else{
-					BootstrapDialog.alert(result.message);
+					BootstrapDialog.alert(data.message);
+					$('.bindCard').show();
+					$('.authentication').hide();
+					$('.removeBindCard').hide();
 				}
+			},
+			error : function() {
+				$('.bindCard').show();
+				$('.authentication').hide();
+				$('.removeBindCard').hide();
 			}
 		};
 		$.ajax(options);	
@@ -188,8 +201,16 @@ function authentication(event){
 					$('.authentication').hide();
 					$('.removeBindCard').show();
 				}else{
-					BootstrapDialog.alert(result.message);
+					BootstrapDialog.alert(data.message);
+					$('.bindCard').hide();
+					$('.authentication').show();
+					$('.removeBindCard').show();
 				}
+			},
+			error : function() {
+				$('.bindCard').hide();
+				$('.authentication').show();
+				$('.removeBindCard').show();
 			}
 		};
 		$.ajax(options);	
@@ -211,7 +232,7 @@ function removeBindCard(event){
 				if(data.code == 0){
 					count = data.data;
 				}else{
-					BootstrapDialog.alert(result.message);
+					BootstrapDialog.alert(data.message);
 				}
 			}
 		};
@@ -243,8 +264,16 @@ function removeBindCard(event){
 					$('.authentication').hide();
 					$('.removeBindCard').hide();
 				}else{
-					BootstrapDialog.alert(result.message);
+					BootstrapDialog.alert(data.message);
+					$('.bindCard').hide();
+					$('.authentication').show();
+					$('.removeBindCard').show();
 				}
+			},
+			error : function() {
+				$('.bindCard').hide();
+				$('.authentication').show();
+				$('.removeBindCard').show();
 			}
 		};
 		$.ajax(options);		

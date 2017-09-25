@@ -177,8 +177,13 @@ function bindCard(event){
 					$('#accountBankName').attr("readonly","readonly");
 					$('#mobile').attr("readonly","readonly");
 				}else{
-					BootstrapDialog.alert(result.message);
+					BootstrapDialog.alert(data.message);
 				}
+			},
+			error : function() {
+				$('.bindCard').show();
+				$('.authentication').hide();
+				$('.removeBindCard').hide();
 			}
 		};
 		$.ajax(options);	
@@ -204,8 +209,16 @@ function authentication(event){
 					$('.authentication').hide();
 					$('.removeBindCard').show();
 				}else{
-					BootstrapDialog.alert(result.message);
+					BootstrapDialog.alert(data.message);
+					$('.bindCard').hide();
+					$('.authentication').show();
+					$('.removeBindCard').show();
 				}
+			},
+			error : function() {
+				$('.bindCard').hide();
+				$('.authentication').show();
+				$('.removeBindCard').show();
 			}
 		};
 		$.ajax(options);	
@@ -227,7 +240,7 @@ function removeBindCard(event){
 				if(data.code == 0){
 					count = data.data;
 				}else{
-					BootstrapDialog.alert(result.message);
+					BootstrapDialog.alert(data.message);
 				}
 			}
 		};
@@ -259,8 +272,16 @@ function removeBindCard(event){
 					$('.authentication').hide();
 					$('.removeBindCard').hide();
 				}else{
-					BootstrapDialog.alert(result.message);
+					BootstrapDialog.alert(data.message);
+					$('.bindCard').hide();
+					$('.authentication').show();
+					$('.removeBindCard').show();
 				}
+			},
+			error : function() {
+				$('.bindCard').hide();
+				$('.authentication').show();
+				$('.removeBindCard').show();
 			}
 		};
 		$.ajax(options);		
@@ -325,6 +346,11 @@ function queryUserCardInfo(){
 				}else{
 					BootstrapDialog.alert(result.message);
 				}
+			},
+			error : function() {
+				$('.bindCard').show();
+				$('.authentication').hide();
+				$('.removeBindCard').hide();
 			}
 		};
 		$.ajax(options);		

@@ -245,6 +245,7 @@ function onClick(e, treeId, treeNode) {
 }
 
 function updateUserflag(id,userFlag){
+	var flag = true;
 	var options = {
 			url : serverPath + "/card/queryUserCardInfo.htm",
 			type : 'post',
@@ -259,13 +260,16 @@ function updateUserflag(id,userFlag){
 					var data = result.data;
 					if(data != null){
 						BootstrapDialog.alert("当前员工有卡信息，请先解绑");
+						flag = false;
 						return false;
 					}
 				}
 			}
 		};
 		$.ajax(options);	
-		
+		if(!flag){
+			return false;
+		}
 	$.ajax({
 		url : serverPath + "/employee/updateUserflag.htm",
 		type : "post",
@@ -308,7 +312,7 @@ function updateIcmbFlag(){
 	if(f) {
 		return false;
 	}
-	
+	var flag = true;
 	var options = {
 			url : serverPath + "/card/queryUserCardInfo.htm",
 			type : 'post',
@@ -323,13 +327,16 @@ function updateIcmbFlag(){
 					var data = result.data;
 					if(data != null){
 						BootstrapDialog.alert("当前员工有卡信息，请先解绑");
+						flag = false;
 						return false;
 					}
 				}
 			}
 		};
 		$.ajax(options);
-		
+		if(!flag){
+			return false;
+		}
 	$.ajax({
 		url : serverPath + "/employee/updateIcmbFlag.htm",
 		type : "post",
