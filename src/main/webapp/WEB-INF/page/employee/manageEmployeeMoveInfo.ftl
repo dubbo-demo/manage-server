@@ -50,7 +50,7 @@
 			<div class="control-group span4 ">
 				<label class="control-label">身份证号</label>
 				<div class="controls">
-				<input type="text" class="m-wrap span12" value="${item.identityNumber}" readonly="readonly">
+				<input type="text" class="m-wrap span12" id="identityNumber" name="identityNumber" value="${item.identityNumber}" readonly="readonly">
 				</div>
 			</div>
 		</div>
@@ -58,7 +58,7 @@
 			<div class="control-group span4 ">
 				<label class="control-label">姓名拼音</label>
 				<div class="controls">
-				<input type="text" class="m-wrap span12" value="${item.nameSpell}" readonly="readonly">
+				<input type="text" class="m-wrap span12" id="employeeName" name="employeeName" value="${item.nameSpell}" readonly="readonly">
 				</div>
 			</div>
 			<div class="control-group span4 ">
