@@ -5,20 +5,16 @@ import com.myph.common.result.AjaxResult;
 import com.myph.common.result.ServiceResult;
 import com.myph.common.rom.annotation.BasePage;
 import com.myph.common.rom.annotation.Pagination;
-import com.myph.common.util.DateUtils;
 import com.myph.constant.HkBIllRecordStateEnum;
 import com.myph.employee.dto.EmployeeInfoDto;
 import com.myph.hkrecord.service.HkBillRepayRecordService;
 import com.myph.manage.common.shiro.ShiroUtils;
 import com.myph.manage.common.util.BeanUtils;
 import com.myph.manage.controller.BaseController;
-import com.myph.manage.controller.apply.ApplyBaseController;
 import com.myph.organization.dto.OrganizationDto;
-import com.myph.performance.dto.FrbaoLoanMemberDto;
 import com.myph.performance.dto.billRecord.RepayRecordDto;
 import com.myph.performance.dto.billRecord.RepayRecordQueryDto;
 import com.myph.performance.service.RepayRecordService;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -27,10 +23,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletResponse;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  *
@@ -62,6 +55,7 @@ public class HKBillRecordController extends BaseController{
     public String list(Model model, RepayRecordQueryDto queryDto, BasePage basePage) {
         ServiceResult<Pagination<RepayRecordDto>>  resultInfo = repayRecordService.queryPagination(queryDto,basePage);
         List<OrganizationDto> orgs = ShiroUtils.getStoreInfo();
+        initQueryDate(queryDto);
         // 查询组织条件为空获取当前组织数据权限
         if(null == queryDto.getStoreId()) {
             List<Long> storeIds = new ArrayList<Long>();
@@ -76,6 +70,30 @@ public class HKBillRecordController extends BaseController{
         model.addAttribute("page", resultInfo.getData());
         MyphLogger.info("团队管理列表分页查询", resultInfo.getData());
         return "/billRecord/billRecord_list";
+    }
+
+    /**
+     * 初始化查询时间，开始时间默认为当月1号，结束时间默认为当天
+     *
+     * @param queryDto
+     */
+    private void initQueryDate(RepayRecordQueryDto queryDto) {
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+        Date today = cal.getTime();
+        cal.set(Calendar.DATE, 1);// 设为当前月的1号
+        Date date = cal.getTime();
+
+        if (null == queryDto.getBeginPayTime()) {
+            queryDto.setBeginPayTime(date);
+        }
+        if (null == queryDto.getEndPayTime()) {
+            queryDto.setEndPayTime(today);
+        }
+
     }
 
     @RequestMapping("/exportPayRecordInfo")

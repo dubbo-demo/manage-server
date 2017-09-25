@@ -84,7 +84,7 @@ public class OrderRepayMadeController extends BaseController {
             if (!result.success()) {
                 return AjaxResult.failed(result.getMessage());
             }
-            if (null == result && result.getData().size() > 0) {
+            if (null != result && null != result.getData()) {
                 for (UserCardInfoDto dto : result.getData()) {
                     if (dto.getIDKFlag().equals(Constants.YES_INT)) {
                         ServiceResult<SysPayBankDto> payBank = sysPayBankService.selectBySbankNo(dto.getBankNo());

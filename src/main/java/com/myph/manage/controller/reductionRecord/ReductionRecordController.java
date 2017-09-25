@@ -25,10 +25,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.http.HttpServletResponse;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author 罗荣
@@ -39,12 +36,38 @@ public class ReductionRecordController extends BaseController {
     @Autowired
     HkReductionRecordService hkReductionRecordService;
 
+    private static SimpleDateFormat SDF = new SimpleDateFormat("yyyy-MM-dd");
+
     @RequestMapping("/queryPageList")
     public String queryPageList(HkReductionRecordQuery query, BasePage page, Model model) {
         ServiceResult<Pagination<HkReductionRecordDto>> result = hkReductionRecordService.queryPageList(query, page);
+        initQueryDate(query);
         model.addAttribute("page", result.getData());
         model.addAttribute("query", query);
         return "/reductionRecord/list";
+    }
+
+    /**
+     * 初始化查询时间，开始时间默认为当月1号，结束时间默认为当天
+     *
+     * @param queryDto
+     */
+    private void initQueryDate(HkReductionRecordQuery queryDto) {
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+        Date today = cal.getTime();
+        cal.set(Calendar.DATE, 1);// 设为当前月的1号
+        Date date = cal.getTime();
+        if (null == queryDto.getReductionDateStart()) {
+            queryDto.setReductionDateStart(SDF.format(date));
+        }
+        if (null == queryDto.getReductionDateEnd()) {
+            queryDto.setReductionDateEnd(SDF.format(today));
+        }
+
     }
     @RequestMapping("/download")
     public void download(HkReductionRecordQuery query, Integer total, Model model, HttpServletResponse response) {

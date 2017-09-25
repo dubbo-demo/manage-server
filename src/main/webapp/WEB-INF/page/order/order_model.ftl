@@ -443,6 +443,9 @@
 
             $("" + target + " input[name=idCardNo]").val(cardData.idCard);//身分证号
         } else if (payType == 5) {
+            if(null == cardData) {
+                return;
+            }
             //卡类别
             $("" + target + " input[name=bankTypeName]").val(cardData.bankTypeName);
 
