@@ -85,7 +85,7 @@ public class RepaymentResultNotifyTpicMsgListener implements MessageListener {
                         dto.setState(HkBIllRecordStateEnum.SUCESS.getCode());
                     } else {
                         dto.setState(HkBIllRecordStateEnum.FALSE.getCode());
-                        hkBillRepayRecordService.updateStateByBillNo(dto);
+                        hkBillRepayRecordService.updateStateByIdToMQ(dto);
                         MyphLogger.info("普惠接收还款中心代扣，parm{},修改还款记录状态为失败 " + message);
                         return true;
                     }
@@ -103,10 +103,10 @@ public class RepaymentResultNotifyTpicMsgListener implements MessageListener {
                 }
 
             } catch (UnsupportedEncodingException e) {
-                MyphLogger.error("普惠接收还款中心代扣结果RepaymentResultNotifyTpicMsgListener", e);
+                MyphLogger.error("普惠接收还款中心代扣结果RepaymentResultNotifyTpicMsgListener，消费失败", e);
                 return true;
             } catch (Exception e) {
-                MyphLogger.error("普惠接收还款中心代扣结果RepaymentResultNotifyTpicMsgListener,messageExt = " + JSON
+                MyphLogger.error("普惠接收还款中心代扣结果RepaymentResultNotifyTpicMsgListener，消费失败,messageExt = " + JSON
                         .toJSONString(messageExt) + " message=" + message, e);
                 return true;
             } finally {
