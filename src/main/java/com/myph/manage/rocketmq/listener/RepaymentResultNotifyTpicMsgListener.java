@@ -99,7 +99,9 @@ public class RepaymentResultNotifyTpicMsgListener implements MessageListener {
                         // 人工代扣
                         repayManMadeService.splitRepay(dto);
                     }
-                    MyphLogger.info("普惠接收还款中心代扣结果RepaymentResultNotifyTpicMsgListener,消费成功: " + message);
+                    MyphLogger.info("普惠接收还款中心代扣结果RepaymentResultNotifyTpicMsgListener,消费成功:{} " + message);
+                } else {
+                    MyphLogger.info("普惠接收还款中心代扣结果RepaymentResultNotifyTpicMsgListener,消费失败，在锁中: {}" + message);
                 }
 
             } catch (UnsupportedEncodingException e) {
