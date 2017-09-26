@@ -285,7 +285,7 @@ public class OrderRepayMadeController extends BaseController {
             param.setCreateUser(user.getEmployeeName());
             ServiceResult<String> result = null;
             // 判断是否提前结清
-            if (param.getIsAdvanceSettle().equals(IsAdvanceSettleEnum.YES.getCode())) {
+            if (IsAdvanceSettleEnum.YES.getCode().equals(param.getIsAdvanceSettle())) {
                 result = repayManMadeService.reductionRepayAdvanceSettle(param);
             } else {
                 result = repayManMadeService.reductionRepay(param);
@@ -295,8 +295,15 @@ public class OrderRepayMadeController extends BaseController {
                 return AjaxResult.failed(result.getMessage());
             }
         } catch (Exception e) {
-            MyphLogger.error("发起提前结清减免-异常【{}】", param, e);
-            return AjaxResult.failed("发起提前结清减免异常");
+            // 判断是否提前结清
+            if (IsAdvanceSettleEnum.YES.getCode().equals(param.getIsAdvanceSettle())) {
+                MyphLogger.error("发起提前结清减免-异常【{}】", param, e);
+                return AjaxResult.failed("发起提前结清减免异常");
+            } else {
+                MyphLogger.error("发起减免-异常【{}】", param, e);
+                return AjaxResult.failed("发起减免异常");
+            }
+
         }
         return AjaxResult.success();
     }

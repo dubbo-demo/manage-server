@@ -398,9 +398,6 @@
         //手机号
         $("" + target + " input[name=reservedPhone]").val("");
 
-        //账单号
-        $("" + target + " input[name=billNo]").val("");
-
         $("" + target + " input[name=idCardNo]").val("");//身份证号
     }
     function getCardInfo(payType, target) {

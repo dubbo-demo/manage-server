@@ -142,8 +142,8 @@
                             <td>${item.payTypeName! }</td>
                             <td>${item.payAmount! }</td>
 							<td>${(item.username)!""}</td>
-							<td>${(item.backOpen)!""}</td>
-                            <td>${(item.idBackNo)!""}</td>
+							<td>${(item.bankName)!""}</td>
+                            <td>${(item.idBankNo)!""}</td>
                             <td>${(item.reservedPhone)!""}</td>
                             <td>${(item.idCardNo)!""}</td>
                             <td>${(item.createUser)!""}</td>
