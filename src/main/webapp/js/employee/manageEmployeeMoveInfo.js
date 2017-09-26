@@ -320,10 +320,12 @@ function removeBindCard(event){
 					$('#bankCardNo').attr("readonly",false);
 					$('#accountBankName').attr("readonly",false);
 					$('#mobile').attr("readonly",false);
-					BootstrapDialog.alert("解绑成功！");
-					$('.bindCard').show();
-					$('.authentication').hide();
-					$('.removeBindCard').hide();
+					BootstrapDialog.alert('解绑成功！', function() {
+						$('.bindCard').show();
+						$('.authentication').hide();
+						$('.removeBindCard').hide();
+						window.location.href = window.location;	
+					});
 				}else{
 					BootstrapDialog.alert(data.message);
 					$('.bindCard').hide();

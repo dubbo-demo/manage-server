@@ -131,9 +131,9 @@
 					<a href="${serverPath}/employee/queryEmployeeMoveInfo.htm?id=${item.id?c}&searchemployeeName=${(queryDto.employeeName)!''}&searchemployeeNo=${(queryDto.employeeNo)!''}&searchidentityNumber=${(queryDto.identityNumber)!''}&searchorgType=${(queryDto.orgType)!''}&searchorgId=${(queryDto.orgId)!''}&searchorgName=${(queryDto.orgName)!''}&searchpositionId=${(queryDto.positionId)!''}&pageIndex=${(page.pageIndex)!1}&pageSize=${(page.pageSize)!10}">变更记录</a>
 					<a href="${serverPath}/employee/queryEmployeeInfoDetail.htm?id=${item.id?c}&searchemployeeName=${(queryDto.employeeName)!''}&searchemployeeNo=${(queryDto.employeeNo)!''}&searchidentityNumber=${(queryDto.identityNumber)!''}&searchorgType=${(queryDto.orgType)!''}&searchorgId=${(queryDto.orgId)!''}&searchorgName=${(queryDto.orgName)!''}&searchpositionId=${(queryDto.positionId)!''}&pageIndex=${(page.pageIndex)!1}&pageSize=${(page.pageSize)!10}">详细信息</a>
 					<@shiro.hasPermission name="employee:forbidden">
-					<a  <#if item.icmbFlag?? && item.icmbFlag == '0'>href="javascript:updateUserflag(${item.id!},${item.userFlag!})"<#else>href="javascript:alertInfo()"</#if>><#if item.userFlag?? &&  item.userFlag == '0'>启用<#else>禁用</#if></a>
+					<a  <#if item.icmbFlag?? && item.icmbFlag == '0'>href="javascript:updateUserflag(${item.id!},${item.userFlag!},${item.relPhone!})"<#else>href="javascript:alertInfo()"</#if>><#if item.userFlag?? &&  item.userFlag == '0'>启用<#else>禁用</#if></a>
 					</@shiro.hasPermission>
-					<a data-target="#icmbShow" data-toggle="modal" class="aIcmbShow" data-id='${item.id!}' data-icmbflag='${item.icmbFlag!}'><#if item.icmbFlag?? && item.icmbFlag == '0'>离职<#else>复职</#if></a></td>
+					<a data-target="#icmbShow" data-toggle="modal" class="aIcmbShow" data-id='${item.id!}' data-icmbflag='${item.icmbFlag!}' data-relPhone='${item.relPhone!}'><#if item.icmbFlag?? && item.icmbFlag == '0'>离职<#else>复职</#if></a></td>
 				</tr>
 				</#list>
 			</tbody>
@@ -141,6 +141,7 @@
         <div id="icmbShow" class="modal hide fade icmbShow" tabindex="-1" data-width="760">
             <input type="hidden" id="icmbShowId" name="icmbShowId"></input>
             <input type="hidden" id="icmbShowFlag" name="icmbShowFlag"></input>
+            <input type="hidden" id="relPhone" name="relPhone"></input>
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal"
                     aria-hidden="true"></button>

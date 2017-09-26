@@ -95,6 +95,7 @@ public class EmployeeController {
         if (null != page && null != page.getResult()) {
             List<EmployeeDetailDto> list = page.getResult();
             for (EmployeeDetailDto dto : list) {
+                dto.setRelPhone(dto.getMobilePhone());
                 dto.setIdentityNumber(SensitiveInfoUtils.maskIdCard(dto.getIdentityNumber()));// 隐藏身份证
                 dto.setMobilePhone(SensitiveInfoUtils.maskMobilePhone(dto.getMobilePhone()));// 隐藏手机号
             }

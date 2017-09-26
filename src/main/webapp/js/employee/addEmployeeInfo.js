@@ -271,6 +271,7 @@ function removeBindCard(event){
 					$('.bindCard').show();
 					$('.authentication').hide();
 					$('.removeBindCard').hide();
+					$('#authStatus').val('未认证');
 				}else{
 					BootstrapDialog.alert(data.message);
 					$('.bindCard').hide();

@@ -24,9 +24,11 @@ $(function() {
 	}
 	$(".aIcmbShow").on('click',function(){
 		  var icmbFlag = $(this).data("icmbflag");
+		  var relPhone = $(this).data("relphone");
 	        var id = $(this).attr("data-id");
 	        $("#icmbShowId").val(id);
 	        $("#icmbShowFlag").val(icmbFlag);
+	        $("#relPhone").val(relPhone);
 	        if(icmbFlag == 1){
 	        	$("#icmbTimeLabel").html("复职日期：");
 	        }else{
@@ -244,7 +246,7 @@ function onClick(e, treeId, treeNode) {
 	});
 }
 
-function updateUserflag(id,userFlag){
+function updateUserflag(id,userFlag,relPhone){
 	var flag = true;
 	var options = {
 			url : serverPath + "/card/queryUserCardInfo.htm",
@@ -252,7 +254,7 @@ function updateUserflag(id,userFlag){
 			async:false,
 			dataType : 'json',
 			data : {
-				'phone':$('#mobilePhone').val(),
+				'phone':relPhone,
 				"Time" : new Date().getMilliseconds()
 			},
 			success : function(result) {
@@ -319,7 +321,7 @@ function updateIcmbFlag(){
 			async:false,
 			dataType : 'json',
 			data : {
-				'phone':$('#mobilePhone').val(),
+				'phone':$('#relPhone').val(),
 				"Time" : new Date().getMilliseconds()
 			},
 			success : function(result) {
