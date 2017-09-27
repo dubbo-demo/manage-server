@@ -5,6 +5,7 @@ import com.myph.common.result.ServiceResult;
 import com.myph.common.rom.annotation.BasePage;
 import com.myph.common.rom.annotation.Pagination;
 import com.myph.manage.controller.BaseController;
+import com.myph.repaymentPlan.service.JkRepaymentPlanService;
 import com.myph.sms.template.dto.SmsTemplate;
 import com.myph.sms.template.dto.SmsTemplateQuery;
 import com.myph.sms.template.service.SmsTemplateService;
@@ -28,6 +29,9 @@ public class SmsTemplateController extends BaseController {
 
     @Autowired
     private SmsTemplateService smsTemplateService;
+
+    @Autowired
+    private JkRepaymentPlanService jkRepaymentPlanService;
 
     /**
      * 短信模板内容列表
@@ -94,5 +98,11 @@ public class SmsTemplateController extends BaseController {
         ServiceResult<Integer> serviceResult =
                 smsTemplateService.updateOrSaveSmsTemplate(vo);
         return AjaxResult.formatFromServiceResult(serviceResult);
+    }
+    @RequestMapping("/preSendSms")
+    @ResponseBody
+    public AjaxResult preSendSms(SmsTemplate vo){
+        jkRepaymentPlanService.preSendSms();
+        return AjaxResult.success();
     }
 }
