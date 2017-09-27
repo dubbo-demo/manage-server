@@ -341,8 +341,8 @@ public class SignController extends BaseController {
 										StringBuffer myphContractNo = new StringBuffer("MYPH");
 										String nextVal = generatorService.getNextVal(contractNo.toString(), 4).getData();
 										myphContractNo.append(nextVal);
-										model.addAttribute("contractNo", myphContractNo);
-										final JkContractDto record = new JkContractDto();
+
+										JkContractDto record = new JkContractDto();model.addAttribute("contractNo", myphContractNo);
 										record.setApplyLoanNo(applyLoanNo);
 										record.setContractNo(myphContractNo.toString());
 										record.setBankCardNo(userCardInfoDto.getBankCardNo());
@@ -356,7 +356,8 @@ public class SignController extends BaseController {
 										record.setOverdueScale(productDto.getOverdueScale());
 										record.setRepayRate(productDto.getPreRepayRate());
 										record.setOrgId(applyInfo.getStoreId());
-										final String operatorName = ShiroUtils.getCurrentUserName();
+										String operatorName = ShiroUtils.getCurrentUserName();
+										MyphLogger.debug("待插入合同信息：【{}】",record.toString());
 										contractService.insertSelective(record, operatorName);
 									}
 								}
@@ -810,7 +811,7 @@ public class SignController extends BaseController {
 			cityCodeDto = cityCodeService.selectByPrimaryKey(cityId).getData();
 		}
 		ContractModelView contractModelView = constructContractData(applyLoanNo, bankNo, bankName, applyInfo,
-				cityCodeDto);
+				cityCodeDto,loanTime,num);
 		Integer subState = applyInfo.getSubState();
 		if (ContractEnum.CREDIT_LOAN_PROTOCOL.type == type) {
 			initCreditLoanProtocol(subState, applyLoanNo, bankNo, bankName, contractAmount, interestAmount, num,
@@ -842,7 +843,7 @@ public class SignController extends BaseController {
 	}
 
 	private ContractModelView constructContractData(String applyLoanNo, String bankNo, String bankName,
-			ApplyInfoDto applyInfo, CityCodeDto cityCodeDto) {
+													ApplyInfoDto applyInfo, CityCodeDto cityCodeDto, String loanTime, Integer periods) {
 		ContractModelView contractModelView = new ContractModelView();
 		if (cityCodeDto != null) {
 			contractModelView.setSignAddress(cityCodeDto.getCityName());
@@ -868,6 +869,8 @@ public class SignController extends BaseController {
 		if (nodeDto != null) {
 			contractModelView.setLoanPopurse(nodeDto.getNodeName());
 		}
+		contractModelView.setRepayDateStart(DateTimeUtil.convertStringToDate(DateTimeUtil.getAddMonth(loanTime, 1)));
+		contractModelView.setRepayDateEnd(DateTimeUtil.convertStringToDate(DateTimeUtil.getAddMonth(loanTime, periods)));
 		return contractModelView;
 	}
 
