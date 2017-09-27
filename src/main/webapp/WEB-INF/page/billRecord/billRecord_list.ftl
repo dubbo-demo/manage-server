@@ -150,12 +150,13 @@
 							<td>${(item.isAdvanceSettleName)!""}</td>
 							<td>${item.createTime?datetime}</td>
                             <td>${(item.stateName)!""}</td>
-                            <td>${item.payDesc!""}</td>
+                            <td><a data-toggle="modal" href="#refuse"
+                                                       data-billdesc="${item.payDesc!""}">备注</a></td>
 						</tr>
 					</#list>
 			
 					<tr>
-					<td colspan="14" align="center">
+					<td colspan="16" align="center">
 						<@p.pagination value=page />
 		            </td>
 					</tr>
@@ -170,7 +171,7 @@
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal"
 					aria-hidden="true"></button>
-					<h4 class="refuseDivTitle"></h3>
+					<h4 class="refuseDivTitle">备注</h3>
 					<style>
 				  	.refuseDivTitle {text-align:center;font-weight:bold}
 				  	</style>
@@ -178,7 +179,7 @@
 			<div class="modal-body">
 				<div class="row-fluid">
 					<div class="control-group span10">
-						<label class="help-inline text-right span3">说明:</label>
+						<label class="help-inline text-right span3"></label>
 						<div class="controls">
 						<textarea id="description" rows="4" class="m-wrap span9"></textarea>
 						</div>
@@ -186,8 +187,15 @@
 				</div>
 			</div>
 			<div class="modal-footer">
-				<button type="button" class="btn blue" onclick="goDelte(event)">确定</button>
 				<button type="button" data-dismiss="modal" class="btn">取消</button>
 			</div>
 </div>
+<script type="text/javascript">
+	$(function() {
+        $("*[data-billdesc]").click(function (e) {
+            var billdesc = $(this).data("billdesc");
+            $("#description").html(billdesc);
+        });
+	});
+</script>
 <#include "/sys/bottom.ftl">

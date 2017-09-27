@@ -10,7 +10,6 @@ import com.myph.constant.HkBIllRecordStateEnum;
 import com.myph.constant.IsAdvanceSettleEnum;
 import com.myph.hkrecord.dto.HkBillRepayRecordDto;
 import com.myph.hkrecord.service.HkBillRepayRecordService;
-import com.myph.manage.common.constant.Constant;
 import com.myph.repayManMade.service.RepayManMadeService;
 import com.myph.repaymentPlan.dto.JkRepaymentPlanDto;
 import com.myph.repaymentPlan.service.JkRepaymentPlanService;
@@ -44,7 +43,7 @@ public class RepaymentResultNotifyTpicMsgListener implements MessageListener {
     @Override
     public boolean onMessage(List<MessageExt> messages, ConsumeConcurrentlyContext Context) {
         for (MessageExt messageExt : messages) {
-            MyphLogger.info("普惠接收还款中心代扣结果,开始消费消息:{}",messageExt);
+            MyphLogger.info("普惠接收还款中心代扣结果,开始消费消息:{}", messageExt);
             String message = null;
             PayResultDkMQ payResultDto = null;
             try {
@@ -53,19 +52,20 @@ public class RepaymentResultNotifyTpicMsgListener implements MessageListener {
                 // 转换字符串成dto
                 payResultDto = JSON.parseObject(message, PayResultDkMQ.class);
                 // 不在业务方处理锁中
-                if (repaymentLockService
-                        .checkLockDebitBill(payResultDto.getBillId(),ChannelEnum.MYPH.getCode())) {
+                if (!repaymentLockService
+                        .checkLockDebitBill(payResultDto.getBillId(), ChannelEnum.MYPH.getCode())) {
                     // 加业务方接受还款中心，处理锁
-                    String lockResult = repaymentLockService.lockDebitBill(payResultDto.getBillId(),ChannelEnum.MYPH.getCode());
-                    if(!StringUtils.isEmpty(lockResult)) {
+                    String lockResult = repaymentLockService
+                            .lockDebitBill(payResultDto.getBillId(), ChannelEnum.MYPH.getCode());
+                    if (!StringUtils.isEmpty(lockResult)) {
                         MyphLogger.info(lockResult);
                         return true;
                     }
                     MyphLogger.info("普惠接收还款中心代扣结果RepaymentResultNotifyTpicMsgListener,开始消费消息: " + message);
                     HkBillRepayRecordDto dto = new HkBillRepayRecordDto();
                     dto.setBillNo(payResultDto.getBillNo());
-                    if(null == payResultDto.getBusinessId()) {
-                        MyphLogger.info("普惠接收还款中心代扣结果失败，还款记录id为空",payResultDto);
+                    if (null == payResultDto.getBusinessId()) {
+                        MyphLogger.info("普惠接收还款中心代扣结果失败，还款记录id为空", payResultDto);
                         return true;
                     }
                     dto.setId(Long.valueOf(payResultDto.getBusinessId()));
@@ -81,11 +81,11 @@ public class RepaymentResultNotifyTpicMsgListener implements MessageListener {
                     }
                     BeanUtils.copyProperties(repayDto.getData(), dto);
                     //更新还款记录状态
-                    if(payResultDto.getTradeStatus().equals(Constants.YES)) {
+                    if (payResultDto.getTradeStatus().equals(Constants.YES)) {
                         dto.setState(HkBIllRecordStateEnum.SUCESS.getCode());
                     } else {
                         dto.setState(HkBIllRecordStateEnum.FALSE.getCode());
-                        hkBillRepayRecordService.updateStateByIdToMQ(dto);
+                        repayManMadeService.updateStateByIdToMQ(dto);
                         MyphLogger.info("普惠接收还款中心代扣，parm{},修改还款记录状态为失败 " + message);
                         return true;
                     }
@@ -99,7 +99,9 @@ public class RepaymentResultNotifyTpicMsgListener implements MessageListener {
                         // 人工代扣
                         repayManMadeService.splitRepay(dto);
                     }
-                    MyphLogger.info("普惠接收还款中心代扣结果RepaymentResultNotifyTpicMsgListener,消费成功: " + message);
+                    MyphLogger.info("普惠接收还款中心代扣结果RepaymentResultNotifyTpicMsgListener,消费成功:{} " + message);
+                } else {
+                    MyphLogger.info("普惠接收还款中心代扣结果RepaymentResultNotifyTpicMsgListener,消费失败，在锁中: {}" + message);
                 }
 
             } catch (UnsupportedEncodingException e) {
@@ -110,8 +112,8 @@ public class RepaymentResultNotifyTpicMsgListener implements MessageListener {
                         .toJSONString(messageExt) + " message=" + message, e);
                 return true;
             } finally {
-//                 加业务方接受还款中心，释放锁
-                repaymentLockService.lockDebitBill(payResultDto.getBillId(),ChannelEnum.MYPH.getCode());
+                //                 加业务方接受还款中心，释放锁
+                repaymentLockService.unlockDebitBill(payResultDto.getBillId(), ChannelEnum.MYPH.getCode());
             }
         }
         return true;
