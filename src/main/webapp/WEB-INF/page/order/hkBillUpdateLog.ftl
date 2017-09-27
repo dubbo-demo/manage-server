@@ -45,7 +45,7 @@
 						<#list page as record>
 						<tr>
 							<td>${record_index+1}</td>
-							<td>${record.createTime!}</td>
+							<td>${record.createTime?datetime}</td>
 							<td>${record.createUser!}</td>
 							<td>${record.changeMoney!}</td>
 							<td>${record.changeTypeDesc!}</td>
