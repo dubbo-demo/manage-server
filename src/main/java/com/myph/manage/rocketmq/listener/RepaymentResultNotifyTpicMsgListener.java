@@ -75,11 +75,12 @@ public class RepaymentResultNotifyTpicMsgListener implements MessageListener {
                         MyphLogger.info("普惠接收还款中心代扣结果RepaymentResultNotifyTpicMsgListener异常,找不到账单，parm{}", messages);
                         return true;
                     }
+                    BeanUtils.copyProperties(repayDto.getData(), dto);
                     if (!HkBIllRecordStateEnum.GOING.getCode().equals(repayDto.getData().getState())) {
+                        repayManMadeService.successToMQ(dto);
                         MyphLogger.info("账单已经处理过，parm{}", repayDto.getData().toString());
                         return true;
                     }
-                    BeanUtils.copyProperties(repayDto.getData(), dto);
                     //更新还款记录状态
                     if (payResultDto.getTradeStatus().equals(Constants.YES)) {
                         dto.setState(HkBIllRecordStateEnum.SUCESS.getCode());
