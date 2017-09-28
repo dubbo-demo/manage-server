@@ -94,7 +94,7 @@ public class RepaymentResultNotifyTpicMsgListener implements MessageListener {
                     JkRepaymentPlanDto jpDto = jkRepaymentPlanService.queryById(payResultDto.getBillId());
 
                     // 金额大于账单金额，提前结清代扣
-                    if (dto.getIsAdvanceSettle().equals(IsAdvanceSettleEnum.YES.getCode())) {
+                    if (IsAdvanceSettleEnum.YES.getCode().equals(dto.getIsAdvanceSettle())) {
                         repayManMadeService.splitAdvanceSettle(dto,jpDto);
                     } else {
                         // 人工代扣
