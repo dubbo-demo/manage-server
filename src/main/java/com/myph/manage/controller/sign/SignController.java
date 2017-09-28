@@ -348,7 +348,7 @@ public class SignController extends BaseController {
 										record.setBankCardNo(userCardInfoDto.getBankCardNo());
 										record.setBankCity(userCardInfoDto.getBankAccountCity());
 										record.setBankName(bankDto.getSname());
-										record.setBankType(bankDto.getSsimplecode());
+										record.setBankType(bankDto.getSbankno());
 										record.setBankTypeName(bankDto.getSname());
 										record.setMemberName(userCardInfoDto.getAccountName());
 										record.setIdCard(userCardInfoDto.getIdCardNo());
