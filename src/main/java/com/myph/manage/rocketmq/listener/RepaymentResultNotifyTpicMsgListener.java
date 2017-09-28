@@ -75,11 +75,12 @@ public class RepaymentResultNotifyTpicMsgListener implements MessageListener {
                         MyphLogger.info("普惠接收还款中心代扣结果RepaymentResultNotifyTpicMsgListener异常,找不到账单，parm{}", messages);
                         return true;
                     }
+                    BeanUtils.copyProperties(repayDto.getData(), dto);
                     if (!HkBIllRecordStateEnum.GOING.getCode().equals(repayDto.getData().getState())) {
+                        repayManMadeService.successToMQ(dto);
                         MyphLogger.info("账单已经处理过，parm{}", repayDto.getData().toString());
                         return true;
                     }
-                    BeanUtils.copyProperties(repayDto.getData(), dto);
                     //更新还款记录状态
                     if (payResultDto.getTradeStatus().equals(Constants.YES)) {
                         dto.setState(HkBIllRecordStateEnum.SUCESS.getCode());
@@ -94,7 +95,7 @@ public class RepaymentResultNotifyTpicMsgListener implements MessageListener {
 
                     // 金额大于账单金额，提前结清代扣
                     if (dto.getIsAdvanceSettle().equals(IsAdvanceSettleEnum.YES.getCode())) {
-                        repayManMadeService.splitAdvanceSettle(dto);
+                        repayManMadeService.splitAdvanceSettle(dto,jpDto);
                     } else {
                         // 人工代扣
                         repayManMadeService.splitRepay(dto);
