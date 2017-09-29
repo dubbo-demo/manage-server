@@ -153,8 +153,8 @@
             <span class="control-label span3">代扣卡</span>
             <select name="payType" class="form-control span6" id="payType"
                     onchange="changeCardInfo(this,'#earlySettlementShow')">
-                <option value="4" selected>客户卡</option>
-                <option value="5">代偿卡</option>
+                <option value="2" selected>客户卡</option>
+                <option value="3">代偿卡</option>
             </select>
         </div>
         <div class="row-fluid">
