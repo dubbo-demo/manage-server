@@ -34,10 +34,10 @@
 								<li> <i class="icon-home"></i>
 									<a href="${serverPath}/index.htm">首页</a> <i class="icon-angle-right"></i> </li>
 								<li>
-									<a href="javascript:void(0)">分公司业务管理</a><i class="icon-angle-right"></i>
+									<a href="javascript:void(0)">财务管理</a><i class="icon-angle-right"></i>
 								</li>
 								<li>
-									<a href="#">接待管理</a>
+									<a href="#">扣款记录</a>
 								</li>
 							</ul>
 						</div>
