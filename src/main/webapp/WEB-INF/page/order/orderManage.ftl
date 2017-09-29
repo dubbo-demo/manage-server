@@ -145,7 +145,7 @@
                                 <a data-target="#toPublicShow" data-toggle="modal" href="" class="toPublicShow ifshow state" data-paytype="1" data-billno='${record.billNo!}'>对公</a>
                                 </@shiro.hasPermission>
                                 <@shiro.hasPermission name="order:detail">
-                                <a href="${serverPath}/order/hkBillUpdateLog.htm?billNo=${record.billNo!}" class='ifshow'>详情</a>
+                                <a href="${serverPath}/order/hkBillUpdateLog.htm?billNo=${record.billNo!}">详情</a>
                                 </@shiro.hasPermission>
                             </td>
 						<tr></#list>
