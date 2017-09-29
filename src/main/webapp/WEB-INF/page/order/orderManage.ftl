@@ -125,7 +125,7 @@
                             <td>${record.lastPenalty!}</td>
                             <td>${record.lastLateFee!}</td>
                             <td>${record.surplusRepay!}</td>
-                            <td><#if record.agreeRepayDate??>${record.agreeRepayDate?datetime}</#if></td>
+                            <td><#if record.agreeRepayDate??>${(record.agreeRepayDate?string("yyyy-MM-dd"))!}</#if></td>
                             <td>${record.overdueDay!}</td>
                             <td>${record.stateDesc!}</td>
                             <td class='a' data-ifshow='${record.ifShow!}' data-state='${record.state!}'>
@@ -185,17 +185,13 @@
         $(".a .ifshow").each(function () {
             var ifShow = $(this).parent().data('ifshow');
             if(ifShow == 0){
-                $(this).removeAttr('onclick');
-                $(this).removeAttr('href');
-                $(this).removeAttr('data-target');
+                $(this).hide();
             }                
         });
         $(".a .state").each(function () {  
             var state = $(this).parent().data('state');
             if(state == 30){
-                $(this).removeAttr('onclick');
-                $(this).removeAttr('href');
-                $(this).removeAttr('data-target');
+                $(this).hide();
             }              
         });        
     }
