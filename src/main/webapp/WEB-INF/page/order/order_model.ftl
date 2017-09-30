@@ -247,7 +247,7 @@
                 "reservedPhone": $("" + target + " input[name=reservedPhone]").val(),//手机号
                 "Time": new Date().getMilliseconds()
             };
-        } else if(payType == 14) { //减免
+        } else if(payType == 14) { //提前结清
             data = {
                 "billNo": $("" + target + " input[name=billNo]").val(),
                 "bankName": $("" + target + " input[name=bankTypeName]").val(), //卡类别
@@ -344,7 +344,8 @@
             $("" + target + " input[name=billNo]").val(billNo);
 
             if (payType == 4 || payType == 5 || payType == 14) { // 代扣 ;代偿;提前结清代扣
-                getCardInfo(payType, target);
+                var payType2 = $(this).data("paytype2");
+                getCardInfo(payType2, target);
             }
         });
     });
@@ -423,7 +424,7 @@
     }
 
     function addInfoToDiv(payType,cardData,target) {
-        if (payType == 4) {
+        if (payType == 2) {
             //卡类别
             $("" + target + " input[name=bankTypeName]").val(cardData.bankTypeName);
 
@@ -439,7 +440,7 @@
             $("" + target + " input[name=reservedPhone]").val(cardData.reservedPhone);
 
             $("" + target + " input[name=idCardNo]").val(cardData.idCard);//身分证号
-        } else if (payType == 5) {
+        } else if (payType == 3) {
             if(null == cardData) {
                 return;
             }

@@ -130,16 +130,16 @@
                             <td>${record.stateDesc!}</td>
                             <td class='a' data-ifshow='${record.ifShow!}' data-state='${record.state!}'>
                                 <@shiro.hasPermission name="order:withhold">
-                                <a data-target="#withholdShow" data-toggle="modal" href="" class="withholdShow ifshow state" data-paytype="4" data-billno='${record.billNo!}'>代扣</a>
+                                <a data-target="#withholdShow" data-toggle="modal" href="" class="withholdShow ifshow state" data-paytype="4" data-paytype2="2" data-billno='${record.billNo!}'>代扣</a>
                                 </@shiro.hasPermission>
                                 <@shiro.hasPermission name="order:compensate">
-                                <a data-target="#compensateShow" data-toggle="modal" href="" class="compensateShow ifshow state" data-paytype="5" data-billno='${record.billNo!}'>代偿</a>
+                                <a data-target="#compensateShow" data-toggle="modal" href="" class="compensateShow ifshow state" data-paytype="5" data-paytype2="3" data-billno='${record.billNo!}'>代偿</a>
                                 </@shiro.hasPermission>
                                 <@shiro.hasPermission name="order:reduction">
                                 <a data-target="#reductionShow" data-toggle="modal" href="" class="reductionShow ifshow state" data-paytype="1" data-billno='${record.billNo!}'>减免</a>
                                 </@shiro.hasPermission>
                                 <@shiro.hasPermission name="order:earlySettlement">
-                                <a data-target="#earlySettlementShow" data-toggle="modal" href="" class="earlySettlementShow ifshow state" data-paytype="4" data-billno='${record.billNo!}'>提前结清</a>
+                                <a data-target="#earlySettlementShow" data-toggle="modal" href="" class="earlySettlementShow ifshow state" data-paytype="14" data-paytype2="2" data-billno='${record.billNo!}'>提前结清</a>
                                 </@shiro.hasPermission>
                                 <@shiro.hasPermission name="order:toPublic">
                                 <a data-target="#toPublicShow" data-toggle="modal" href="" class="toPublicShow ifshow state" data-paytype="1" data-billno='${record.billNo!}'>对公</a>

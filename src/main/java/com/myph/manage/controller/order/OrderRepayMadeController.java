@@ -67,7 +67,7 @@ public class OrderRepayMadeController extends BaseController {
         MyphLogger.info("人工代扣操作界面-billNo【{}】,payType:{},isAdvanceSettleEnum:{}", billNo, payType);
 
         // 代扣
-        if (payType.equals(BillChangeTypeEnum.PERSON_WITHHOLD.getCode())) {
+        if (payType.equals(PayTypeEnum.PAY_PERSON_KOU.getCode())) {
             BankCardInfoDto card = jkRepaymentPlanService.queryBankCardInfoByBillNo(billNo);
             if (null != card) {
                 return AjaxResult.success(card);
@@ -77,7 +77,7 @@ public class OrderRepayMadeController extends BaseController {
         }
 
         // 代偿
-        if (payType.equals(BillChangeTypeEnum.PERSON_COMPENSATE.getCode())) {
+        if (payType.equals(PayTypeEnum.PAI_PERSON_CHANG.getCode())) {
             EmployeeInfoDto user = ShiroUtils.getCurrentUser();
             // 获取银行卡信息
             ServiceResult<List<UserCardInfoDto>> result = cardService.queryUserCardInfo(user.getMobilePhone());
