@@ -154,7 +154,7 @@ public class OrderRepayMadeController extends BaseController {
             }
         } catch (Exception e) {
             MyphLogger.error("发起人工代扣-异常【{}】", e);
-            return AjaxResult.failed("发起人工代扣-异常");
+            return AjaxResult.failed("发起人工代扣异常");
         }
         return AjaxResult.success();
     }
@@ -182,7 +182,7 @@ public class OrderRepayMadeController extends BaseController {
             }
         } catch (Exception e) {
             MyphLogger.error("发起对公-异常【{}】", e);
-            return AjaxResult.failed("发起对公-异常");
+            return AjaxResult.failed("发起对公异常");
         }
         return AjaxResult.success();
     }
