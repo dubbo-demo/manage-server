@@ -160,12 +160,6 @@ public class CardController {
         dto.setIDFFlag(Constants.YES_INT);//是否支持快捷0表示不支持  1表示支持    默认支持
         dto.setIDKFlag(Constants.YES_INT);//是否支持代扣0表示不支持  1表示支持    默认支持
         dto.setIKJFlag(Constants.NO_INT);//是否支持代付0表示不支持  1表示支持    默认不支持
-        if (StringUtils.isBlank(dto.getBankAccountCity())) {
-            dto.setBankAccountCity("-");
-        }
-        if (StringUtils.isBlank(dto.getBankAccountProvince())) {
-            dto.setBankAccountProvince("-");
-        }
         dto.setSFromIp(ShiroUtils.getCurrentUserIp());
     }
 

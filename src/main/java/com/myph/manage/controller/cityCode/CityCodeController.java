@@ -73,6 +73,21 @@ public class CityCodeController {
         }
     }
 
+    @RequestMapping("/selectProvince")
+    @ResponseBody
+    public AjaxResult selectProvince() {
+        try {
+            MyphLogger.debug("CityCodeController.selectProvince 输入参数[]");
+            // 查询省
+            ServiceResult<List<SysDistrictDto>> sysDistrictResult = sysDistrictService
+                    .selectByTreelevel(DISTRICT_TREE_LEVEL.LEVEL_1.toNumber());
+            return AjaxResult.success(sysDistrictResult);
+        } catch (Exception e) {
+            MyphLogger.error(e, "查询地市编码信息异常");
+            return AjaxResult.failed("查询地市编码信息异常");
+        }
+    }
+    
     /**
      * 
      * @名称 getCityByProvinceId

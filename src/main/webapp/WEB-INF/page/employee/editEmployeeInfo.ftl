@@ -124,7 +124,25 @@
                 <input type="text" class="m-wrap span12" id="mobile" name="mobile">
                 </div>
             </div>
-         </div>                
+         </div>   
+        <div class="row-fluid">
+            <div class="control-group span4 ">
+                <label class="control-label">开户行省份</label>
+                <div class="controls">
+                    <select onchange="getCity()" class="m-wrap span12" id="province">
+                        <option value="0">请选择省份</option>
+                    </select>
+                </div>
+            </div>
+            <div class="control-group span4 ">
+                <label class="control-label">开户行城市</label>
+                <div class="controls">
+                    <select class="m-wrap span12" id="city">
+                        <option value="0">请选择市</option>
+                    </select>
+                </div>
+            </div>
+         </div>                      
          <div class="row-fluid">
             <div class="control-group span8 ">
                 <label class="control-label">认证状态</label>
