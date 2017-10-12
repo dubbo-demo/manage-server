@@ -230,6 +230,7 @@ function removeBindCard(event){
 			async:false,
 			dataType : 'json',
 			data : {	
+				"idCardNo" : $('#identityNumber').val(),
 				"Time" : new Date().getMilliseconds()
 			},
 			success : function(data) {
@@ -342,6 +343,7 @@ function queryUserCardInfo(){
 						$('#bankNo').val(data.bankNo);
 						var text = 'option:contains(\'' + data.bankAccountProvince + '\')';
 						$("#province").find(text).attr("selected",true);
+						getCity();
 						var text = 'option:contains(\'' + data.bankAccountCity + '\')';
 						$("#city").find(text).attr("selected",true);
 						$('#bankCardNo').val(data.bankCardNo);
