@@ -39,9 +39,9 @@
             <span class="control-label span3">还款金额</span>
             <input type="text" name="payAmount" id="payAmount" maxlength="10" class="form-control span6" value=""/>
         </div>
-        <#--<div class="row-fluid">-->
-            <#--<span class="control-label span3"><a href="#">附件上传</a></span>-->
-        <#--</div>-->
+        <div class="row-fluid">
+            <span class="control-label span3"><a href="javascript:uploadFile('#withholdShow')">附件上传</a></span>
+        </div>
         <div class="row-fluid">
             <span class="control-label span4" id="error"></span>
         </div>
@@ -93,9 +93,9 @@
             <span class="control-label span3">还款金额</span>
             <input type="text" name="payAmount" id="payAmount" maxlength="10" class="form-control span6" value=""/>
         </div>
-        <#--<div class="row-fluid">-->
-            <#--<span class="control-label span3"><a href="#">附件上传</a></span>-->
-        <#--</div>-->
+        <div class="row-fluid">
+            <span class="control-label span3"><a href="javascript:uploadFile('#compensateShow')">附件上传</a></span>
+        </div>
         <div class="row-fluid">
             <span class="control-label span4" id="error"></span>
         </div>
@@ -127,9 +127,9 @@
             <span class="control-label span3">还款金额</span>
             <input type="text" name="payAmount" id="payAmount" maxlength="10" class="form-control span6" value=""/>
         </div>
-        <#--<div class="row-fluid">-->
-            <#--<span class="control-label span3"><a href="#">附件上传</a></span>-->
-        <#--</div>-->
+        <div class="row-fluid">
+            <span class="control-label span3"><a href="javascript:uploadFile('#reductionShow')">附件上传</a></span>
+        </div>
         <div class="row-fluid">
             <span class="control-label span4" id="error"></span>
         </div>
@@ -185,9 +185,9 @@
             <span class="control-label span3">还款金额</span>
             <input type="text" name="payAmount" id="payAmount" maxlength="10" class="form-control span6" value=""/>
         </div>
-        <#--<div class="row-fluid">-->
-            <#--<span class="control-label span3"><a href="#">附件上传</a></span>-->
-        <#--</div>-->
+        <div class="row-fluid">
+            <span class="control-label span3"><a href="javascript:uploadFile('#earlySettlementShow')">附件上传</a></span>
+        </div>
         <div class="row-fluid">
             <span class="control-label span4" id="error"></span>
         </div>
@@ -212,9 +212,9 @@
             <input type="text" name="payAmount" id="payAmount" maxlength="10" class="form-control span6" value=""/>
             <input type="hidden" name="billNo" id="billNo" class="form-control span6" value=""/>
         </div>
-    <#--<div class="row-fluid">-->
-    <#--<span class="control-label span3"><a href="#">附件上传</a></span>-->
-    <#--</div>-->
+    <div class="row-fluid">
+    <span class="control-label span3"><a href="javascript:uploadFile('#toPublicShow')">附件上传</a></span>
+    </div>
         <div class="row-fluid">
             <span class="control-label span4" id="error"></span>
         </div>
@@ -230,6 +230,15 @@
     function returnBack(target) {
 //        window.location.href = window.location;
         $(target).modal('hide');
+    }
+
+    function uploadFile(target) {
+        var this_billNo = $("" + target + " input[name=billNo]").val();
+        if(null == this_billNo) {
+            BootstrapDialog.alert("账单号不能为空");
+            return;
+        }
+        window.open( serverPath+"/productFile/fileUploadForRepay.htm?billNo="+this_billNo);
     }
     function getPayData(target, payType) {
         var data = {};
@@ -342,6 +351,8 @@
             $("" + target + " input[name=billNo]").val("");
 //            console.log("billNo",billNo);
             $("" + target + " input[name=billNo]").val(billNo);
+            // 释放按钮
+            $(target + ' .blue').removeAttr("disabled");
 
             if (payType == 4 || payType == 5 || payType == 14) { // 代扣 ;代偿;提前结清代扣
                 var payType2 = $(this).data("paytype2");
@@ -417,7 +428,6 @@
                 $("" + target + " #error").css("display", "block");
             } else {
                 var cardData = result.data;
-                console.log(cardData);
                 addInfoToDiv(payType,cardData,target)
             }
         });
@@ -444,13 +454,13 @@
             if(null == cardData) {
                 return;
             }
-            //卡类别
-            $("" + target + " input[name=bankTypeName]").val(cardData.bankTypeName);
-
-            $("" + target + " input[name=bankType]").val(cardData.bankNo);
-
-            //卡号
-            $("" + target + " input[name=idBankNo]").val(cardData.bankCardNo);
+            // 禁用按钮
+            $(target + ' .blue').attr('disabled', "true");
+            if("1" != cardData.authStatus) {
+                $("" + target + " #error").html('<font color="red">门店副理已经绑定代偿卡，但没有鉴权!</font>');
+                $("" + target + " #error").css("display", "block");
+                return;
+            }
 
             //姓名
             $("" + target + " input[name=username]").val(cardData.accountName);
@@ -459,6 +469,15 @@
             $("" + target + " input[name=reservedPhone]").val(cardData.mobile);
 
             $("" + target + " input[name=idCardNo]").val(cardData.idCardNo);//身分证号
+
+            //卡类别
+            $("" + target + " input[name=bankTypeName]").val(cardData.bankTypeName);
+
+            $("" + target + " input[name=bankType]").val(cardData.bankNo);
+
+            //卡号
+            $("" + target + " input[name=idBankNo]").val(cardData.bankCardNo);
+
         }
     }
 </script>
