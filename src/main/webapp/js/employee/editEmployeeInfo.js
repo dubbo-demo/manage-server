@@ -147,6 +147,8 @@ function bindCard(event){
 			data : {
 				'memberId':$('#mobilePhone').val(),
 				'bankCardNo':$('#bankCardNo').val(),
+				'bankAccountProvince':$('#province').find("option:selected").text(),
+				'bankAccountCity':$('#city').find("option:selected").text(),
 				'accountBankName':$('#accountBankName').val(),
 				'bankNo':bankNo,
 				'mobile':$('#mobile').val(),
@@ -162,6 +164,8 @@ function bindCard(event){
 					$('.removeBindCard').show();
 					//绑卡成功的，相关参数不允许修改，解绑后可修改
 					$("#bankNo").attr("disabled",true);
+					$("#province").attr("disabled",true);
+					$("#city").attr("disabled",true);
 					$('#bankCardNo').attr("readonly","readonly");
 					$('#accountBankName').attr("readonly","readonly");
 					$('#mobile').attr("readonly","readonly");
@@ -226,6 +230,7 @@ function removeBindCard(event){
 			async:false,
 			dataType : 'json',
 			data : {	
+				"idCardNo" : $('#identityNumber').val(),
 				"Time" : new Date().getMilliseconds()
 			},
 			success : function(data) {
@@ -256,6 +261,8 @@ function removeBindCard(event){
 				if(data.code == 0){
 					//解绑成功的，相关参数允许修改
 					$("#bankNo").attr("disabled",false);
+					$("#province").attr("disabled",false);
+					$("#city").attr("disabled",false);
 					$('#bankCardNo').attr("readonly",false);
 					$('#accountBankName').attr("readonly",false);
 					$('#mobile').attr("readonly",false);
@@ -334,6 +341,11 @@ function queryUserCardInfo(){
 					var data = result.data;
 					if(data != null){
 						$('#bankNo').val(data.bankNo);
+						var text = 'option:contains(\'' + data.bankAccountProvince + '\')';
+						$("#province").find(text).attr("selected",true);
+						getCity();
+						var text = 'option:contains(\'' + data.bankAccountCity + '\')';
+						$("#city").find(text).attr("selected",true);
 						$('#bankCardNo').val(data.bankCardNo);
 						$('#accountBankName').val(data.accountBankName);
 						$('#mobile').val(data.mobile);
@@ -348,6 +360,8 @@ function queryUserCardInfo(){
 						$('.removeBindCard').show();
 						//查到绑卡信息，相关参数不支持修改
 						$("#bankNo").attr("disabled",true);
+						$("#province").attr("disabled",true);
+						$("#city").attr("disabled",true);
 						$('#bankCardNo').attr("readonly","readonly");
 						$('#accountBankName').attr("readonly","readonly");
 						$('#mobile').attr("readonly","readonly");
@@ -357,6 +371,8 @@ function queryUserCardInfo(){
 						$('.removeBindCard').hide();
 						//未查到绑卡信息，相关参数支持修改
 						$("#bankNo").attr("disabled",false);
+						$("#province").attr("disabled",false);
+						$("#city").attr("disabled",false);
 						$('#bankCardNo').attr("readonly",false);
 						$('#accountBankName').attr("readonly",false);
 						$('#mobile').attr("readonly",false);
@@ -374,7 +390,52 @@ function queryUserCardInfo(){
 		$.ajax(options);		
 }
 
+function getCity() {
+	var options = {
+		url : serverPath + '/cityCode/getCity.htm',
+		type : 'post',
+		dataType : 'json',
+		data : {
+			"id" : $('#province').val()
+		},
+		success : function(data) {
+			$("#city").empty();
+			$("#city").append("<option value=0>请选择市</option>");
+			var cityData = data.data;
+			for (var i = 0; i < cityData.length; i++) {
+				var op = "<option value=" + cityData[i].id + " data-code=" + cityData[i].code + ">"
+						+ cityData[i].name + "</option>";
+				$("#city").append(op);
+			}
+		}
+	};
+	$.ajax(options);
+}
+
+function getProvince(){
+	var options = {
+			url : serverPath + '/cityCode/selectProvince.htm',
+			type : 'post',
+			dataType : 'json',
+			data : {
+				"Time" : new Date().getMilliseconds()
+			},
+			success : function(data) {
+				$("#province").empty();
+				$("#province").append("<option value=0>请选择省份</option>");
+				var provinceData = data.data.data;
+				for (var i = 0; i < provinceData.length; i++) {
+					var op = "<option value=" + provinceData[i].id + " data-code=" + provinceData[i].code + ">"
+							+ provinceData[i].name + "</option>";
+					$("#province").append(op);
+				}
+			}
+		};
+		$.ajax(options);
+}
+
 $(function() {
 	getBankList();
+	getProvince();
 	queryUserCardInfo();
 });

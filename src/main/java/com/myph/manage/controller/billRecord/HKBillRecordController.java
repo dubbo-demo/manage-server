@@ -169,10 +169,7 @@ public class HKBillRecordController extends BaseController{
      */
     @RequestMapping("/queryCountByIdCardNo")
     @ResponseBody
-    public AjaxResult queryCountByIdCardNo() {
-        //获取当前登录人身份证号
-        EmployeeInfoDto employeeInfoDto = ShiroUtils.getCurrentUser();
-        String idCardNo = employeeInfoDto.getIdentityNumber();
+    public AjaxResult queryCountByIdCardNo(String idCardNo) {
         ServiceResult<Integer> count = hkBillRepayRecordService.selectCountByIdCardNo(idCardNo);
         return AjaxResult.success(count.getData());
     }
