@@ -278,9 +278,7 @@
 	var isFlag = false;
 	$(function(){
 		<#if !(bankInfo??)>
-			BootstrapDialog.alert("请先绑定银行卡信息！",function(){
-				history.go(-1);
-			});
+			BootstrapDialog.alert("请先绑定银行卡信息！");
 		</#if>
 		$("select[name='signResult']").val("${(jkSignDto.signResult)!''}");
 		var date = new Date();
