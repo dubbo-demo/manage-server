@@ -454,11 +454,11 @@
             if(null == cardData) {
                 return;
             }
-            // 禁用按钮
-            $(target + ' .blue').attr('disabled', "true");
             if("1" != cardData.authStatus) {
                 $("" + target + " #error").html('<font color="red">门店副理已经绑定代偿卡，但没有鉴权!</font>');
                 $("" + target + " #error").css("display", "block");
+                // 禁用按钮
+                $(target + ' .blue').attr('disabled', "true");
                 return;
             }
 
