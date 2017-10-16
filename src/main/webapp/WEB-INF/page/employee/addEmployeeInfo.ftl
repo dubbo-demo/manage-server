@@ -29,7 +29,10 @@ $(function() {
 			},
 			entryTime : {
 				required : true
-			}
+			},
+            mobile : {
+                phone : true
+            }
 		},
 		submitHandler : function(form) { // 表单提交句柄,为一回调函数，带一个参数form
 			form.submit(); // 提交表单
@@ -81,7 +84,7 @@ $(function() {
 			<div class="control-group span4 ">
 				<label class="control-label">手机号码<span class="required">*</span></label>
 				<div class="controls">
-				<input type="text" class="m-wrap span12" maxlength="18" id="mobilePhone" name="mobilePhone">
+				<input type="text" class="m-wrap span12" maxlength="11" id="mobilePhone" name="mobilePhone">
 				</div>
 			</div>
 			<div class="control-group span4 ">
@@ -119,7 +122,7 @@ $(function() {
             <div class="control-group span4 ">
                 <label class="control-label">银行预留手机号</label>
                 <div class="controls">
-                <input type="text" class="m-wrap span12" maxlength="18" id="mobile" name="mobile">
+                <input type="text" class="m-wrap span12" maxlength="11" id="mobile" name="mobile">
                 </div>
             </div>
          </div>  

@@ -12,7 +12,10 @@ $(function() {
 			mobilePhone : {
 				required : true,
 				phone : true
-			}
+			},
+            mobile : {
+                phone : true
+            }
 		},
 		submitHandler : function(form) { // 表单提交句柄,为一回调函数，带一个参数：form
 			form.submit(); // 提交表单
