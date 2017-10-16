@@ -238,7 +238,7 @@
             BootstrapDialog.alert("账单号不能为空");
             return;
         }
-        window.open( serverPath+"/productFile/fileUploadForRepay.htm?billNo="+this_billNo);
+        window.open( serverPath+"/productFile/fileUploadForRepay.htm?billNo="+this_billNo,"_blank");
     }
     function getPayData(target, payType) {
         var data = {};
