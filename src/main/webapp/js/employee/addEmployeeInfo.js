@@ -179,6 +179,9 @@ function bindCard(event){
 					$("#bankNo").attr("disabled",true);
 					$("#province").attr("disabled",true);
 					$("#city").attr("disabled",true);
+					$('#employeeName').attr("readonly","readonly");
+					$('#identityNumber').attr("readonly","readonly");
+					$('#mobilePhone').attr("readonly","readonly");
 					$('#bankCardNo').attr("readonly","readonly");
 					$('#accountBankName').attr("readonly","readonly");
 					$('#mobile').attr("readonly","readonly");
@@ -270,6 +273,9 @@ function removeBindCard(event){
 			success : function(data) {
 				if(data.code == 0){
 					//解绑成功的，相关参数允许修改
+					$('#employeeName').attr("readonly",false);
+					$('#identityNumber').attr("readonly",false);
+					$('#mobilePhone').attr("readonly",false);
 					$("#bankNo").attr("disabled",false);
 					$("#province").attr("disabled",false);
 					$("#city").attr("disabled",false);

@@ -50,7 +50,7 @@
 			<div class="control-group span4 ">
 				<label class="control-label">身份证号</label>
 				<div class="controls">
-				<input type="text" class="m-wrap span12" id="identityNumber" name="identityNumber" value="${item.identityNumber}" readonly="readonly">
+				<input type="text" class="m-wrap span12" id="identityNumber" maxlength="18" name="identityNumber" value="${item.identityNumber}" readonly="readonly">
 				</div>
 			</div>
 		</div>
@@ -79,7 +79,7 @@
             <div class="control-group span4 ">
                 <label class="control-label">卡号</label>
                 <div class="controls">
-                <input type="text" class="m-wrap span12" id="bankCardNo" name="bankCardNo">
+                <input type="text" class="m-wrap span12" maxlength="18" id="bankCardNo" name="bankCardNo">
                 </div>
             </div>
         </div>      
@@ -93,7 +93,7 @@
             <div class="control-group span4 ">
                 <label class="control-label">银行预留手机号</label>
                 <div class="controls">
-                <input type="text" class="m-wrap span12" id="mobile" name="mobile">
+                <input type="text" class="m-wrap span12" maxlength="18" id="mobile" name="mobile">
                 </div>
             </div>
          </div>     

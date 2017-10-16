@@ -168,6 +168,8 @@ function bindCard(event){
 					$("#bankNo").attr("disabled",true);
 					$("#province").attr("disabled",true);
 					$("#city").attr("disabled",true);
+					$('#mobilePhone').attr("readonly","readonly");
+					$('#employeeName').attr("readonly","readonly");
 					$('#bankCardNo').attr("readonly","readonly");
 					$('#accountBankName').attr("readonly","readonly");
 					$('#mobile').attr("readonly","readonly");
@@ -262,6 +264,8 @@ function removeBindCard(event){
 			success : function(data) {
 				if(data.code == 0){
 					//解绑成功的，相关参数允许修改
+					$('#mobilePhone').attr("readonly",false);
+					$('#employeeName').attr("readonly",false);
 					$("#bankNo").attr("disabled",false);
 					$("#province").attr("disabled",false);
 					$("#city").attr("disabled",false);
@@ -361,6 +365,8 @@ function queryUserCardInfo(){
 						$('.bindCard').hide();
 						$('.removeBindCard').show();
 						//查到绑卡信息，相关参数不支持修改
+						$('#mobilePhone').attr("readonly","readonly");
+						$('#employeeName').attr("readonly","readonly");
 						$("#bankNo").attr("disabled",true);
 						$("#province").attr("disabled",true);
 						$("#city").attr("disabled",true);
@@ -372,6 +378,8 @@ function queryUserCardInfo(){
 						$('.authentication').hide();
 						$('.removeBindCard').hide();
 						//未查到绑卡信息，相关参数支持修改
+						$('#mobilePhone').attr("readonly",false);
+						$('#employeeName').attr("readonly",false);
 						$("#bankNo").attr("disabled",false);
 						$("#province").attr("disabled",false);
 						$("#city").attr("disabled",false);

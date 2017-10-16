@@ -1,6 +1,5 @@
 <#include "/sys/top.ftl">
 <#include "/sys/left.ftl">
-<script src="${cdnPath}/js/employee/editEmployeeInfo.js?v=${VERSION_NO}"></script>
 <script type="text/javascript">
     var serverPath = "${serverPath}";
     var id = "${item.id}";
@@ -37,13 +36,13 @@
 			<div class="control-group span4 ">
 				<label class="control-label">员工姓名<span class="required">*</span></label>
 				<div class="controls">
-				<input type="text" class="m-wrap span12" id="employeeName" name="employeeName" value="${item.employeeName}">
+				<input type="text" class="m-wrap span12" maxlength="18" id="employeeName" name="employeeName" value="${item.employeeName}">
 				</div>
 			</div>
 			<div class="control-group span4 ">
 				<label class="control-label">身份证号<span class="required">*</span></label>
 				<div class="controls">
-				<input type="text" class="m-wrap span12" id="identityNumber" name="identityNumber" value="${item.identityNumber}">
+				<input type="text" class="m-wrap span12" id="identityNumber" maxlength="18" name="identityNumber" value="${item.identityNumber}">
 				</div>
 			</div>
 		</div>
@@ -51,7 +50,7 @@
 			<div class="control-group span4 ">
 				<label class="control-label">手机号码<span class="required">*</span></label>
 				<div class="controls">
-				<input type="text" class="m-wrap span12" id="mobilePhone" name="mobilePhone" value="${item.mobilePhone}">
+				<input type="text" class="m-wrap span12" id="mobilePhone" maxlength="18" name="mobilePhone" value="${item.mobilePhone}">
 				</div>
 			</div>
 			<div class="control-group span4 ">
@@ -178,5 +177,6 @@
 </div>
 </div>
 <#include "/sys/bottom.ftl">
+<script src="${cdnPath}/js/employee/editEmployeeInfo.js?v=${VERSION_NO}"></script>
 </body>
 </html>
