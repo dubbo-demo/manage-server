@@ -1,6 +1,5 @@
 <#include "/sys/top.ftl">
 <#include "/sys/left.ftl">
-<script src="${cdnPath}/js/employee/addEmployeeInfo.js?v=${VERSION_NO}"></script>
 <script type="text/javascript">
     var serverPath = "${serverPath}";
     var queryDto = {orgId:"${(orgId)!''}"};
@@ -30,7 +29,10 @@ $(function() {
 			},
 			entryTime : {
 				required : true
-			}
+			},
+            mobile : {
+                phone : true
+            }
 		},
 		submitHandler : function(form) { // 表单提交句柄,为一回调函数，带一个参数form
 			form.submit(); // 提交表单
@@ -68,13 +70,13 @@ $(function() {
 			<div class="control-group span4 ">
 				<label class="control-label">员工姓名<span class="required">*</span></label>
 				<div class="controls">
-				<input type="text" class="m-wrap span12" id="employeeName" name="employeeName">
+				<input type="text" class="m-wrap span12" maxlength="10" id="employeeName" name="employeeName">
 				</div>
 			</div>
 			<div class="control-group span4 ">
 				<label class="control-label">身份证号<span class="required">*</span></label>
 				<div class="controls">
-				<input type="text" class="m-wrap span12" id="identityNumber" name="identityNumber">
+				<input type="text" class="m-wrap span12" maxlength="18" id="identityNumber" name="identityNumber">
 				</div>
 			</div>
 		</div>
@@ -82,7 +84,7 @@ $(function() {
 			<div class="control-group span4 ">
 				<label class="control-label">手机号码<span class="required">*</span></label>
 				<div class="controls">
-				<input type="text" class="m-wrap span12" id="mobilePhone" name="mobilePhone">
+				<input type="text" class="m-wrap span12" maxlength="11" id="mobilePhone" name="mobilePhone">
 				</div>
 			</div>
 			<div class="control-group span4 ">
@@ -106,7 +108,7 @@ $(function() {
             <div class="control-group span4 ">
                 <label class="control-label">卡号</label>
                 <div class="controls">
-                <input type="text" class="m-wrap span12" id="bankCardNo" name="bankCardNo">
+                <input type="text" class="m-wrap span12" maxlength="50" id="bankCardNo" name="bankCardNo">
                 </div>
             </div>
         </div>		
@@ -120,7 +122,7 @@ $(function() {
             <div class="control-group span4 ">
                 <label class="control-label">银行预留手机号</label>
                 <div class="controls">
-                <input type="text" class="m-wrap span12" id="mobile" name="mobile">
+                <input type="text" class="m-wrap span12" maxlength="11" id="mobile" name="mobile">
                 </div>
             </div>
          </div>  
@@ -222,5 +224,6 @@ $(function() {
 </div>
 </div>
 <#include "/sys/bottom.ftl">
+<script src="${cdnPath}/js/employee/addEmployeeInfo.js?v=${VERSION_NO}"></script>
 </body>
 </html>

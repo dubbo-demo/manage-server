@@ -279,15 +279,16 @@ public class OrderRepayMadeController extends BaseController {
     @RequestMapping("/redutionMadeRepay")
     @ResponseBody
     public AjaxResult redutionMadeRepay(HkReductionRecordDto param, Model model) {
-        MyphLogger.info("发起提前结清减免-参数【{}】", param);
         try {
             EmployeeInfoDto user = ShiroUtils.getCurrentUser();
             param.setCreateUser(user.getEmployeeName());
             ServiceResult<String> result = null;
             // 判断是否提前结清
             if (IsAdvanceSettleEnum.YES.getCode().equals(param.getIsAdvanceSettle())) {
+                MyphLogger.info("发起提前结清减免-参数【{}】", param);
                 result = repayManMadeService.reductionRepayAdvanceSettle(param);
             } else {
+                MyphLogger.info("发起当期减免-参数【{}】", param);
                 result = repayManMadeService.reductionRepay(param);
             }
 

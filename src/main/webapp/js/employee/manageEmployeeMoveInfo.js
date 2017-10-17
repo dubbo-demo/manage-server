@@ -14,7 +14,10 @@ $(function() {
 			moveRemark : {
 				required : true,
 				maxlength : 100
-			}
+			},
+            mobile : {
+                phone : true
+            }
 		},
 		submitHandler : function(form) { // 表单提交句柄,为一回调函数，带一个参数：form
 			form.submit(); // 提交表单
@@ -196,7 +199,9 @@ function bindCard(event){
 	ChkUtil.stopBubbleEvent(event);
 	//校验必填项
 	var bankNo = $("#bankNo").find("option:selected").val();
-	if(bankNo == '' || $("#bankCardNo").val() == '' || $('#accountBankName').val() == '' || $('#mobile').val() == '' || $('#employeeName').val() == '' || $('#identityNumber').val() == '' ){
+	var province = $("#province").find("option:selected").val();
+	var city = $("#city").find("option:selected").val();
+	if(bankNo == '' || province == '0' || city == '0' || $("#bankCardNo").val() == '' || $('#accountBankName').val() == '' || $('#mobile').val() == '' || $('#employeeName').val() == '' || $('#identityNumber').val() == '' ){
 		BootstrapDialog.alert("请填写必填项!");
 		return;
 	}

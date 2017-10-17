@@ -12,7 +12,10 @@ $(function() {
 			mobilePhone : {
 				required : true,
 				phone : true
-			}
+			},
+            mobile : {
+                phone : true
+            }
 		},
 		submitHandler : function(form) { // 表单提交句柄,为一回调函数，带一个参数：form
 			form.submit(); // 提交表单
@@ -135,7 +138,9 @@ function bindCard(event){
 	ChkUtil.stopBubbleEvent(event);
 	//校验必填项
 	var bankNo = $("#bankNo").find("option:selected").val();
-	if(bankNo == '' || $("#bankCardNo").val() == '' || $('#accountBankName').val() == '' || $('#mobile').val() == '' || $('#employeeName').val() == '' || $('#identityNumber').val() == '' ){
+	var province = $("#province").find("option:selected").val();
+	var city = $("#city").find("option:selected").val();
+	if(bankNo == '' || province == '0' || city == '0' || $("#bankCardNo").val() == '' || $('#accountBankName').val() == '' || $('#mobile').val() == '' || $('#employeeName').val() == '' || $('#identityNumber').val() == '' ){
 		BootstrapDialog.alert("请填写必填项!");
 		return;
 	}
@@ -166,6 +171,8 @@ function bindCard(event){
 					$("#bankNo").attr("disabled",true);
 					$("#province").attr("disabled",true);
 					$("#city").attr("disabled",true);
+					$('#mobilePhone').attr("readonly","readonly");
+					$('#employeeName').attr("readonly","readonly");
 					$('#bankCardNo').attr("readonly","readonly");
 					$('#accountBankName').attr("readonly","readonly");
 					$('#mobile').attr("readonly","readonly");
@@ -260,6 +267,8 @@ function removeBindCard(event){
 			success : function(data) {
 				if(data.code == 0){
 					//解绑成功的，相关参数允许修改
+					$('#mobilePhone').attr("readonly",false);
+					$('#employeeName').attr("readonly",false);
 					$("#bankNo").attr("disabled",false);
 					$("#province").attr("disabled",false);
 					$("#city").attr("disabled",false);
@@ -359,6 +368,8 @@ function queryUserCardInfo(){
 						$('.bindCard').hide();
 						$('.removeBindCard').show();
 						//查到绑卡信息，相关参数不支持修改
+						$('#mobilePhone').attr("readonly","readonly");
+						$('#employeeName').attr("readonly","readonly");
 						$("#bankNo").attr("disabled",true);
 						$("#province").attr("disabled",true);
 						$("#city").attr("disabled",true);
@@ -370,6 +381,8 @@ function queryUserCardInfo(){
 						$('.authentication').hide();
 						$('.removeBindCard').hide();
 						//未查到绑卡信息，相关参数支持修改
+						$('#mobilePhone').attr("readonly",false);
+						$('#employeeName').attr("readonly",false);
 						$("#bankNo").attr("disabled",false);
 						$("#province").attr("disabled",false);
 						$("#city").attr("disabled",false);

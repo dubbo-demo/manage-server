@@ -86,6 +86,7 @@ public class RepaymentResultNotifyTpicMsgListener implements MessageListener {
                         dto.setState(HkBIllRecordStateEnum.SUCESS.getCode());
                     } else {
                         dto.setState(HkBIllRecordStateEnum.FALSE.getCode());
+                        dto.setPayDesc(payResultDto.getExecDesc());
                         repayManMadeService.updateStateByIdToMQ(dto);
                         MyphLogger.info("普惠接收还款中心代扣，parm{},修改还款记录状态为失败 " + message);
                         return true;
