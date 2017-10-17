@@ -88,11 +88,15 @@ public class OrderManageController extends BaseController {
                         .subtract(dto.getReductionLateFee());
                 dto.setLastLateFee(lastLateFee);
                 // 计算剩余应还=月还款额+应还罚息+应还滞纳金-已还罚息-已还滞纳金-已还本金-已还利息-减免罚息-减免滞纳金-减免本金-减免利息
-                BigDecimal surplusRepay = dto.getReapyAmount().add(dto.getPenalty()).add(dto.getLateFee())
-                        .subtract(dto.getAlsoInterest()).subtract(dto.getAlsoLateFee()).subtract(dto.getAlsoPenalty())
-                        .subtract(dto.getAlsoPrincipal()).subtract(dto.getReductionInterest())
-                        .subtract(dto.getReductionLateFee()).subtract(dto.getReductionPenalty())
-                        .subtract(dto.getReductionPrincipal());
+                // 已结清默认剩余应还为0
+                BigDecimal surplusRepay = new BigDecimal(0);
+                if(!dto.getRepayState().equals(RepayStateEnum.ALREADY_REPAY.getCode())){
+                    surplusRepay = dto.getReapyAmount().add(dto.getPenalty()).add(dto.getLateFee())
+                            .subtract(dto.getAlsoInterest()).subtract(dto.getAlsoLateFee()).subtract(dto.getAlsoPenalty())
+                            .subtract(dto.getAlsoPrincipal()).subtract(dto.getReductionInterest())
+                            .subtract(dto.getReductionLateFee()).subtract(dto.getReductionPenalty())
+                            .subtract(dto.getReductionPrincipal()); 
+                }
                 dto.setSurplusRepay(surplusRepay);
                 //是否允许操作 未到期账单不允许操作
                 if(dto.getAgreeRepayDate().compareTo(Calendar.getInstance().getTime()) > 0){
