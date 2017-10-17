@@ -65,6 +65,7 @@
                                         <input type="hidden"  name="teamManageId" value='${(appInfo.teamManageId)!}' />
                                         <input type="hidden"  name="teamManageName" value='${(appInfo.teamManageName)!}' />
 										<input type="hidden"  name="productId" value='${(productDto.id)!}' />
+										<input type="hidden"  name="reservedPhone" value='${(applyUserDto.phone)!}' />
 									</div>
 								</div>
 							</div>
@@ -101,7 +102,7 @@
 								<div class="control-group span4 ">
 									<label class="control-label">手机号</label>
 									<div class="controls">
-										<span class="text" id = "phone">${(appInfo.phone)!}</span>
+										<span class="text" id = "phone" >${(appInfo.phone)!}</span>
 									</div>
 								</div>
 								<div class="control-group span4 ">
