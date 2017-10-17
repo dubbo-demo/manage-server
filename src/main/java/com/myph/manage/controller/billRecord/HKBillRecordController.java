@@ -53,6 +53,8 @@ public class HKBillRecordController extends BaseController{
      */
     @RequestMapping("/list")
     public String list(Model model, RepayRecordQueryDto queryDto, BasePage basePage) {
+        basePage.setSortField("createTime");
+        basePage.setSortOrder("desc");
         ServiceResult<Pagination<RepayRecordDto>>  resultInfo = repayRecordService.queryPagination(queryDto,basePage);
         List<OrganizationDto> orgs = ShiroUtils.getStoreInfo();
         initQueryDate(queryDto);
