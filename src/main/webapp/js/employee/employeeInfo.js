@@ -24,9 +24,11 @@ $(function() {
 	}
 	$(".aIcmbShow").on('click',function(){
 		  var icmbFlag = $(this).data("icmbflag");
+		  var relPhone = $(this).data("relphone");
 	        var id = $(this).attr("data-id");
 	        $("#icmbShowId").val(id);
 	        $("#icmbShowFlag").val(icmbFlag);
+	        $("#relPhone").val(relPhone);
 	        if(icmbFlag == 1){
 	        	$("#icmbTimeLabel").html("复职日期：");
 	        }else{
@@ -244,10 +246,36 @@ function onClick(e, treeId, treeNode) {
 	});
 }
 
-function updateUserflag(id,userFlag){
+function updateUserflag(id,userFlag,relPhone){
+	var flag = true;
+	var options = {
+			url : serverPath + "/card/queryUserCardInfo.htm",
+			type : 'post',
+			async:false,
+			dataType : 'json',
+			data : {
+				'phone':relPhone,
+				"Time" : new Date().getMilliseconds()
+			},
+			success : function(result) {
+				if(result.code == 0){
+					var data = result.data;
+					if(data != null){
+						BootstrapDialog.alert("当前员工有卡信息，请先解绑");
+						flag = false;
+						return false;
+					}
+				}
+			}
+		};
+		$.ajax(options);	
+		if(!flag){
+			return false;
+		}
 	$.ajax({
 		url : serverPath + "/employee/updateUserflag.htm",
 		type : "post",
+		async:false,
 		data : {
 			"id" : id,
 			"userFlag" : userFlag,
@@ -286,9 +314,35 @@ function updateIcmbFlag(){
 	if(f) {
 		return false;
 	}
+	var flag = true;
+	var options = {
+			url : serverPath + "/card/queryUserCardInfo.htm",
+			type : 'post',
+			async:false,
+			dataType : 'json',
+			data : {
+				'phone':$('#relPhone').val(),
+				"Time" : new Date().getMilliseconds()
+			},
+			success : function(result) {
+				if(result.code == 0){
+					var data = result.data;
+					if(data != null){
+						BootstrapDialog.alert("当前员工有卡信息，请先解绑");
+						flag = false;
+						return false;
+					}
+				}
+			}
+		};
+		$.ajax(options);
+		if(!flag){
+			return false;
+		}
 	$.ajax({
 		url : serverPath + "/employee/updateIcmbFlag.htm",
 		type : "post",
+		async:false,
 		data : {
 			"id" : $("#icmbShowId").val(),
 			"icmbFlag" : $("#icmbShowFlag").val(),

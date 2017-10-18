@@ -2,8 +2,7 @@
  * @Title: ApplyManageController.java 
  * @Package: com.myph.manage.controller.apply
  * @company: 麦芽金服
- * @Description: TODO
- * @date 2016年9月24日 下午1:35:06 
+ * @date 2016年9月24日 下午1:35:06
  * @version V1.0   
  */
 package com.myph.manage.controller.apply;

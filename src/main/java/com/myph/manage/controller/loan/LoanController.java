@@ -49,6 +49,7 @@ import com.myph.organization.dto.OrganizationDto;
 import com.myph.organization.service.OrganizationService;
 import com.myph.performance.service.FinanceManageService;
 import com.myph.product.service.ProductService;
+import com.myph.repaymentPlan.service.JkRepaymentPlanService;
 
 /**
  * 
@@ -77,6 +78,9 @@ public class LoanController extends BaseController{
 
     @Autowired
     ApplyInfoService applyInfoService;
+    
+    @Autowired
+    JkRepaymentPlanService jkRepaymentPlanService;
 
     public final static String PATH = "/loan";
 
@@ -130,6 +134,15 @@ public class LoanController extends BaseController{
         String[] idsStr = request.getParameterValues("ids[]");
         String[] applyLoanNos = request.getParameterValues("applyLoanNos[]");
         for (String applyLoanNo : applyLoanNos) {
+            LoanedInfoDto param = new LoanedInfoDto();
+            param.setCreateUser(ShiroUtils.getCurrentUserName());
+            param.setCreateUserId(ShiroUtils.getCurrentUserId());
+            param.setApplyLoanNo(applyLoanNo);
+            param.setStatus(Constants.YES_INT);
+            //更新放款记录表
+            loanService.update(param);
+            //更新账单表为有效
+            jkRepaymentPlanService.updateIsEffectiveByApplyLoanNo(applyLoanNo);
             // 调用状态机进入主流程
             ContinueActionDto applyNotifyDto = new ContinueActionDto();
             applyNotifyDto.setApplyLoanNo(applyLoanNo);
@@ -145,17 +158,9 @@ public class LoanController extends BaseController{
                 MyphLogger.info("操作人ID【"+ShiroUtils.getCurrentUserId()+"】操作人【"+ShiroUtils.getCurrentUserName()+"】 放款成功！【"+applyNotifyDto+"】");
             }
         }
-        Long[] ids = new Long[idsStr.length];
-        for (int i = 0; i < ids.length; i++) {
-            Long id = Long.parseLong(idsStr[i]);
-            //更新内容信息
-            loanService.update(ShiroUtils.getCurrentUserName(),ShiroUtils.getCurrentUserId(),id);
-            ids[i] = id;
-        }
-        //更新状态
-        ServiceResult<Integer> result = loanService.loaned(ids);
-        MyphLogger.info("操作人ID【"+ShiroUtils.getCurrentUserId()+"】操作人【"+ShiroUtils.getCurrentUserName()+"】 放款数据修改成功！param【"+ids+"】");
-        return AjaxResult.success(result.getData());
+        
+        MyphLogger.info("操作人ID【"+ShiroUtils.getCurrentUserId()+"】操作人【"+ShiroUtils.getCurrentUserName()+"】 放款数据修改成功！param【"+idsStr+"】");
+        return AjaxResult.success();
     }
 
     @RequestMapping("/loanedDetail")

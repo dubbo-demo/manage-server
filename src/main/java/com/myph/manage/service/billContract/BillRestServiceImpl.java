@@ -25,7 +25,6 @@ import com.myph.member.base.service.MemberInfoService;
 import com.myph.node.dto.SysNodeDto;
 import com.myph.node.service.NodeService;
 import com.myph.product.service.ProductService;
-import com.myph.sign.service.ContractService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -79,8 +78,8 @@ public class BillRestServiceImpl implements BillRestService {
     /**
      * 合同service
      */
-    @Autowired
-    private ContractService contractService;
+//    @Autowired
+//    private ContractService contractService;
 
     @Autowired
     private RestTemplate restTemplate;
@@ -101,7 +100,7 @@ public class BillRestServiceImpl implements BillRestService {
         ContractRequestVo fristDto = new ContractRequestVo();
         BeanUtils.copyProperties(successData, fristDto);
 
-        // TODO 抓取合同信息,申请单对象
+        //  抓取合同信息,申请单对象
         FristBillPushEntityDto eFristDto = pushContarctAndBillTaskService
                 .selectApplyContractLoan(fristDto.getContractNo());
         if (null == eFristDto) {
@@ -113,7 +112,7 @@ public class BillRestServiceImpl implements BillRestService {
             eFristDto.setLoanDate(DateUtils.dateParseString(DateUtils.convertToDateTime(eFristDto.getLoanDate())));
         }
         BeanUtils.copyProperties(eFristDto, fristDto);
-        // TODO 备用电话，memeberInfo表里，逗号分隔
+        //  备用电话，memeberInfo表里，逗号分隔
         ServiceResult<MemberInfoDto> memberDto = memberInfoService
                 .queryInfoByIdCard(eFristDto.getIdCard());
         if (null == memberDto || null == memberDto.getData()) {
@@ -122,7 +121,7 @@ public class BillRestServiceImpl implements BillRestService {
             return null;
         }
         toInfoMember(fristDto, memberDto.getData());
-        // TODO 抓取工作信息
+        //  抓取工作信息
         ServiceResult<MemberJobDto> memberJobR = memberJobService
                 .selectByMemberId(memberDto.getData().getId());
         if (null == memberJobR || null == memberJobR.getData()) {
@@ -137,7 +136,7 @@ public class BillRestServiceImpl implements BillRestService {
             fristDto.setMailAddr(memberJobR.getData().getDetailAddr()); //邮寄地址
         }
 
-        // TODO 抓取联系人信息
+        //  抓取联系人信息
         ServiceResult<List<MemberLinkmanDto>> linkMans =
                 memberLinkmanService.getLinkmansByMemId(memberDto.getData().getId());
         if (null == linkMans || null == linkMans.getData()) {
@@ -165,7 +164,7 @@ public class BillRestServiceImpl implements BillRestService {
         RepayPlanRequestVo successData = null;
         for (int i = 0; i < successDatas.size(); i++) {
             successData = successDatas.get(i);
-            // TODO 通过合同号查询推送合同账单推送执行结果表，是否有成功发送的数据
+            //  通过合同号查询推送合同账单推送执行结果表，是否有成功发送的数据
             PushContarctAndBillTaskDto record = new PushContarctAndBillTaskDto();
             record.setContractId(successData.getContractNo());
             PushContarctAndBillTaskDto resultPush = pushContarctAndBillTaskService.selectSuccessInfo(record);
@@ -205,18 +204,18 @@ public class BillRestServiceImpl implements BillRestService {
      */
     private void toRest(PushContarctAndBillTaskDto resultPush, RepayPlanRequestVo successData,
             ContractRequestVo fristVo) {
-        // TODO 组装插入记录表
+        //  组装插入记录表
         PushContarctAndBillTaskDto record = new PushContarctAndBillTaskDto();
         record.setBillId(successData.getBillId());
         record.setContractId(successData.getContractNo());
         ResultParams response = null;
         if (null != fristVo) {
-            // TODO http发送正确数据给催收系统 req 合同基础数据接口
+            //  http发送正确数据给催收系统 req 合同基础数据接口
             fristVo.setPushedTime(DateUtils.dateParseString(new Date()));
             MyphLogger.info("=============开始调用合同基础数据接口");
             response = restPushBillAndContract(fristVo);
         } else {
-            // TODO http发送逾期账单给催收系统
+            //  http发送逾期账单给催收系统
             successData.setPushedTime(DateUtils.dateParseString(new Date()));
             MyphLogger.info("=============开始调用逾期账单接口");
             response = restPushBill(successData);
@@ -237,10 +236,10 @@ public class BillRestServiceImpl implements BillRestService {
             // 已经插入该账单记录，修改状态
             if (null != resultPush) {
                 record.setPushTimes(resultPush.getPushTimes() + 1);
-                // TODO update记录表为成功标记
+                //  update记录表为成功标记
                 pushContarctAndBillTaskService.updateByStatuToSuc(record);
             } else {
-                // TODO 插入记录表
+                //  插入记录表
                 pushContarctAndBillTaskService.insert(record);
             }
         }

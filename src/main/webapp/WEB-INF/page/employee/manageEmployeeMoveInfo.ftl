@@ -1,6 +1,5 @@
 <#include "/sys/top.ftl">
 <#include "/sys/left.ftl">
-<script src="${cdnPath}/js/employee/manageEmployeeMoveInfo.js?v=${VERSION_NO}"></script>
 <script type="text/javascript">
     var serverPath = "${serverPath}";
     var queryDto = {orgId:"${(orgId)!''}"};
@@ -35,6 +34,7 @@
 		<input type="hidden" name="id" value="${item.id?c}"/>
 		<input type="hidden" name="employeeId" value="${item.id?c}"/>
 		<input type="hidden" id="orgId" name="orgId"/>
+		<input type="hidden" id="mobilePhone" name="mobilePhone" value="${item.mobilePhone}"/>
 		<input type="hidden" id="parentId" name="parentId"/>
 		<input type="hidden" id="newOrgType" name="newOrgType"/>
 		<input type="hidden" id="newPosition" name="newPosition"/>
@@ -50,7 +50,7 @@
 			<div class="control-group span4 ">
 				<label class="control-label">身份证号</label>
 				<div class="controls">
-				<input type="text" class="m-wrap span12" value="${item.identityNumber}" readonly="readonly">
+				<input type="text" class="m-wrap span12" id="identityNumber" maxlength="18" name="identityNumber" value="${item.identityNumber}" readonly="readonly">
 				</div>
 			</div>
 		</div>
@@ -58,7 +58,7 @@
 			<div class="control-group span4 ">
 				<label class="control-label">姓名拼音</label>
 				<div class="controls">
-				<input type="text" class="m-wrap span12" value="${item.nameSpell}" readonly="readonly">
+				<input type="text" class="m-wrap span12" id="employeeName" name="employeeName" value="${item.nameSpell}" readonly="readonly">
 				</div>
 			</div>
 			<div class="control-group span4 ">
@@ -68,6 +68,64 @@
 				</div>
 			</div>
 		</div>
+        <div class="row-fluid">
+            <div class="control-group span4 ">
+                <label class="control-label">银行类别</label>
+                <div class="controls">
+                <select class="m-wrap span12" name="bankNo" id="bankNo">
+                </select>
+                </div>
+            </div>
+            <div class="control-group span4 ">
+                <label class="control-label">卡号</label>
+                <div class="controls">
+                <input type="text" class="m-wrap span12" maxlength="18" id="bankCardNo" name="bankCardNo">
+                </div>
+            </div>
+        </div>      
+        <div class="row-fluid">
+            <div class="control-group span4 ">
+                <label class="control-label">开户行</label>
+                <div class="controls">
+                <input type="text" class="m-wrap span12" id="accountBankName" name="accountBankName">
+                </div>
+            </div>
+            <div class="control-group span4 ">
+                <label class="control-label">银行预留手机号</label>
+                <div class="controls">
+                <input type="text" class="m-wrap span12" maxlength="11" id="mobile" name="mobile">
+                </div>
+            </div>
+         </div>     
+        <div class="row-fluid">
+            <div class="control-group span4 ">
+                <label class="control-label">开户行省份</label>
+                <div class="controls">
+                    <select onchange="getCity()" class="m-wrap span12" id="province">
+                        <option value="0">请选择省份</option>
+                    </select>
+                </div>
+            </div>
+            <div class="control-group span4 ">
+                <label class="control-label">开户行城市</label>
+                <div class="controls">
+                    <select class="m-wrap span12" id="city">
+                        <option value="0">请选择市</option>
+                    </select>
+                </div>
+            </div>
+         </div>                      
+         <div class="row-fluid">
+            <div class="control-group span8 ">
+                <label class="control-label">认证状态</label>
+                <div class="controls">
+                <input type="text" class="m-wrap span3" id="authStatus" value = "未认证" name="authStatus" readOnly></input>
+                <button class="btn blue bindCard" onclick="bindCard(event);return false;">绑卡</button>
+                <button class="btn blue authentication" onclick="authentication(event);return false;">鉴权</button>
+                <button class="btn blue removeBindCard" onclick="removeBindCard(event);return false;">解绑</button>
+                </div>
+            </div>
+        </div>      
 		
 		
 		<div class="row-fluid">
@@ -185,5 +243,6 @@
 </div>
 </div>
 <#include "/sys/bottom.ftl">
+<script src="${cdnPath}/js/employee/manageEmployeeMoveInfo.js?v=${VERSION_NO}"></script>
 </body>
 </html>

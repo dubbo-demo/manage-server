@@ -308,7 +308,7 @@ style='font-family:宋体;color:black'>：</span></p>
   none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
   background:white;padding:0cm 0cm 0cm 0cm;height:19.85pt'>
   <p class=MsoNormal style='line-height:11.35pt;text-autospace:
-  none'><span style='font-family:宋体'>每月<span lang=EN-US>&nbsp;&nbsp;</span>日（<span
+  none'><span style='font-family:宋体'>每月&nbsp;${contractModelView.repayDateStart?string("dd")}&nbsp;日（<span
   lang=EN-US>17:00</span>前，节假日顺延）</span></p>
   </td>
  </tr>
@@ -322,9 +322,8 @@ style='font-family:宋体;color:black'>：</span></p>
   none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
   background:white;padding:0cm 0cm 0cm 0cm;height:19.85pt'>
   <p class=MsoNormal style='text-indent:31.5pt;line-height:13.3pt;text-autospace:none'>
-  <span style='font-family:宋体'>&nbsp;&nbsp;年<span lang=EN-US style='color:red'>&nbsp;</span>月
-  <span lang=EN-US>&nbsp;</span>日起，至<span lang=EN-US>&nbsp;&nbsp;&nbsp;
-  </span>年<span lang=EN-US>&nbsp;</span>月<span lang=EN-US>&nbsp;</span>日止</span>
+  <span style='font-family:宋体'>${contractModelView.repayDateStart?string("yyyy年MM月dd日")} &nbsp;起，至<span lang=EN-US>&nbsp;&nbsp;
+  </span>${contractModelView.repayDateEnd?string("yyyy年MM月dd日")}&nbsp;止&nbsp;</span>
   </p>
   </td>
  </tr>

@@ -1,25 +1,4 @@
-/**
- * 
- */
 package com.myph.manage.controller.sign;
-
-import java.io.UnsupportedEncodingException;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-
-import com.myph.employee.constants.EmployeeMsg;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.myph.apply.dto.ApplyInfoDto;
 import com.myph.apply.dto.ApplyUserDto;
@@ -45,7 +24,12 @@ import com.myph.common.util.NumberToCN;
 import com.myph.compliance.dto.JkComplianceDto;
 import com.myph.constant.ApplyUtils;
 import com.myph.constant.FlowStateEnum;
+import com.myph.constant.IsAdvanceSettleEnum;
+import com.myph.constant.RepayStateEnum;
 import com.myph.constant.bis.SignBisStateEnum;
+import com.myph.contract.dto.JkContractDto;
+import com.myph.contract.service.JkContractService;
+import com.myph.employee.dto.EmpDetailDto;
 import com.myph.employee.dto.EmployeeInfoDto;
 import com.myph.employee.service.EmployeeInfoService;
 import com.myph.flow.dto.AbandonActionDto;
@@ -54,26 +38,44 @@ import com.myph.flow.dto.RejectActionDto;
 import com.myph.idgenerator.service.IdGeneratorService;
 import com.myph.manage.common.constant.Constant;
 import com.myph.manage.common.shiro.ShiroUtils;
-import com.myph.employee.dto.EmpDetailDto;
 import com.myph.manage.controller.BaseController;
 import com.myph.manage.facadeService.FacadeFlowStateExchangeService;
+import com.myph.member.card.dto.UserCardInfoDto;
+import com.myph.member.card.service.CardService;
 import com.myph.node.dto.SysNodeDto;
 import com.myph.node.service.NodeService;
 import com.myph.organization.dto.OrganizationDto;
 import com.myph.organization.service.OrganizationService;
+import com.myph.payBank.dto.SysPayBankDto;
+import com.myph.payBank.service.SysPayBankService;
 import com.myph.product.dto.ProductDto;
 import com.myph.product.service.ProductService;
+import com.myph.repaymentPlan.dto.JkRepaymentPlanDto;
+import com.myph.repaymentPlan.service.JkRepaymentPlanService;
 import com.myph.sign.dto.ContractModelView;
-import com.myph.sign.dto.JkContractDto;
-import com.myph.sign.dto.JkRepaymentPlanDto;
 import com.myph.sign.dto.JkSignDto;
 import com.myph.sign.dto.SignQueryDto;
-import com.myph.sign.service.ContractService;
-import com.myph.sign.service.JkRepaymentPlanService;
 import com.myph.sign.service.SignService;
 import com.myph.sysParamConfig.service.SysParamConfigService;
 import com.myph.visit.dto.VisitDetailDto;
 import com.myph.visit.service.VisitService;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 
 /**
  * 签约
@@ -122,7 +124,7 @@ public class SignController extends BaseController {
 	private ProductService productService;
 
 	@Autowired
-	private ContractService contractService;
+	private JkContractService contractService;
 
 	@Autowired
 	private IdGeneratorService generatorService;
@@ -153,7 +155,10 @@ public class SignController extends BaseController {
 
 	@Autowired
 	private FacadeFlowStateExchangeService facadeFlowStateExchangeService;
-
+	@Autowired
+	private CardService cardService;
+	@Autowired
+	SysPayBankService sysPayBankService;
 	/**
 	 * 
 	 * @名称 list
@@ -295,44 +300,88 @@ public class SignController extends BaseController {
 
 			int loanUpMax = productDto.getLoanUpLimit().setScale(0, RoundingMode.DOWN).toString().length();// 贷款额度上限
 
-			// 获取产品期数，月息，综合服务费；计算合同金额、总利息、服务费和还款总额
-			if (productDto != null && jkContractDto != null && jkContractDto.getRepayMoney() != null) {
-				JkContractDto jkcontarct = calculateServiceRate(productDto, jkContractDto.getRepayMoney());
-				jkContractDto.setServiceRate(jkcontarct.getServiceRate());
+			// 查询银行卡信息
+			ServiceResult<List<UserCardInfoDto>> result = cardService.queryUserCardInfo(applyUserDto.getPhone());
+			SysPayBankDto bankDto = null;
+			UserCardInfoDto userCardInfoDto = null;
+			if(result.success()){
+				if(null!=result.getData()&&result.getData().size() > 0){
+					for(UserCardInfoDto dto:result.getData()){
+						if(dto.getIDKFlag().equals(Constants.YES_INT)){
+							model.addAttribute("userCardInfo", dto);
+							userCardInfoDto = dto;
+							//通过银行卡信息去查询银行名称
+							ServiceResult<SysPayBankDto> bankResult = sysPayBankService.selectBySbankNo(dto.getBankNo());
+							if(bankResult.success()){
+								model.addAttribute("bankInfo",bankResult.getData());
+								bankDto = bankResult.getData();
+
+								// 获取产品期数，月息，综合服务费；计算合同金额、总利息、服务费和还款总额
+								if (productDto != null && jkContractDto != null && jkContractDto.getRepayMoney() != null) {
+									JkContractDto jkcontarct = calculateServiceRate(productDto, jkContractDto.getRepayMoney());
+									jkContractDto.setServiceRate(jkcontarct.getServiceRate());
+								}
+
+								ServiceResult<JkContractDto> contractResult = contractService.selectByApplyLoanNo(applyLoanNo);
+								if (contractResult.success() && contractResult.getData() != null) {
+									JkContractDto contractDto = contractResult.getData();
+									model.addAttribute("contractNo", contractDto.getContractNo());
+									contractDto.setBankCardNo(userCardInfoDto.getBankCardNo());
+									contractDto.setBankCity(userCardInfoDto.getBankAccountCity());
+									contractDto.setBankName(bankDto.getSname());
+									contractDto.setBankType(bankDto.getSbankno());
+									contractDto.setBankTypeName(bankDto.getSname());
+									contractDto.setMemberName(userCardInfoDto.getAccountName());
+									contractDto.setIdCard(userCardInfoDto.getIdCardNo());
+									contractDto.setReservedPhone(userCardInfoDto.getMobile());
+									contractDto.setOverdueScale(productDto.getOverdueScale());
+									contractDto.setRepayRate(productDto.getPreRepayRate());
+									contractDto.setOrgId(applyInfo.getStoreId());
+									contractService.updateSelective(contractDto);
+								} else {
+									EmpDetailDto empDetail = ShiroUtils.getEmpDetail();
+									Long cityId = empDetail.getCityId();
+									CityCodeDto cityCodeDto = null;
+									if (cityId != null) {
+										// 获取城市编码
+										cityCodeDto = cityCodeService.selectByPrimaryKey(cityId).getData();
+									}
+									if (cityCodeDto != null) {
+										String cityCode = cityCodeDto.getCityCode();
+										StringBuffer contractNo = new StringBuffer(cityCode);
+										contractNo.append(DateUtils.getCurrentTimeNum());
+										StringBuffer myphContractNo = new StringBuffer("MYPH");
+										String nextVal = generatorService.getNextVal(contractNo.toString(), 4).getData();
+										myphContractNo.append(nextVal);
+
+										JkContractDto record = new JkContractDto();model.addAttribute("contractNo", myphContractNo);
+										record.setApplyLoanNo(applyLoanNo);
+										record.setContractNo(myphContractNo.toString());
+										record.setBankCardNo(userCardInfoDto.getBankCardNo());
+										record.setBankCity(userCardInfoDto.getBankAccountCity());
+										record.setBankName(bankDto.getSname());
+										record.setBankType(bankDto.getSbankno());
+										record.setBankTypeName(bankDto.getSname());
+										record.setMemberName(userCardInfoDto.getAccountName());
+										record.setIdCard(userCardInfoDto.getIdCardNo());
+										record.setReservedPhone(userCardInfoDto.getMobile());
+										record.setOverdueScale(productDto.getOverdueScale());
+										record.setRepayRate(productDto.getPreRepayRate());
+										record.setOrgId(applyInfo.getStoreId());
+										String operatorName = ShiroUtils.getCurrentUserName();
+										MyphLogger.debug("待插入合同信息：【{}】",record.toString());
+										contractService.insertSelective(record, operatorName);
+									}
+								}
+							}
+							break;
+						}
+					}
+				}
+			}else{
+				MyphLogger.error(result.getMessage());
 			}
 
-			ServiceResult<JkContractDto> contractResult = contractService.selectByApplyLoanNo(applyLoanNo);
-			if (contractResult.success() && contractResult.getData() != null) {
-				JkContractDto contractDto = contractResult.getData();
-				model.addAttribute("contractNo", contractDto.getContractNo());
-			} else {
-				EmpDetailDto empDetail = ShiroUtils.getEmpDetail();
-				Long cityId = empDetail.getCityId();
-				CityCodeDto cityCodeDto = null;
-				if (cityId != null) {
-					// 获取城市编码
-					cityCodeDto = cityCodeService.selectByPrimaryKey(cityId).getData();
-				}
-				if (cityCodeDto != null) {
-					String cityCode = cityCodeDto.getCityCode();
-					StringBuffer contractNo = new StringBuffer(cityCode);
-					contractNo.append(DateUtils.getCurrentTimeNum());
-					StringBuffer myphContractNo = new StringBuffer("MYPH");
-					String nextVal = generatorService.getNextVal(contractNo.toString(), 4).getData();
-					myphContractNo.append(nextVal);
-					model.addAttribute("contractNo", myphContractNo);
-					final JkContractDto record = new JkContractDto();
-					record.setApplyLoanNo(applyLoanNo);
-					record.setContractNo(myphContractNo.toString());
-					final String operatorName = ShiroUtils.getCurrentUserName();
-					new Thread(new Runnable() {
-						@Override
-						public void run() {
-							contractService.insertSelective(record, operatorName);
-						}
-					}).start();
-				}
-			}
 			if (applyUserDto != null) {
 				String mailAddress = applyUserDto.getMailAddress();
 				// 邮寄地址:1,现住址;2,公司地址;3,户籍地址
@@ -362,6 +411,7 @@ public class SignController extends BaseController {
 			model.addAttribute("appInfo", applyInfo);
 			model.addAttribute("applyUserDto", applyUserDto);
 			model.addAttribute("subState", subState);
+
 		} catch (Exception e) {
 			MyphLogger.error(e, "进入合同详情页服务异常");
 		}
@@ -432,8 +482,55 @@ public class SignController extends BaseController {
 	@RequestMapping("/submitSign")
 	@ResponseBody
 	public AjaxResult sign(JkContractDto jkContractDto) {
+		MyphLogger.debug("提交签约时 合同信息为：【{}】", jkContractDto.getContractNo());
 		if (null == jkContractDto) {
 			return AjaxResult.failed("请求参数不能为空");
+		}
+		//验证银行卡信息
+		// 查询银行卡信息
+		ServiceResult<List<UserCardInfoDto>> userCardResult = cardService.queryUserCardInfo(jkContractDto.getReservedPhone());
+		SysPayBankDto bankDto = null;
+		UserCardInfoDto userCardInfoDto = null;
+		if(userCardResult.success()){
+			if(null!=userCardResult.getData()&&userCardResult.getData().size() > 0){
+				for(UserCardInfoDto dto:userCardResult.getData()){
+					if(dto.getIDKFlag().equals(Constants.YES_INT)){
+						if(!dto.getBankCardNo().equals(jkContractDto.getBankCardNo())){
+							return AjaxResult.failed("绑定的银行卡已更新，请刷新页面，并重新打印合同！");
+						}
+					}
+				}
+			}
+		}
+		//新加检验++++罗荣+++++2017-09-08   通过合同号查询放款计划表中，首期 期初本金 与放款时间
+		ServiceResult<JkRepaymentPlanDto> repaymentResult = repaymentPlanService.queryFirstBillByContractNo(jkContractDto.getContractNo());
+		//判断放款金额+服务是否恒等于首期金额 期初本金
+		if(repaymentResult.success()){
+			JkRepaymentPlanDto dto= repaymentResult.getData();
+			if(null == dto){
+				MyphLogger.error("提交异常,查询还款计划表数据为空【{}】", jkContractDto.getContractNo());
+				return AjaxResult.failed("请先导出账单数据！");
+			}
+			BigDecimal initialPrincipal = dto.getInitialPrincipal();
+			if(null!=initialPrincipal){
+				if(initialPrincipal.compareTo(jkContractDto.getRepayMoney().add(jkContractDto.getServiceRate())) != 0){
+					return AjaxResult.failed("放款金额加服务费不等于期初本金["+initialPrincipal.toString()+"]");
+				}
+			}else{
+				MyphLogger.error("提交异常,合同号[{}]第一期期初本金为空", jkContractDto.getContractNo());
+				return AjaxResult.failed("期初本金为空");
+			}
+			//判断放款日期的后一个月，是否恒等于 放款计划第一期的协议还款日期
+			Date loanTime = jkContractDto.getLoanTime();
+			//加一个月
+			Date newLoanTime= DateUtils.add(loanTime,Calendar.MONTH,1);
+			//如果不等于则返回一个提示
+			if(!newLoanTime.equals(dto.getAgreeRepayDate())){
+				return AjaxResult.failed("放款日期后一个月不等于协议还款日期");
+			}
+		}else{
+			MyphLogger.error("提交异常,合同号[{}]第一期还款信息不存在", jkContractDto.getContractNo());
+			return AjaxResult.failed("请先导出生成还款信息！");
 		}
 		String operatorName = ShiroUtils.getCurrentUserName();
 		Long operatorId = ShiroUtils.getCurrentUserId();
@@ -489,7 +586,12 @@ public class SignController extends BaseController {
 								|| SignBisStateEnum.BACK_INIT.getCode().equals(applyInfoDto.getSubState())))) {
 					return AjaxResult.failed("该申请单已签约！");
 				}
-				serviceResult = signService.insertAllData(isUpdate, jkSignDto, applyInfo, jkContractDto,
+				if (isUpdate) {
+					contractService.updateSelective(jkContractDto);
+				} else {
+					contractService.insertSelective(jkContractDto, operatorName);
+				}
+				serviceResult = signService.insertAllData(isUpdate, jkSignDto, applyInfo,
 						ShiroUtils.getCurrentUserName());
 
 				if (!serviceResult.success()) {
@@ -533,7 +635,7 @@ public class SignController extends BaseController {
 
 	private void constructParams(JkContractDto jkContractDto, ProductDto productDto, String productName) {
 		jkContractDto.setTotalRate(productDto.getServiceRate());// 综合服务费率
-		jkContractDto.setPenalty(productDto.getPenaltyRate());// 罚息比例
+		jkContractDto.setPenaltyRate(productDto.getPenaltyRate());// 罚息比例
 		jkContractDto.setRepayRate(productDto.getPreRepayRate());// 提前还款费率
 		jkContractDto.setProductId(productDto.getId());
 		jkContractDto.setProductName(productName);
@@ -737,7 +839,7 @@ public class SignController extends BaseController {
 			cityCodeDto = cityCodeService.selectByPrimaryKey(cityId).getData();
 		}
 		ContractModelView contractModelView = constructContractData(applyLoanNo, bankNo, bankName, applyInfo,
-				cityCodeDto);
+				cityCodeDto,loanTime,num);
 		Integer subState = applyInfo.getSubState();
 		if (ContractEnum.CREDIT_LOAN_PROTOCOL.type == type) {
 			initCreditLoanProtocol(subState, applyLoanNo, bankNo, bankName, contractAmount, interestAmount, num,
@@ -769,7 +871,7 @@ public class SignController extends BaseController {
 	}
 
 	private ContractModelView constructContractData(String applyLoanNo, String bankNo, String bankName,
-			ApplyInfoDto applyInfo, CityCodeDto cityCodeDto) {
+													ApplyInfoDto applyInfo, CityCodeDto cityCodeDto, String loanTime, Integer periods) {
 		ContractModelView contractModelView = new ContractModelView();
 		if (cityCodeDto != null) {
 			contractModelView.setSignAddress(cityCodeDto.getCityName());
@@ -795,6 +897,8 @@ public class SignController extends BaseController {
 		if (nodeDto != null) {
 			contractModelView.setLoanPopurse(nodeDto.getNodeName());
 		}
+		contractModelView.setRepayDateStart(DateTimeUtil.convertStringToDate(DateTimeUtil.getAddMonth(loanTime, 1)));
+		contractModelView.setRepayDateEnd(DateTimeUtil.convertStringToDate(DateTimeUtil.getAddMonth(loanTime, periods)));
 		return contractModelView;
 	}
 
@@ -843,7 +947,7 @@ public class SignController extends BaseController {
 				repay = new JkRepaymentPlanDto();
 				repay.setApplyLoanNo(applyLoanNo);
 				repay.setContractNo(contractNo);
-				repay.setRepayState(Constants.NO_INT); // 还款状态
+				repay.setRepayState(RepayStateEnum.NO_REPAY.getCode()); // 还款状态
 				repay.setCreateTime(DateUtils.getCurrentDateTime());
 				repay.setUpdateTime(DateUtils.getCurrentDateTime());
 				repay.setCreateUser(ShiroUtils.getCurrentUserName());
@@ -926,6 +1030,9 @@ public class SignController extends BaseController {
 					}
 				}
 				repay.setAheadAmount(aheadAmount);
+				repay.setIsEffective(IsAdvanceSettleEnum.NO.getCode());
+				String str = String.format("%02d", accumulation);
+				repay.setBillNo(contractNo+str);
 				repayPlans.add(repay);
 			}
 			List<JkRepaymentPlanDto> jkRepayments = repaymentPlanService.selectByApplyLoanNo(applyLoanNo).getData();

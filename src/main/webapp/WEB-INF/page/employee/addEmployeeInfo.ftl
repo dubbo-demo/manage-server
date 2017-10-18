@@ -1,6 +1,5 @@
 <#include "/sys/top.ftl">
 <#include "/sys/left.ftl">
-<script src="${cdnPath}/js/employee/addEmployeeInfo.js?v=${VERSION_NO}"></script>
 <script type="text/javascript">
     var serverPath = "${serverPath}";
     var queryDto = {orgId:"${(orgId)!''}"};
@@ -30,7 +29,10 @@ $(function() {
 			},
 			entryTime : {
 				required : true
-			}
+			},
+            mobile : {
+                phone : true
+            }
 		},
 		submitHandler : function(form) { // 表单提交句柄,为一回调函数，带一个参数form
 			form.submit(); // 提交表单
@@ -68,13 +70,13 @@ $(function() {
 			<div class="control-group span4 ">
 				<label class="control-label">员工姓名<span class="required">*</span></label>
 				<div class="controls">
-				<input type="text" class="m-wrap span12" id="employeeName" name="employeeName">
+				<input type="text" class="m-wrap span12" maxlength="10" id="employeeName" name="employeeName">
 				</div>
 			</div>
 			<div class="control-group span4 ">
 				<label class="control-label">身份证号<span class="required">*</span></label>
 				<div class="controls">
-				<input type="text" class="m-wrap span12" id="identityNumber" name="identityNumber">
+				<input type="text" class="m-wrap span12" maxlength="18" id="identityNumber" name="identityNumber">
 				</div>
 			</div>
 		</div>
@@ -82,7 +84,7 @@ $(function() {
 			<div class="control-group span4 ">
 				<label class="control-label">手机号码<span class="required">*</span></label>
 				<div class="controls">
-				<input type="text" class="m-wrap span12" id="mobilePhone" name="mobilePhone">
+				<input type="text" class="m-wrap span12" maxlength="11" id="mobilePhone" name="mobilePhone">
 				</div>
 			</div>
 			<div class="control-group span4 ">
@@ -95,6 +97,64 @@ $(function() {
 				</div>
 			</div>
 		</div>
+        <div class="row-fluid">
+            <div class="control-group span4 ">
+                <label class="control-label">银行类别</label>
+                <div class="controls">
+                <select class="m-wrap span12" name="bankNo" id="bankNo">
+                </select>
+                </div>
+            </div>
+            <div class="control-group span4 ">
+                <label class="control-label">卡号</label>
+                <div class="controls">
+                <input type="text" class="m-wrap span12" maxlength="50" id="bankCardNo" name="bankCardNo">
+                </div>
+            </div>
+        </div>		
+        <div class="row-fluid">
+            <div class="control-group span4 ">
+                <label class="control-label">开户行</label>
+                <div class="controls">
+                <input type="text" class="m-wrap span12" id="accountBankName" name="accountBankName">
+                </div>
+            </div>
+            <div class="control-group span4 ">
+                <label class="control-label">银行预留手机号</label>
+                <div class="controls">
+                <input type="text" class="m-wrap span12" maxlength="11" id="mobile" name="mobile">
+                </div>
+            </div>
+         </div>  
+        <div class="row-fluid">
+            <div class="control-group span4 ">
+                <label class="control-label">开户行省份</label>
+                <div class="controls">
+                    <select onchange="getCity()" class="m-wrap span12" id="province">
+                        <option value="0">请选择省份</option>
+                    </select>
+                </div>
+            </div>
+            <div class="control-group span4 ">
+                <label class="control-label">开户行城市</label>
+                <div class="controls">
+                    <select class="m-wrap span12" id="city">
+                        <option value="0">请选择市</option>
+                    </select>
+                </div>
+            </div>
+         </div>                         
+         <div class="row-fluid">
+            <div class="control-group span8 ">
+                <label class="control-label">认证状态</label>
+                <div class="controls">
+                <input type="text" class="m-wrap span3" id="authStatus" value = "未认证" name="authStatus" readOnly></input>
+                <button class="btn blue bindCard" onclick="bindCard(event);return false;">绑卡</button>
+                <button class="btn blue authentication" onclick="authentication(event);return false;">鉴权</button>
+                <button class="btn blue removeBindCard" onclick="removeBindCard(event);return false;">解绑</button>
+                </div>
+            </div>
+        </div>          
 		<div class="row-fluid">
 			<div class="control-group span4 ">
 				<label class="control-label">组织架构<span class="required">*</span></label>
@@ -164,5 +224,6 @@ $(function() {
 </div>
 </div>
 <#include "/sys/bottom.ftl">
+<script src="${cdnPath}/js/employee/addEmployeeInfo.js?v=${VERSION_NO}"></script>
 </body>
 </html>

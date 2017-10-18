@@ -7,7 +7,7 @@
         http://code.alibabatech.com/schema/dubbo http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
 
      <!--定义dubbo consumer 的基本配置信息-->
-    <dubbo:application name="dubbo_manage_server" />
+    <dubbo:application name="dubbo_manage_client" />
 
     <!-- 注册位置 -->
     <dubbo:registry address="${dubbo_registry_address}"/>
