@@ -500,10 +500,12 @@ public class SignController extends BaseController {
 							flag = false;
 						}
 					}
-					if(!flag) {
-						return AjaxResult.failed("绑定的银行卡已更新，请刷新页面，并重新打印合同！");
-					}
 				}
+				if(!flag) {
+					return AjaxResult.failed("绑定的银行卡已更新，请刷新页面，并重新打印合同！");
+				}
+			}else {
+				return AjaxResult.failed("银行卡已更新,请重新绑定银行卡！");
 			}
 		}
 		//新加检验++++罗荣+++++2017-09-08   通过合同号查询放款计划表中，首期 期初本金 与放款时间
