@@ -125,11 +125,11 @@
 									</div>
 								</div>
 							</div>
-							<div class="row-fluid">
+							<div class="row-f luid">
 								<div class="control-group span4 ">
 									<label class="control-label">银行类别</label>
 									<div class="controls">
-										<span class="text" id="bankType"  data-value="${(jkContractDto.bankType)!}">${(jkContractDto.bankType)!}</span>
+										<span class="text" id="bankType"  data-value="${(jkContractDto.bankType)!}">${(jkContractDto.bankTypeName)!}</span>
 									</div>
 								</div>
 								<div class="control-group span4 ">
