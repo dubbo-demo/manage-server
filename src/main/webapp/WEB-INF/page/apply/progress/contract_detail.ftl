@@ -125,7 +125,7 @@
 									</div>
 								</div>
 							</div>
-							<div class="row-f luid">
+							<div class="row-fluid">
 								<div class="control-group span4 ">
 									<label class="control-label">银行类别</label>
 									<div class="controls">
@@ -248,7 +248,6 @@
 		});
 	}	
 	getNode("#loanPurpose","loanUse");
-	getNode("#bankType","bankType");
 	function exportMain(event){
 		//阻止冒泡
 		//ChkUtil.stopBubbleEvent(event);
