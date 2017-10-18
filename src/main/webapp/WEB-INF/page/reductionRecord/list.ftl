@@ -136,7 +136,7 @@
                         <td>${(record.createUser)!}</td>
                         <td>${record.createTime?string('yyyy-MM-dd HH:mm:ss')}</td>
                         <td>
-                            <a href="${ctx}/productFile/fileUploadForRepay.htm?billNo=${record.billNo}">查看</a>
+                            <a href="${ctx}/productFile/fileUploadForRepay.htm?billNo=${record.billNo}" target="_blank">查看</a>
                         </td>
                     <tr>
                     </#list>
