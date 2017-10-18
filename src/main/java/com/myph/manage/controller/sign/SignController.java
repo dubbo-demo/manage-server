@@ -489,17 +489,23 @@ public class SignController extends BaseController {
 		//验证银行卡信息
 		// 查询银行卡信息
 		ServiceResult<List<UserCardInfoDto>> userCardResult = cardService.queryUserCardInfo(jkContractDto.getReservedPhone());
-		SysPayBankDto bankDto = null;
-		UserCardInfoDto userCardInfoDto = null;
+		MyphLogger.debug("提交签约时 银行卡 卡号信息为：【{}】", jkContractDto.getBankCardNo());
+		MyphLogger.debug("查询用户[{}]银行卡 卡号信息为：【{}】",jkContractDto.getReservedPhone(), userCardResult.getData());
 		if(userCardResult.success()){
 			if(null!=userCardResult.getData()&&userCardResult.getData().size() > 0){
+				boolean flag = true;
 				for(UserCardInfoDto dto:userCardResult.getData()){
 					if(dto.getIDKFlag().equals(Constants.YES_INT)){
-						if(!dto.getBankCardNo().equals(jkContractDto.getBankCardNo())){
-							return AjaxResult.failed("绑定的银行卡已更新，请刷新页面，并重新打印合同！");
+						if(dto.getBankCardNo().equals(jkContractDto.getBankCardNo())){
+							flag = false;
 						}
 					}
 				}
+				if(!flag) {
+					return AjaxResult.failed("绑定的银行卡已更新，请刷新页面，并重新打印合同！");
+				}
+			}else {
+				return AjaxResult.failed("银行卡已更新,请重新绑定银行卡！");
 			}
 		}
 		//新加检验++++罗荣+++++2017-09-08   通过合同号查询放款计划表中，首期 期初本金 与放款时间
