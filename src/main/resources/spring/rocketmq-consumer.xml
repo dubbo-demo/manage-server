@@ -19,8 +19,8 @@
           destroy-method="destroy">
         <property name="namesrvAddr" value="${mq.namesrvAddr}"/>
         <property name="consumerGroup" value="${mq.RepaymentNotifyConsumerGroup}"/>
-        <property name="topic" value="TEST"/>
-        <property name="subExpression" value="TEST"/>
+        <property name="topic" value="PAYRESULT_DK"/>
+        <property name="subExpression" value="MYPH"/>
         <property name="messageListener">
             <bean class="com.myph.manage.rocketmq.listener.RepaymentResultNotifyTpicMsgListener"/>
         </property>
