@@ -173,7 +173,7 @@
 								<div class="control-group span4 ">
 									<label class="control-label">开户行</label>
 									<div class="controls">
-										<input readonly="readonly" type="text" class="span9 m-wrap" value="${(bankInfo.sname)!}" name="bankName" />
+										<input readonly="readonly" type="text" class="span9 m-wrap" value="${(jkContractDto.bankName)!}" name="bankName" />
 									</div>
 								</div>
 								<div class="control-group span4 ">
