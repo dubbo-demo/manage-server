@@ -501,7 +501,7 @@ public class SignController extends BaseController {
 						}
 					}
 				}
-				if(!flag) {
+				if(flag) {
 					return AjaxResult.failed("绑定的银行卡已更新，请刷新页面，并重新打印合同！");
 				}
 			}else {
