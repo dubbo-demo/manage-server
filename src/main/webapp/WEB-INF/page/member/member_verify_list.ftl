@@ -98,6 +98,8 @@
 							<th>系统准入未通过原因</th>
 							<th>现居城市是否有门店</th>
 							<th>创建日期</th>
+							<th>推荐人</th>
+							<th>推荐人编号</th>
 							<th>操作</th>
 						</tr>
 					</thead>
@@ -131,6 +133,8 @@
 								</#switch>
 							</#if></td>
 							<td><#if item.createTime??>${item.createTime?date}</#if></td>
+							<td>${item.employeeName!}</td>
+							<td>${item.employeeNo!}</td>
 							<td><a href="${ctx}/member/detailUI.htm?id=${item.memberId}"  target='_blank'>查看详情</a></td>
 						</tr>
 						</#list>
