@@ -29,7 +29,7 @@
             </timeBasedFileNamingAndTriggeringPolicy>
         </rollingPolicy>
         <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss} > %msg%n</pattern>
+            <pattern>[%d PLATFORM] > %msg%n</pattern>
             <charset>utf-8</charset>
         </encoder>
     </appender>
@@ -53,7 +53,7 @@
             </timeBasedFileNamingAndTriggeringPolicy>
         </rollingPolicy>
         <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss} > %msg%n</pattern>
+            <pattern>[%d ACCESS] > %msg%n</pattern>
             <charset>utf-8</charset>
         </encoder>
     </appender>
@@ -77,7 +77,7 @@
             </timeBasedFileNamingAndTriggeringPolicy>
         </rollingPolicy>
         <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss} > %msg%n</pattern>
+            <pattern>[%d DEBUG] > %msg%n</pattern>
             <charset>utf-8</charset>
         </encoder>
     </appender>
@@ -100,7 +100,7 @@
             </timeBasedFileNamingAndTriggeringPolicy>
         </rollingPolicy>
         <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss} > %msg%n</pattern>
+            <pattern>[%d INFO] > %msg%n</pattern>
             <charset>utf-8</charset>
         </encoder>
     </appender>
@@ -124,7 +124,7 @@
             </timeBasedFileNamingAndTriggeringPolicy>
         </rollingPolicy>
         <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss} > %msg%n</pattern>
+            <pattern>[%d ERROR] > %msg%n</pattern>
             <charset>utf-8</charset>
         </encoder>
     </appender>

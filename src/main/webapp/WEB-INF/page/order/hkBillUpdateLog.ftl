@@ -1,5 +1,4 @@
  <#include "/sys/top.ftl"> <#include "/sys/left.ftl">
-<script src="${cdnPath}/js/loan/frb/frbTarget.js?v=${VERSION_NO}"></script>
 <div class="page-content">
 	<div class="container-fluid">
 		<div class="row-fluid">
@@ -64,7 +63,7 @@
 <#include "/sys/bottom.ftl">
 <script>
     function back() {
-        $("#searchForm").attr("action", "${ctx}/order/list.htm");
+        $("#searchForm").attr("action", "${ctx}/order/list.htm"+"?"+ChkUtil.getCookie("orderManage"));
         $("#searchForm").submit();
     }
 

@@ -93,7 +93,7 @@
             <div class="control-group span4 ">
                 <label class="control-label">银行预留手机号</label>
                 <div class="controls">
-                <input type="text" class="m-wrap span12" maxlength="18" id="mobile" name="mobile">
+                <input type="text" class="m-wrap span12" maxlength="11" id="mobile" name="mobile">
                 </div>
             </div>
          </div>     

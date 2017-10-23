@@ -326,6 +326,18 @@ public class SignController extends BaseController {
 								if (contractResult.success() && contractResult.getData() != null) {
 									JkContractDto contractDto = contractResult.getData();
 									model.addAttribute("contractNo", contractDto.getContractNo());
+									contractDto.setBankCardNo(userCardInfoDto.getBankCardNo());
+									contractDto.setBankCity(userCardInfoDto.getBankAccountCity());
+									contractDto.setBankName(bankDto.getSname());
+									contractDto.setBankType(bankDto.getSbankno());
+									contractDto.setBankTypeName(bankDto.getSname());
+									contractDto.setMemberName(userCardInfoDto.getAccountName());
+									contractDto.setIdCard(userCardInfoDto.getIdCardNo());
+									contractDto.setReservedPhone(userCardInfoDto.getMobile());
+									contractDto.setOverdueScale(productDto.getOverdueScale());
+									contractDto.setRepayRate(productDto.getPreRepayRate());
+									contractDto.setOrgId(applyInfo.getStoreId());
+									contractService.updateSelective(contractDto);
 								} else {
 									EmpDetailDto empDetail = ShiroUtils.getEmpDetail();
 									Long cityId = empDetail.getCityId();
@@ -473,6 +485,28 @@ public class SignController extends BaseController {
 		MyphLogger.debug("提交签约时 合同信息为：【{}】", jkContractDto.getContractNo());
 		if (null == jkContractDto) {
 			return AjaxResult.failed("请求参数不能为空");
+		}
+		//验证银行卡信息
+		// 查询银行卡信息
+		ServiceResult<List<UserCardInfoDto>> userCardResult = cardService.queryUserCardInfo(jkContractDto.getReservedPhone());
+		MyphLogger.debug("提交签约时 银行卡 卡号信息为：【{}】", jkContractDto.getBankCardNo());
+		MyphLogger.debug("查询用户[{}]银行卡 卡号信息为：【{}】",jkContractDto.getReservedPhone(), userCardResult.getData());
+		if(userCardResult.success()){
+			if(null!=userCardResult.getData()&&userCardResult.getData().size() > 0){
+				boolean flag = true;
+				for(UserCardInfoDto dto:userCardResult.getData()){
+					if(dto.getIDKFlag().equals(Constants.YES_INT)){
+						if(dto.getBankCardNo().equals(jkContractDto.getBankCardNo())){
+							flag = false;
+						}
+					}
+				}
+				if(flag) {
+					return AjaxResult.failed("绑定的银行卡已更新，请刷新页面，并重新打印合同！");
+				}
+			}else {
+				return AjaxResult.failed("银行卡已更新,请重新绑定银行卡！");
+			}
 		}
 		//新加检验++++罗荣+++++2017-09-08   通过合同号查询放款计划表中，首期 期初本金 与放款时间
 		ServiceResult<JkRepaymentPlanDto> repaymentResult = repaymentPlanService.queryFirstBillByContractNo(jkContractDto.getContractNo());

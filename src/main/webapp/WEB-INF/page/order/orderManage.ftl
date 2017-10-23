@@ -166,6 +166,7 @@
     function search() {
         ChkUtil.form_trim($("#searchForm"));
         $("#searchForm").attr("action", "${ctx}/order/list.htm");
+        ChkUtil.saveCookie("orderManage", $("#searchForm").serialize(),"","/");
         $("#searchForm").submit();
     }
 

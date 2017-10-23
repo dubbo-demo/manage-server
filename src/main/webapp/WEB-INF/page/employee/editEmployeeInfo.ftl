@@ -50,7 +50,7 @@
 			<div class="control-group span4 ">
 				<label class="control-label">手机号码<span class="required">*</span></label>
 				<div class="controls">
-				<input type="text" class="m-wrap span12" id="mobilePhone" maxlength="18" name="mobilePhone" value="${item.mobilePhone}">
+				<input type="text" class="m-wrap span12" id="mobilePhone" maxlength="11" name="mobilePhone" value="${item.mobilePhone}">
 				</div>
 			</div>
 			<div class="control-group span4 ">
@@ -120,7 +120,7 @@
             <div class="control-group span4 ">
                 <label class="control-label">银行预留手机号</label>
                 <div class="controls">
-                <input type="text" class="m-wrap span12" id="mobile" name="mobile">
+                <input type="text" class="m-wrap span12" maxlength="11" id="mobile" name="mobile">
                 </div>
             </div>
          </div>   
