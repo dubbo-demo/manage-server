@@ -124,7 +124,7 @@
             <input type="hidden" name="billNo" id="billNo" class="form-control span6" value=""/>
         </div>
         <div class="row-fluid">
-            <span class="control-label span3">还款金额</span>
+            <span class="control-label span3">减免金额</span>
             <input type="text" name="payAmount" id="payAmount" maxlength="10" class="form-control span6" value=""/>
         </div>
         <div class="row-fluid">
