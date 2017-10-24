@@ -328,7 +328,7 @@ public class SignController extends BaseController {
 									model.addAttribute("contractNo", contractDto.getContractNo());
 									contractDto.setBankCardNo(userCardInfoDto.getBankCardNo());
 									contractDto.setBankCity(userCardInfoDto.getBankAccountCity());
-									contractDto.setBankName(bankDto.getSname());
+									contractDto.setBankName(userCardInfoDto.getAccountBankName());
 									contractDto.setBankType(bankDto.getSbankno());
 									contractDto.setBankTypeName(bankDto.getSname());
 									contractDto.setMemberName(userCardInfoDto.getAccountName());
@@ -359,7 +359,7 @@ public class SignController extends BaseController {
 										record.setContractNo(myphContractNo.toString());
 										record.setBankCardNo(userCardInfoDto.getBankCardNo());
 										record.setBankCity(userCardInfoDto.getBankAccountCity());
-										record.setBankName(bankDto.getSname());
+										record.setBankName(userCardInfoDto.getAccountBankName());
 										record.setBankType(bankDto.getSbankno());
 										record.setBankTypeName(bankDto.getSname());
 										record.setMemberName(userCardInfoDto.getAccountName());
