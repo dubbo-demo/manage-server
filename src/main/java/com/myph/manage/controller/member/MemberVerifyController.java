@@ -1,19 +1,5 @@
 package com.myph.manage.controller.member;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
-
 import com.myph.common.constant.Constants;
 import com.myph.common.log.MyphLogger;
 import com.myph.common.result.ServiceResult;
@@ -21,13 +7,29 @@ import com.myph.common.rom.annotation.BasePage;
 import com.myph.common.rom.annotation.Pagination;
 import com.myph.common.util.DateUtils;
 import com.myph.common.util.SensitiveInfoUtils;
+import com.myph.employee.dto.EmployeeInfoDto;
+import com.myph.employee.service.EmployeeInfoService;
 import com.myph.manage.common.constant.ClientType;
 import com.myph.manage.common.util.BeanUtils;
 import com.myph.manage.common.util.CommonUtil;
 import com.myph.manage.controller.BaseController;
+import com.myph.member.base.dto.MemberInfoDto;
 import com.myph.member.base.dto.MemberVerifyDto;
 import com.myph.member.base.dto.MemberVerifyQueryDto;
+import com.myph.member.base.service.MemberInfoService;
 import com.myph.member.base.service.MemberVerifyService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/member/verify")
@@ -35,6 +37,12 @@ public class MemberVerifyController extends BaseController {
 
     @Autowired
     private MemberVerifyService memberVerifyService;
+
+    @Autowired
+    private MemberInfoService memberInfoService;
+
+    @Autowired
+    private EmployeeInfoService employeeInfoService;
 
     @RequestMapping("/list")
     public String verifylist(Model model, MemberVerifyQueryDto queryDto, BasePage basePage) {
@@ -44,6 +52,16 @@ public class MemberVerifyController extends BaseController {
         List<MemberVerifyDto> lists = pageResult.getData().getResult();
         for (MemberVerifyDto member : lists) {
             member.setBirthday(CommonUtil.getBirthdayByIdCard(member.getIdCarNo()));
+            // 查出用户信息
+            ServiceResult<MemberInfoDto> memberInfoDto = memberInfoService.getMemberInfoById(member.getMemberId());
+            // 查询推荐人信息
+            if (null != memberInfoDto.getData() && null != memberInfoDto.getData().getEmployeeId()) {
+                EmployeeInfoDto employee = employeeInfoService.getEntityById(memberInfoDto.getData().getEmployeeId()).getData();
+                if (null != employee) {
+                    member.setEmployeeNo(employee.getEmployeeNo());
+                    member.setEmployeeName(employee.getEmployeeName());
+                }
+            }
           //  member.setPhone(SensitiveInfoUtils.maskMobilePhone(member.getPhone()));// 隐藏手机号
           //  member.setMemberName(SensitiveInfoUtils.maskUserName(member.getMemberName()));// 隐藏姓名
             member.setIdCarNo(SensitiveInfoUtils.maskIdCard(member.getIdCarNo()));// 隐藏身份证
