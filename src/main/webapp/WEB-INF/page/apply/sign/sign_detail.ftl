@@ -185,6 +185,20 @@
 									</div>
 								</div>
 							</div>
+                            <div class="row-fluid">
+                                <div class="control-group span4 ">
+                                    <label class="control-label">银行类别</label>
+                                    <div class="controls">
+                                        <span class="text">${(jkContractDto.bankTypeName)!}</span>
+                                    </div>
+                                </div>
+                                <div class="control-group span4 ">
+                                    <label class="control-label">预留手机号</label>
+                                    <div class="controls">
+                                        <span class="text">${(jkContractDto.reservedPhone)!}</span>
+                                    </div>
+                                </div>
+                            </div>
 							<div class="row-fluid">
 								<div class="control-group span4 ">
 									<label class="control-label">银行卡号</label>

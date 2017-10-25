@@ -126,12 +126,12 @@
 								</div>
 							</div>
 							<div class="row-fluid">
-								<div class="control-group span4 ">
-									<label class="control-label">银行类别</label>
-									<div class="controls">
-										<span class="text" id="bankType"  data-value="${(jkContractDto.bankType)!}">${(jkContractDto.bankTypeName)!}</span>
-									</div>
-								</div>
+                                <div class="control-group span4 ">
+                                    <label class="control-label">开户行</label>
+                                    <div class="controls">
+                                        <span class="text">${(jkContractDto.bankName)!}</span>
+                                    </div>
+                                </div>
 								<div class="control-group span4 ">
 									<label class="control-label">放款日期</label>
 									<div class="controls">
@@ -139,6 +139,20 @@
 									</div>
 								</div>
 							</div>
+                            <div class="row-fluid">
+                                <div class="control-group span4 ">
+                                    <label class="control-label">银行类别</label>
+                                    <div class="controls">
+                                        <span class="text" id="bankType"  data-value="${(jkContractDto.bankType)!}">${(jkContractDto.bankTypeName)!}</span>
+                                    </div>
+                                </div>
+                                <div class="control-group span4 ">
+                                    <label class="control-label">预留手机号</label>
+                                    <div class="controls">
+                                        <span class="text" id="bankType">${(jkContractDto.reservedPhone)!}</span>
+                                    </div>
+                                </div>
+                            </div>
 							<div class="row-fluid">
 								<div class="control-group span4 ">
 									<label class="control-label">银行卡号</label>
@@ -150,14 +164,6 @@
 									<label class="control-label">开户城市</label>
 									<div class="controls">
 										<span class="text">${(jkContractDto.bankCity)!}</span>
-									</div>
-								</div>
-							</div>
-							<div class="row-fluid">
-								<div class="control-group span6 ">
-									<label class="control-label">开户行</label>
-									<div class="controls">
-										<span class="text">${(jkContractDto.bankName)!}</span>
 									</div>
 								</div>
 							</div>
