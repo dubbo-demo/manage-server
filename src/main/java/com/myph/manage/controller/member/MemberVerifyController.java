@@ -18,6 +18,7 @@ import com.myph.member.base.dto.MemberVerifyDto;
 import com.myph.member.base.dto.MemberVerifyQueryDto;
 import com.myph.member.base.service.MemberInfoService;
 import com.myph.member.base.service.MemberVerifyService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -48,6 +49,25 @@ public class MemberVerifyController extends BaseController {
     public String verifylist(Model model, MemberVerifyQueryDto queryDto, BasePage basePage) {
         MyphLogger.debug("开始客户准入信息查询：/member/verify/list.htm|querDto=" + queryDto.toString() + "|basePage="
                 + basePage.toString());
+        String employeeNo = null;
+        // 如果传入了推荐人编号或者推荐人姓名
+        if(StringUtils.isNotBlank(queryDto.getEmployeeName())){
+            // 根据员工姓名查出员工编号
+            List<String> employeeNos = employeeInfoService.getEmployeeNoByEmployeeName(queryDto.getEmployeeName()).getData();
+            if(null != employeeNos){
+                // 根据员工编号查出员工推荐用户id
+                List<Integer> memberIds = memberInfoService.getRecommendedMemberIds(employeeNos).getData();
+                queryDto.setEmployeeNameIds(memberIds);
+            }
+        }
+        if(StringUtils.isNotBlank(queryDto.getEmployeeNo())){
+            // 根据员工编号查出员工推荐用户信息
+            List<String> employeeNos = new ArrayList<String>();
+            employeeNos.add(queryDto.getEmployeeNo());
+            List<Integer> memberIds = memberInfoService.getRecommendedMemberIds(employeeNos).getData();
+            queryDto.setEmployeeNoIds(memberIds);
+        }
+
         ServiceResult<Pagination<MemberVerifyDto>> pageResult = memberVerifyService.listPageInfos(queryDto, basePage);
         List<MemberVerifyDto> lists = pageResult.getData().getResult();
         for (MemberVerifyDto member : lists) {
@@ -56,7 +76,8 @@ public class MemberVerifyController extends BaseController {
             ServiceResult<MemberInfoDto> memberInfoDto = memberInfoService.getMemberInfoById(member.getMemberId());
             // 查询推荐人信息
             if (null != memberInfoDto.getData() && null != memberInfoDto.getData().getEmployeeId()) {
-                EmployeeInfoDto employee = employeeInfoService.getEntityById(memberInfoDto.getData().getEmployeeId()).getData();
+                // 根据员工编号查出员工信息
+                EmployeeInfoDto employee = employeeInfoService.getEntityByEmployeeNo(String.valueOf(memberInfoDto.getData().getEmployeeId())).getData();
                 if (null != employee) {
                     member.setEmployeeNo(employee.getEmployeeNo());
                     member.setEmployeeName(employee.getEmployeeName());
