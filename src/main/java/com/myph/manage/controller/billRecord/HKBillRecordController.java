@@ -1,5 +1,6 @@
 package com.myph.manage.controller.billRecord;
 
+import com.myph.common.constant.ChannelEnum;
 import com.myph.common.log.MyphLogger;
 import com.myph.common.result.AjaxResult;
 import com.myph.common.result.ServiceResult;
@@ -15,6 +16,8 @@ import com.myph.organization.dto.OrganizationDto;
 import com.myph.performance.dto.billRecord.RepayRecordDto;
 import com.myph.performance.dto.billRecord.RepayRecordQueryDto;
 import com.myph.performance.service.RepayRecordService;
+import com.repayment.collectionTask.service.CollectionRecordForeignService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -40,6 +43,9 @@ public class HKBillRecordController extends BaseController{
     @Autowired
     HkBillRepayRecordService hkBillRepayRecordService;
 
+    @Autowired
+    CollectionRecordForeignService collectionRecordForeignService;
+    
     @Autowired
     RepayRecordService repayRecordService;
 
@@ -172,7 +178,11 @@ public class HKBillRecordController extends BaseController{
     @RequestMapping("/queryCountByIdCardNo")
     @ResponseBody
     public AjaxResult queryCountByIdCardNo(String idCardNo) {
-        ServiceResult<Integer> count = hkBillRepayRecordService.selectCountByIdCardNo(idCardNo);
-        return AjaxResult.success(count.getData());
+        Integer result = 0;
+        ServiceResult<List<String>> billNosResult = hkBillRepayRecordService.selectBillNosByIdCardNo(idCardNo);
+        if(billNosResult.success() && !billNosResult.getData().isEmpty()){
+            result = collectionRecordForeignService.queryCountByBillNos(billNosResult.getData(), ChannelEnum.MYPH.getCode());
+        }
+        return AjaxResult.success(result);
     }
 }
