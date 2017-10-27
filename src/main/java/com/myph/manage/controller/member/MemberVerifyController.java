@@ -49,25 +49,25 @@ public class MemberVerifyController extends BaseController {
     public String verifylist(Model model, MemberVerifyQueryDto queryDto, BasePage basePage) {
         MyphLogger.debug("开始客户准入信息查询：/member/verify/list.htm|querDto=" + queryDto.toString() + "|basePage="
                 + basePage.toString());
-        String employeeNo = null;
+        List<String> employeeNos = null;
         // 如果传入了推荐人编号或者推荐人姓名
         if(StringUtils.isNotBlank(queryDto.getEmployeeName())){
             // 根据员工姓名查出员工编号
-            List<String> employeeNos = employeeInfoService.getEmployeeNoByEmployeeName(queryDto.getEmployeeName()).getData();
-            if(null != employeeNos){
-                // 根据员工编号查出员工推荐用户id
-                List<Integer> memberIds = memberInfoService.getRecommendedMemberIds(employeeNos).getData();
-                queryDto.setEmployeeNameIds(memberIds);
-            }
+            employeeNos = employeeInfoService.getEmployeeNoByEmployeeName(queryDto.getEmployeeName()).getData();
         }
         if(StringUtils.isNotBlank(queryDto.getEmployeeNo())){
-            // 根据员工编号查出员工推荐用户信息
-            List<String> employeeNos = new ArrayList<String>();
-            employeeNos.add(queryDto.getEmployeeNo());
-            List<Integer> memberIds = memberInfoService.getRecommendedMemberIds(employeeNos).getData();
-            queryDto.setEmployeeNoIds(memberIds);
+            if(null == employeeNos){
+                employeeNos = new ArrayList<String>();
+                employeeNos.add(queryDto.getEmployeeNo());
+            }else if(null != employeeNos){
+                if(!employeeNos.contains(queryDto.getEmployeeNo())){
+                    employeeNos = new ArrayList<String>();
+                }
+            }
         }
-
+        if(null!= employeeNos){
+            queryDto.setEmployeeNos(employeeNos);
+        }
         ServiceResult<Pagination<MemberVerifyDto>> pageResult = memberVerifyService.listPageInfos(queryDto, basePage);
         List<MemberVerifyDto> lists = pageResult.getData().getResult();
         for (MemberVerifyDto member : lists) {
@@ -97,12 +97,47 @@ public class MemberVerifyController extends BaseController {
     public void export(HttpServletRequest request, HttpServletResponse response, MemberVerifyQueryDto queryDto) {
         MyphLogger.debug("开始客户准入信息导出：/member/verify/export.htm|queryDto=" + queryDto);
         try {
+            List<String> employeeNos = null;
+            // 如果传入了推荐人编号或者推荐人姓名
+            if(StringUtils.isNotBlank(queryDto.getEmployeeName())){
+                // 根据员工姓名查出员工编号
+                employeeNos = employeeInfoService.getEmployeeNoByEmployeeName(queryDto.getEmployeeName()).getData();
+            }
+            if(StringUtils.isNotBlank(queryDto.getEmployeeNo())){
+                if(null == employeeNos){
+                    employeeNos = new ArrayList<String>();
+                    employeeNos.add(queryDto.getEmployeeNo());
+                }else if(null != employeeNos){
+                    if(!employeeNos.contains(queryDto.getEmployeeNo())){
+                        employeeNos = new ArrayList<String>();
+                    }
+                }
+            }
+            if(null!= employeeNos){
+                queryDto.setEmployeeNos(employeeNos);
+            }
             // 设置参数查询满足条件的所有数据不分页
             List<MemberVerifyDto> list = memberVerifyService.listInfos(queryDto).getData();
+            for(MemberVerifyDto memberVerifyDto : list){
+                // 查出用户信息
+                ServiceResult<MemberInfoDto> memberInfoDto = memberInfoService.getMemberInfoById(memberVerifyDto.getMemberId());
+                // 查询推荐人信息
+                if (null != memberInfoDto.getData() && null != memberInfoDto.getData().getEmployeeId()) {
+                    // 根据员工编号查出员工信息
+                    EmployeeInfoDto employee = employeeInfoService.getEntityByEmployeeNo(String.valueOf(memberInfoDto.getData().getEmployeeId())).getData();
+                    if (null != employee) {
+                        memberVerifyDto.setEmployeeNo(employee.getEmployeeNo());
+                        memberVerifyDto.setEmployeeName(employee.getEmployeeName());
+                    }else{
+                        memberVerifyDto.setEmployeeNo("");
+                        memberVerifyDto.setEmployeeName("");
+                    }
+                }
+            }
             String columnNames[] = { "序号", "渠道来源", "姓名", "身份证号", "出生日期", "手机号码", "门店城市", "现居城市(个人资料)", "申请金额",
-                    "系统准入是否通过", "系统准入未通过原因", "现居城市是否有门店", "创建日期" };// 列名
+                    "系统准入是否通过", "系统准入未通过原因", "现居城市是否有门店", "创建日期", "推荐人", "推荐人编号" };// 列名
             String keys[] = { "index", "memberSource", "memberName", "idCarNo", "birthday", "phone", "liveCityOnApply",
-                    "liveCity", "applyMoney", "creditResult", "creditResultMsg", "hasStore", "createTime" };
+                    "liveCity", "applyMoney", "creditResult", "creditResultMsg", "hasStore", "createTime", "employeeName", "employeeNo" };
             String fileName = "APP客户信息" + new SimpleDateFormat("yyyyMMddhhmmss").format(new Date()).toString();
             // 获取Excel数据
             List<Map<String, Object>> excelList = getExcelMapList(list);
@@ -140,20 +175,23 @@ public class MemberVerifyController extends BaseController {
                 SimpleDateFormat sdf = new SimpleDateFormat(DateUtils.DATE_FORMAT_PATTERN);
                 destMap.put("birthday", sdf.format(birthday));
             }
-            int creditResult = dto.getCreditResult();
-            if (creditResult == Constants.YES_INT) {
+            Integer creditResult = dto.getCreditResult();
+            if(null == creditResult){
+                destMap.put("creditResult", "未知");
+            }else if (creditResult == Constants.YES_INT) {
                 destMap.put("creditResult", "通过");
             } else if (creditResult == Constants.NO_INT) {
                 destMap.put("creditResult", "不通过");
-            } else {
-                destMap.put("creditResult", "未知");
             }
-            if (Constants.YES_INT == dto.getHasStore()) {
+
+            if(null == dto.getHasStore()){
+                destMap.put("hasStore", "未知");
+            }else if (dto.getHasStore() == Constants.YES_INT) {
                 destMap.put("hasStore", "有");
-            } else {
+            } else if (dto.getHasStore() == Constants.NO_INT) {
                 destMap.put("hasStore", "没有");
             }
-            
+
             destMap.put("idCarNo", SensitiveInfoUtils.maskIdCard(dto.getIdCarNo()));
             destList.add(destMap);
         }
