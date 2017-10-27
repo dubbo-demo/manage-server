@@ -38,7 +38,7 @@
 								value="${(queryDto.memberName)!}">
 						</div>
 						<div class="control-group span4 ">
-							<label class="help-inline text-right span4">身份证：</label> 
+							<label class="help-inline text-right span4">身份证：</label>
 							<input
 								type="text" class="m-wrap span8" name="idCarNo"
 								value="${(queryDto.idCarNo)!}">
@@ -51,6 +51,20 @@
 								<option value="0">否</option>
 							</select>
 						</div>
+                    </div>
+					<div class="row-fluid">
+                        <div class="control-group span4 ">
+                            <label class="help-inline text-right span4">推荐人：</label>
+                            <input
+                                    type="text" class="m-wrap span8" name="employeeName"
+                                    value="${(queryDto.employeeName)!}">
+                        </div>
+                        <div class="control-group span4 ">
+                            <label class="help-inline text-right span4">推荐人编号：</label>
+                            <input
+                                    type="text" class="m-wrap span8" name="employeeNo"
+                                    value="${(queryDto.employeeNo)!}">
+                        </div>
 					</div>
 					<div class="row-fluid">
 					
