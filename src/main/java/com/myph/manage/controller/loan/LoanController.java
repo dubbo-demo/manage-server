@@ -213,10 +213,10 @@ public class LoanController extends BaseController{
             // 设置参数查询满足条件的所有数据不分页
             List<com.myph.performance.dto.LoanedInfoDto> list = financeManageService.queryFinanceInfo(param).getData();
             String columnNames[] = {"签约日期", "大区", "门店","客服", "客户", "团队经理", "客户经理", "手机号码", "身份证号", "合同号",
-                    "申请单号", "银行卡号", "开户行", "产品名称", "借款金额","借款期限", "借款利率",
+                    "申请单号", "银行卡号","预留手机号","开户城市", "开户行类别", "开户行", "产品名称", "借款金额","借款期限", "借款利率",
                     "还款开始时间", "还款结束时间", "服务费", "实际打款金额", "总利息", "每期应收", "首期应收" };// 列名
             String keys[] = { "signTime","areaName","storeName","customerSName","memberName","leaderName","bmName","phone","idCard","contractNo",
-                    "applyLoanNo","bankCardNo","bankName","productName","contractAmount","loanPeriods","totalRate",
+                    "applyLoanNo","bankCardNo","reservedPhone","bankCity","bankTypeName","bankName","productName","contractAmount","loanPeriods","totalRate",
                     "beginTime","endTime","serviceRate","repayMoney","interestAmount","everyReapyAmount","firstReapyAmount" };
             String fileName = "放款管理" + new SimpleDateFormat("yyyyMMddhhmmss").format(new Date()).toString();
             // 获取Excel数据

@@ -1,5 +1,4 @@
  <#include "/sys/top.ftl"> <#include "/sys/left.ftl">
-<script src="${cdnPath}/js/apply/approve/approve.js?v=${VERSION_NO}"></script>
 <script>
 $(function(){
 	$.uniform.update($(".checkboxitem").prop("checked", false));
@@ -215,5 +214,5 @@ $(function(){
 		</div>
 	</div>
 </div>
-
+<script src="${cdnPath}/js/apply/approve/approve.js?v=${VERSION_NO}"></script>
 <#include "/sys/bottom.ftl">

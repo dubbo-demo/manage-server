@@ -44,7 +44,7 @@
 			<div class="control-group span4 ">
 				<label class="control-label">员工姓名</label>
 				<div class="controls">
-				<input type="text" class="m-wrap span12" value="${item.employeeName}" readonly="readonly">
+				<input type="text" class="m-wrap span12" id="employeeName" name="employeeName" value="${item.employeeName}" readonly="readonly">
 				</div>
 			</div>
 			<div class="control-group span4 ">
@@ -58,7 +58,7 @@
 			<div class="control-group span4 ">
 				<label class="control-label">姓名拼音</label>
 				<div class="controls">
-				<input type="text" class="m-wrap span12" id="employeeName" name="employeeName" value="${item.nameSpell}" readonly="readonly">
+				<input type="text" class="m-wrap span12" value="${item.nameSpell}" readonly="readonly">
 				</div>
 			</div>
 			<div class="control-group span4 ">

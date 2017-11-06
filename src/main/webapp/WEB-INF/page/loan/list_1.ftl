@@ -1,5 +1,4 @@
  <#include "/sys/top.ftl"> <#include "/sys/left.ftl">
-<script src="${cdnPath}/js/apply/approve/approve.js?v=${VERSION_NO}"></script>
 
 <div class="page-content">
 	<div class="container-fluid">
@@ -200,5 +199,5 @@
 	</div>
 </div>
 </div>
-
+<script src="${cdnPath}/js/apply/approve/approve.js?v=${VERSION_NO}"></script>
 <#include "/sys/bottom.ftl">
