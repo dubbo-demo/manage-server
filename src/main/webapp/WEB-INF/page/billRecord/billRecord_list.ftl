@@ -5,11 +5,14 @@
 	var orgType="${orgType!}"; //组织类型1:大区 2：总部 3：门店
 	var regionId="${regionId!}";//大区id
 	function page_jump(url){
-		ChkUtil.saveCookie("queryParams", $("#searchForm").serialize(),"","/");
-		window.location.href=url;
+        ChkUtil.form_trim($("#searchForm"));
+        $("#searchForm").attr("action", url);
+        $("#searchForm").submit();
+        $("#searchForm").attr("action", "${ctx}/hKBillRecord/list.htm");
 	}
     function search() {
-        form_trim();
+        ChkUtil.form_trim($("#searchForm"));
+        $("#searchForm").attr("action", "${ctx}/hKBillRecord/list.htm");
         $("#searchForm").submit();
     }
     function form_trim(){

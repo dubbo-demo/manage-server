@@ -59,20 +59,9 @@ public class HKBillRecordController extends BaseController{
      */
     @RequestMapping("/list")
     public String list(Model model, RepayRecordQueryDto queryDto, BasePage basePage) {
-        basePage.setSortField("createTime");
-        basePage.setSortOrder("desc");
-        ServiceResult<Pagination<RepayRecordDto>>  resultInfo = repayRecordService.queryPagination(queryDto,basePage);
-        List<OrganizationDto> orgs = ShiroUtils.getStoreInfo();
         initQueryDate(queryDto);
-        // 查询组织条件为空获取当前组织数据权限
-        if(null == queryDto.getStoreId()) {
-            List<Long> storeIds = new ArrayList<Long>();
-            for(OrganizationDto org : orgs){
-                storeIds.add(org.getId());
-            }
-            queryDto.setStoreIds(storeIds);
-        }
-        model.addAttribute("orgs",orgs);
+        ServiceResult<Pagination<RepayRecordDto>>  resultInfo = repayRecordService.queryPagination(queryDto,basePage);
+        model.addAttribute("orgs",ShiroUtils.getStoreInfo());
         model.addAttribute("queryDto", queryDto);
         model.addAttribute("states", HkBIllRecordStateEnum.getEnumMap());
         model.addAttribute("page", resultInfo.getData());
@@ -102,24 +91,25 @@ public class HKBillRecordController extends BaseController{
             queryDto.setEndPayTime(today);
         }
 
+        List<OrganizationDto> orgs = ShiroUtils.getStoreInfo();
+        // 查询组织条件为空获取当前组织数据权限
+        if(null == queryDto.getStoreId()) {
+            List<Long> storeIds = new ArrayList<Long>();
+            for(OrganizationDto org : orgs){
+                storeIds.add(org.getId());
+            }
+            queryDto.setStoreIds(storeIds);
+        }
+
     }
 
     @RequestMapping("/exportPayRecordInfo")
     public void exportFinanceInfo(HttpServletResponse response, RepayRecordQueryDto param) {
         MyphLogger.debug("还款记录导出：/hKBillRecord/exportPayRecordInfo.htm|param=" + param);
         try {
+            initQueryDate(param);
             // 设置参数查询满足条件的所有数据不分页
             List<RepayRecordDto> list = repayRecordService.queryList(param).getData();
-            for(RepayRecordDto dto:list){
-//                String addr = dto.getLiveAddr();
-//                if(StringUtils.isNotBlank(addr)){
-//                    String[] addrArray = addr.split("-");
-//                    if(addrArray.length > 1){
-//                        dto.setLiveProv(addrArray[0]);
-//                        dto.setLiveCity(addrArray[1]);
-//                    }
-//                }
-            }
             String columnNames[] = {
                    "合同编号", "期数", "账单编号"
                     , "扣款类型", "扣款金额", "账户名", "开户行", "卡号", "手机号", "身份证号"
