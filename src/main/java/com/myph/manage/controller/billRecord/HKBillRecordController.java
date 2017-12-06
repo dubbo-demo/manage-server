@@ -115,7 +115,7 @@ public class HKBillRecordController extends BaseController{
                     , "扣款类型", "扣款金额", "账户名", "开户行", "卡号", "手机号", "身份证号"
                     , "发起人", "提前结清", "扣款日期", "状态", "备注" };// 列名
             String keys[] = { "contractNo", "repayPeriodName", "billNo", "payTypeName",
-                    "payAmount", "username", "backOpen", "idBackNo", "reservedPhone", "idCardNo", "createUser",
+                    "payAmount", "username", "bankName", "idBankNo", "reservedPhone", "idCardNo", "createUser",
                     "isAdvanceSettleName", "createTime", "stateName", "payDesc"};
             String fileName = "还款记录信息" + new SimpleDateFormat("yyyyMMddhhmmss").format(new Date()).toString();
             // 获取Excel数据
