@@ -175,6 +175,7 @@
         ChkUtil.form_trim($("#searchForm"));
         $("#searchForm").attr("action", "${ctx}/order/export.htm");
         $("#searchForm").submit();
+        $("#searchForm").attr("action", "${ctx}/order/list.htm");
     }
      
 
