@@ -40,6 +40,9 @@
             <input type="text" name="payAmount" id="payAmount" maxlength="10" class="form-control span6" value=""/>
         </div>
         <div class="row-fluid">
+            <span class="control-label span6" name="remainRepaymentAmount1">当期应还金额:<span name="remainRepaymentAmount"></span></span>
+        </div>
+        <div class="row-fluid">
             <span class="control-label span3"><a href="javascript:uploadFile('#withholdShow')">附件上传</a></span>
         </div>
         <div class="row-fluid">
@@ -94,6 +97,9 @@
             <input type="text" name="payAmount" id="payAmount" maxlength="10" class="form-control span6" value=""/>
         </div>
         <div class="row-fluid">
+            <span class="control-label span6" name="remainRepaymentAmount1">当期应还金额:<span name="remainRepaymentAmount"></span></span>
+        </div>
+        <div class="row-fluid">
             <span class="control-label span3"><a href="javascript:uploadFile('#compensateShow')">附件上传</a></span>
         </div>
         <div class="row-fluid">
@@ -126,6 +132,12 @@
         <div class="row-fluid">
             <span class="control-label span3">减免金额</span>
             <input type="text" name="payAmount" id="payAmount" maxlength="10" class="form-control span6" value=""/>
+        </div>
+        <div class="row-fluid">
+            <span class="control-label span6" name="remainRepaymentAmount1">当期应还金额:<span name="remainRepaymentAmount"></span></span>
+        </div>
+        <div class="row-fluid">
+            <span class="control-label span6" name="advanceSettleAmount1">提前结清金额:<span name="advanceSettleAmount"></span></span>
         </div>
         <div class="row-fluid">
             <span class="control-label span3"><a href="javascript:uploadFile('#reductionShow')">附件上传</a></span>
@@ -186,6 +198,12 @@
             <input type="text" name="payAmount" id="payAmount" maxlength="10" class="form-control span6" value=""/>
         </div>
         <div class="row-fluid">
+            <span class="control-label span6" name="remainRepaymentAmount1">当期应还金额:<span name="remainRepaymentAmount"></span></span>
+        </div>
+        <div class="row-fluid">
+            <span class="control-label span6" name="advanceSettleAmount1">提前结清金额:<span name="advanceSettleAmount"></span></span>
+        </div>
+        <div class="row-fluid">
             <span class="control-label span3"><a href="javascript:uploadFile('#earlySettlementShow')">附件上传</a></span>
         </div>
         <div class="row-fluid">
@@ -207,14 +225,27 @@
         <h3>对公还款</h3>
     </div>
     <div class="modal-body">
+        <div class="row-fluid ">
+            <span class="control-label span3">对公类型</span>
+            <select name="isAdvanceSettle" class="form-control span6" id="isAdvanceSettle">
+                <option value="0" selected>当期对公还款</option>
+                <option value="1">提前对公还款</option>
+            </select>
+        </div>
         <div class="row-fluid">
             <span class="control-label span3">还款金额</span>
             <input type="text" name="payAmount" id="payAmount" maxlength="10" class="form-control span6" value=""/>
             <input type="hidden" name="billNo" id="billNo" class="form-control span6" value=""/>
         </div>
-    <div class="row-fluid">
-    <span class="control-label span3"><a href="javascript:uploadFile('#toPublicShow')">附件上传</a></span>
-    </div>
+        <div class="row-fluid">
+            <span class="control-label span6" name="remainRepaymentAmount1">当期应还金额:<span name="remainRepaymentAmount"></span></span>
+        </div>
+        <div class="row-fluid">
+            <span class="control-label span6" name="advanceSettleAmount1">提前结清金额:<span name="advanceSettleAmount"></span></span>
+        </div>
+        <div class="row-fluid">
+        <span class="control-label span3"><a href="javascript:uploadFile('#toPublicShow')">附件上传</a></span>
+        </div>
         <div class="row-fluid">
             <span class="control-label span4" id="error"></span>
         </div>
@@ -310,7 +341,12 @@
         } else if (payType == 14) { //提前结清代扣
             url_this = serverPath + '/repayMade/advanceSettleMadeRepay.htm';
         } else if (payType == 1) { //对公
-            url_this = serverPath + '/repayMade/businessRepay.htm';
+            var isAdvanceSettle_this = $("" + target + " #isAdvanceSettle").val();
+            if(isAdvanceSettle_this == 1) {
+                url_this = serverPath + '/repayMade/businessRepayAdvanceSettle.htm';
+            } else {
+                url_this = serverPath + '/repayMade/businessRepay.htm';
+            }
         }
         // 禁用按钮
         $(target + ' .blue').attr('disabled', "true");
@@ -358,8 +394,58 @@
                 var payType2 = $(this).data("paytype2");
                 getCardInfo(payType2, target);
             }
+            getRemainRepaymentAmount(payType2, target);
         });
     });
+
+    /**
+     * 得到当期应还，提前结清应还
+     * @param payType
+     * @param target
+     */
+    function getRemainRepaymentAmount(payType, target) {
+        var billNo_this = $("" + target + " input[name=billNo]").val();
+//        console.log(target,billNo_this);
+        var url = serverPath + "/repayMade/isCreatRepay.htm";
+        var isReduction = false;
+        if(payType == 2) {
+            isReduction = true;
+        }
+        var data = {
+            "billNo": billNo_this,
+            "isReduction": isReduction,
+            "isAdvanceSettle":true,
+            "Time": new Date().getMilliseconds()
+        };
+        $.getJSON(url, data, function (result) {
+            if(result.code == '1') {
+//                BootstrapDialog.alert(result.message);
+                $("" + target + " #error").html('<font color="red">'+result.message+'</font>');
+                $("" + target + " #error").css("display", "block");
+                $('span[name="remainRepaymentAmount1"]').css("display","none");
+                $('span[name="advanceSettleAmount1"]').css("display","none");
+                console.log(result);
+            } else {
+                if($.isEmptyObject(result.data)) {
+                    $('span[name="remainRepaymentAmount1"]').css("display","none");
+                    $('span[name="advanceSettleAmount1"]').css("display","none");
+                    return false;
+                }
+                if(result.data.remainRepaymentAmount != null) {
+                    $('span[name="remainRepaymentAmount1"]').css("display","block");
+                    $('span[name="remainRepaymentAmount"]').html(result.data.remainRepaymentAmount);
+                } else {
+                    $('span[name="remainRepaymentAmount1"]').css("display","none");
+                }
+                if(result.data.advanceSettleAmount != null) {
+                    $('span[name="advanceSettleAmount1"]').css("display","block");
+                    $('span[name="advanceSettleAmount"]').html(result.data.advanceSettleAmount);
+                } else {
+                    $('span[name="advanceSettleAmount1"]').css("display","none");
+                }
+            }
+        });
+    }
 
 
     function addDataDetail() {

@@ -2,7 +2,7 @@
  * @Title: ContactsInputController.java 
  * @Package: com.myph.manage.controller.apply.contacts
  * @company: 麦芽金服
- * @Description: TODO
+ * @Description:
  * @date 2016年9月14日 下午3:02:34 
  * @version V1.0   
  */
@@ -141,7 +141,7 @@ public class ContactsInputController extends ApplyBaseController{
             insertOrUpdateJkApplyLinkman(jkApplyLinkmanDto,oldJkApplyLinkmanDto);   
             return AjaxResult.success();
 		} catch (Exception e) {
-			MyphLogger.error("数据已更新，请刷新页面后查看", e);
+			MyphLogger.error("数据已更新，请刷新页面后查看,applyLoanNo:{}",jkApplyLinkmanDto.getApplyLoanNo(), e);
 			return AjaxResult.failed("数据已更新，请刷新页面后查看");
 		}
 	}

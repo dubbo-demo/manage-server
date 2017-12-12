@@ -17,6 +17,7 @@ import com.myph.member.card.service.CardService;
 import com.myph.payBank.dto.SysPayBankDto;
 import com.myph.payBank.service.SysPayBankService;
 import com.myph.reduction.dto.HkReductionRecordDto;
+import com.myph.repayManMade.dto.RepayRecordDto;
 import com.myph.repayManMade.service.RepayManMadeService;
 import com.myph.repaymentPlan.dto.BankCardInfoDto;
 import com.myph.repaymentPlan.service.JkRepaymentPlanService;
@@ -112,7 +113,7 @@ public class OrderRepayMadeController extends BaseController {
             boolean isAdvanceSettle) {
         MyphLogger.info("校验是否允许时间内操作，金额区间-账单号【{}】，减免：{},是否提前结清：{}", billNo,isReduction,isAdvanceSettle);
         try {
-            ServiceResult<BigDecimal> result = repayManMadeService
+            ServiceResult<RepayRecordDto> result = repayManMadeService
                     .isCreatRepay(billNo,isReduction,isAdvanceSettle);
             if (!result.success()) {
                 MyphLogger.info("校验是否允许时间内操作，金额区间-失败【{}】", result.getMessage());
@@ -183,6 +184,34 @@ public class OrderRepayMadeController extends BaseController {
         } catch (Exception e) {
             MyphLogger.error("发起对公-异常【{}】", e);
             return AjaxResult.failed("发起对公异常");
+        }
+        return AjaxResult.success();
+    }
+
+    /**
+     * @Description: 提前结清对公
+     * @author heyx
+     * @date 2017/12/8
+     * @version V1.0
+     */
+    @RequestMapping("/businessRepayAdvanceSettle")
+    @ResponseBody
+    public AjaxResult businessRepayAdvanceSettle(HkBillRepayRecordDto param) {
+        MyphLogger.info("发起提前结清对公-参数【{}】", param);
+        EmployeeInfoDto user = ShiroUtils.getCurrentUser();
+        param.setCreateUser(user.getEmployeeName());
+        param.setIsAdvanceSettle(IsAdvanceSettleEnum.YES.getCode());
+        param.setPayType(PayTypeEnum.PAY_MONEY.getCode());
+        try {
+            ServiceResult<String> result = repayManMadeService
+                    .businessRepayAdvanceSettle(param);
+            if (!result.success()) {
+                MyphLogger.info("发起提前结清对公-失败【{}】", result.getMessage());
+                return AjaxResult.failed(result.getMessage());
+            }
+        } catch (Exception e) {
+            MyphLogger.error("发起提前结清对公-异常【{}】", e);
+            return AjaxResult.failed("发起提前结清对公异常");
         }
         return AjaxResult.success();
     }
