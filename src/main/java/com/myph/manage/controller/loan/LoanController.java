@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.alibaba.fastjson.JSONObject;
@@ -34,7 +35,9 @@ import com.myph.common.rom.annotation.BasePage;
 import com.myph.common.rom.annotation.Pagination;
 import com.myph.common.util.DateUtils;
 import com.myph.common.util.SensitiveInfoUtils;
+import com.myph.constant.BusinessState;
 import com.myph.constant.FlowStateEnum;
+import com.myph.constant.bis.FinanceBisStateEnum;
 import com.myph.flow.dto.ContinueActionDto;
 import com.myph.loan.dto.LoanedInfoDto;
 import com.myph.loan.param.QueryListParam;
@@ -256,5 +259,15 @@ public class LoanController extends BaseController{
             destList.add(destMap);
         }
         return destList;
+    }
+    
+    @RequestMapping("/giveUp")
+    @ResponseBody
+    public AjaxResult giveUp(@RequestParam("applyLoanNo")String applyLoanNo) {
+        MyphLogger.info("操作人ID【"+ShiroUtils.getCurrentUserId()+"】操作人【"+ShiroUtils.getCurrentUserName()+"】 合同放弃，申请单号【"+applyLoanNo+"】");
+        applyInfoService.updateStateAndSubState(applyLoanNo, FlowStateEnum.FINANCE.getCode(),
+                FlowStateEnum.ABANDON.getCode(),FlowStateEnum.FINANCE.getCode());
+        loanService.delByApplyLoanNo(applyLoanNo);
+        return AjaxResult.success();
     }
 }

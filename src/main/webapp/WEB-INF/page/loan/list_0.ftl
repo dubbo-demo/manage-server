@@ -205,6 +205,7 @@ $(function(){
 							<td><#if record.status == 0> <a
 								href="javascript:loanedId(${record.id},'${record.applyLoanNo}')">放款</a>
 								</#if>
+                                <a href="javascript:giveUp('${record.applyLoanNo}')">放弃</a>
 							</td>
 						<tr></#list>
 					</tbody>

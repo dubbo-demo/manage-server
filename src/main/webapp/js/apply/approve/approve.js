@@ -210,3 +210,27 @@ function down(status){
 	url = serverPath + "/loan/queryPageList.htm";
 	$("#searchForm").attr("action", url);
 }
+
+function giveUp(applyLoanNo) {
+	$.ajax({
+		url : serverPath + "/loan/giveUp.htm",
+		type : "post",
+		data : {
+			applyLoanNo:applyLoanNo,
+			"Time" : new Date().getMilliseconds()
+		},
+		dataType : "json",
+		success : function(result) {
+			if (result.code == 0) {
+				BootstrapDialog.alert("操作成功",function(){
+					window.location.reload();
+				});
+			} else {
+				BootstrapDialog.alert(result.message);
+			}
+		},
+		error : function() {
+			BootstrapDialog.alert("操作失败");
+		}
+	});
+}
