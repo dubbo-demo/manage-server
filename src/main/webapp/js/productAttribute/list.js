@@ -5,7 +5,7 @@ function deleteInfo(id) {
 	BootstrapDialog.confirm("确定要删除吗？", function(isOk) {
 		if (isOk) {
 			$.ajax({
-				url : serverPath + "/product/deleteInfo.htm",
+				url : serverPath + "/productAttribute/deleteInfo.htm",
 				type : "post",
 				data : {
 					"id" : id,
@@ -16,12 +16,12 @@ function deleteInfo(id) {
 					if (result.code == 0) {
 						BootstrapDialog.alert("删除成功", function() {
 							window.location.href = serverPath
-									+ "/product/queryPageList.htm"
+									+ "/productAttribute/queryProductAttribute.htm"
 						});
 					} else {
 						BootstrapDialog.alert(result.message, function() {
 							window.location.href = serverPath
-									+ "/product/queryPageList.htm"
+									+ "/productAttribute/queryProductAttribute.htm"
 						});
 					}
 				},
@@ -47,7 +47,7 @@ function initProductData() {
 				var select_ = $("select[name='prodCode']");
 				select_.find("option:gt(0)").remove();
 				for (var i = 0; i < result.data.length; i++) {
-					var isSelected = result.data[i].id == select_
+					var isSelected = result.data[i].nodeCode == select_
 							.attr('data-value') ? "selected='selected'" : "";
 					select_.append("<option " + isSelected + " value='"
 							+ result.data[i].nodeCode + "'>"
