@@ -37,10 +37,6 @@ $(function(){
 				required : true,
 				isInt:true
 			},
-			penaltyRate:{	
-				required : true,
-				Floatlen:[2,2]
-			},
 			prodType:{	
 				required : true,
 				productType:true
@@ -49,9 +45,6 @@ $(function(){
 
 		messages : { // custom messages for radio buttons and checkboxes
 			serviceRate:{
-				Floatlen:"请输入[00.00]数据"
-			},
-			penaltyRate:{
 				Floatlen:"请输入[00.00]数据"
 			},
 			interestRate:{
@@ -156,9 +149,30 @@ function initPeriodsUnitType(){
 		}
 	});
 }
+
+function checkPenaltyRate(){
+	var penaltyRate = $("#penaltyRate");
+	if(penaltyRate.indexOf(',') >= 0){
+		var objExp = new RegExp('^[0-9]+\\.?[0-9]+$');
+		if (!objExp.test(penaltyRate)) {
+			return false;
+		}
+		return true;
+	}else{
+		var objExp = new RegExp('^[0-9]+\\.?[0-9]+,[0-9]+\\.?[0-9]+$');
+		if (!objExp.test(penaltyRate)) {
+			return false;
+		}
+		return true;
+	}
+}
+
 function save(){
 	var form = $("#submit_form");
 	if(!form.valid()){
+		return;
+	}
+	if(!checkPenaltyRate()){
 		return;
 	}
 	$.ajax({

@@ -15,7 +15,7 @@
 							<i class="icon-angle-right"></i> 
 						</li>
 						<li>
-							<a href="#">产品管理</a>
+							<a href="#">产品类型管理</a>
 							<i class="icon-angle-right"></i> 
 						</li>
 						<li>
@@ -85,8 +85,8 @@
 			</div>
 			<div class="row-fluid">
 						<div class="control-group span6 ">
-							<label class="help-inline   span2 text-right  control-label"> 罚息比例<span class="required">*</span></label> <input 
-								type="text" class="m-wrap span8" name="penaltyRate" id='penaltyRate'
+							<label class="help-inline   span2 text-right  control-label"> 罚息比例(%)<span class="required">*</span></label> <input 
+								type="text" class="m-wrap span8" name="penaltyRate"
 								value="${(record.penaltyRate)!}">
 						</div>
 						<div class="control-group span6 ">

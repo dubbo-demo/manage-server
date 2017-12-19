@@ -79,7 +79,7 @@
 							<td>${record.loanUpLimit!}</td>
 							<td>${record.loanDownLimit!}</td>
 							<td>${record.overdueDays!}</td>
-							<td>${record.penaltyRate*100!}%</td>
+							<td>${record.penaltyRate!}%</td>
 							<td>${record.interestRate*100!}%</td>
 							<td>${record.stateName!}</td>
 							<td>${record.createTime?string('yyyy-MM-dd HH:mm:ss')}</td>

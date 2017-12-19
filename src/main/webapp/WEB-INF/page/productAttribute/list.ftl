@@ -68,7 +68,7 @@
 							<td>${record.loanUpLimit!}</td>
 							<td>${record.loanDownLimit!}</td>
 							<td>${record.prodIndex!}</td>
-							<td><#if record.chanel==1>APP<#elseif record.chanel==2>线下<#else>APP&线下</#if></td>
+							<td><#if record.channel==1>APP<#elseif record.channel==2>线下<#else>APP&线下</#if></td>
 							<td style=" max-width: 200px;text-overflow:ellipsis;white-space:nowrap;overflow: hidden;" title='${record.storeNames!}'>${record.storeNames!}</td>
 							<td>${record.createTime?string('yyyy-MM-dd HH:mm:ss')}</td>
 							<td>${record.updateTime?string('yyyy-MM-dd HH:mm:ss')}</td>

@@ -46,25 +46,11 @@ public class ProductAttributeController {
     @Autowired
     OrganizationService organizationService;
 
-    @RequestMapping("/allList")
-    @ResponseBody
-    public AjaxResult list() {
-        ServiceResult<List<ProductDto>> result = productService.selectAll();
-        return AjaxResult.success(result.getData());
-    }
-
-    @RequestMapping("/selectByProductType")
-    @ResponseBody
-    public AjaxResult selectByProductType(Long proType) {
-        ServiceResult<List<ProductDto>> result = productService.queryListByProdType(proType);
-        return AjaxResult.success(result.getData());
-    }
-
     @RequestMapping("/deleteInfo")
     @ResponseBody
     public AjaxResult deleteInfo(Long id) {
-        ServiceResult<Integer> result = productService.deleteByPrimaryKey(id);
-        return AjaxResult.success(result.getData());
+        productAttributeService.updateDelflagById(id);
+        return AjaxResult.success();
     }
 
     @RequestMapping("/queryProductAttribute")
@@ -107,66 +93,19 @@ public class ProductAttributeController {
                 return "/error/error";
             }
             ProductDto dto = result.getData();
-            // 得到百分比
-            if (null != dto.getInterestRate()) {
-                BigDecimal newNum = dto.getInterestRate().multiply(new BigDecimal(100));
-                dto.setInterestRate(newNum);
-            }
-            if (null != dto.getPenaltyRate()) {
-                BigDecimal newNum = dto.getPenaltyRate().multiply(new BigDecimal(100));
-                dto.setPenaltyRate(newNum);
-            }
-            if (null != dto.getPreRepayRate()) {
-                BigDecimal newNum = dto.getPreRepayRate().multiply(new BigDecimal(100));
-                dto.setPreRepayRate(newNum);
-            }
-            if (null != dto.getServiceRate()) {
-                BigDecimal newNum = dto.getServiceRate().multiply(new BigDecimal(100));
-                dto.setServiceRate(newNum);
-            }
             model.addAttribute("record", dto);
         }
         return "/product/new_edit";
     }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 
-    @RequestMapping("/saveOrUpdate")
-    @ResponseBody
-    public AjaxResult saveOrUpdate(ProductDto dto, Model model) {
-        // 把百分比除100
-        if (null != dto.getInterestRate()) {
-            BigDecimal newNum = dto.getInterestRate().divide(new BigDecimal(100));
-            dto.setInterestRate(newNum);
-        }
-        if (null != dto.getPenaltyRate()) {
-            BigDecimal newNum = dto.getPenaltyRate().divide(new BigDecimal(100));
-            dto.setPenaltyRate(newNum);
-        }
-        if (null != dto.getPreRepayRate()) {
-            BigDecimal newNum = dto.getPreRepayRate().divide(new BigDecimal(100));
-            dto.setPreRepayRate(newNum);
-        }
-        if (null != dto.getServiceRate()) {
-            BigDecimal newNum = dto.getServiceRate().divide(new BigDecimal(100));
-            dto.setServiceRate(newNum);
-        }
-
-        // 更新
-        if (null != dto.getId()) {
-            dto.setProdCode(dto.getProdType() + "_" + dto.getPeriods());
-            productService.updateByPrimaryKey(dto);
-        } else {
-            // 保存 需要验证此期数和产品类型得到的产品是否已经存在了
-            ServiceResult<ProductDto> rs = productService.selectByCode(dto.getProdType() + "_" + dto.getPeriods());
-            if (rs.success()) {
-                return AjaxResult.failed("相同产品名称与期数不允许重复");
-            }
-            dto.setProdCode(dto.getProdType() + "_" + dto.getPeriods());
-            dto.setDelFlag(Constants.YES_INT);
-            dto.setCreateTime(new Date());
-            dto.setUpdateTime(new Date());
-            dto.setCreateUser(ShiroUtils.getCurrentUserName());
-            productService.insert(dto);
-        }
-        return AjaxResult.success();
-    }
 }

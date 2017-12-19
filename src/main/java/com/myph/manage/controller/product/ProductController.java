@@ -101,10 +101,6 @@ public class ProductController {
                 BigDecimal newNum = dto.getInterestRate().multiply(new BigDecimal(100));
                 dto.setInterestRate(newNum);
             }
-            if(null!=dto.getPenaltyRate()){
-                BigDecimal newNum = dto.getPenaltyRate().multiply(new BigDecimal(100));
-                dto.setPenaltyRate(newNum);
-            }
             if(null!=dto.getPreRepayRate()){
                 BigDecimal newNum = dto.getPreRepayRate().multiply(new BigDecimal(100));
                 dto.setPreRepayRate(newNum);
@@ -125,10 +121,6 @@ public class ProductController {
         if(null!=dto.getInterestRate()){
             BigDecimal newNum = dto.getInterestRate().divide(new BigDecimal(100));
             dto.setInterestRate(newNum);
-        }
-        if(null!=dto.getPenaltyRate()){
-            BigDecimal newNum = dto.getPenaltyRate().divide(new BigDecimal(100));
-            dto.setPenaltyRate(newNum);
         }
         if(null!=dto.getPreRepayRate()){
             BigDecimal newNum = dto.getPreRepayRate().divide(new BigDecimal(100));
