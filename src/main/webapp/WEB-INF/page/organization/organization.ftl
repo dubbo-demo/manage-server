@@ -172,6 +172,7 @@
                                 </div>
                             </div>
                         </div>
+                        
                         <div class="row-fluid" >
                             <div class="control-group span6 ">
                                 <label class="control-label">编号<span class="required">*</span></label>
@@ -199,7 +200,29 @@
                                     <input id="citySel" class="m-wrap span6" type="text" readonly value="" onclick="showMenu(); return false;"/>
                                 </div>
                             </div>
-                        </div>   
+                        </div>
+                         <div class="row-fluid cityCodeTr" style="display:none;">
+                            <div class="control-group span6 ">
+                                <label class="control-label">门店是否在APP显示<span class="required">*</span></label>
+                                <div class="controls">
+                                	<input type="radio" name="ifAPPShow" id="ifAPPShow"
+                                    class="m-wrap " value="1" checked="true" />展示
+                                    <input type="radio" name="ifAPPShow" id="ifAPPShow"
+                                    class="m-wrap " value="0"   />不展示
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row-fluid cityCodeTr" style="display:none;">
+                            <div class="control-group span6 ">
+                                <label class="control-label">运营状态<span class="required">*</span></label>
+                                <div class="controls">
+                                 	<input type="radio" name="operativeState" id="operativeState"
+                                    class="m-wrap span6"  value="1" checked="true"/>开店
+                                    <input type="radio" name="operativeState" id="operativeState"
+                                    class="m-wrap span6"  value="0"/>闭店
+                                </div>
+                            </div>
+                        </div>      
                         <div><span id="error" style="display: block;"></span></div>
                         <div>
                         <input type="button" id="btnBack"

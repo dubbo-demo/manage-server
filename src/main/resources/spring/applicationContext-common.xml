@@ -32,4 +32,5 @@
         <property name="connectionFactory" ref="jedisConnectionFactory"/>
     </bean>
 
+    <bean id="springContextHolder" class="com.myph.manage.spring.SpringContextHolder" lazy-init="false" />
 </beans>
