@@ -244,6 +244,29 @@ function update() {
 		$("#orgName").val(data.orgName);
 		$("#address").val(data.address);
 		$("#telephone").val(data.telephone);
+		
+		if(data.ifAPPShow==0){
+			$("input[name='ifAPPShow'][value=0]").parent().attr("class","checked");
+			$("input[name='ifAPPShow'][value=0]").attr("checked",true);
+			$("input[name='ifAPPShow'][value=1]").parent().removeAttr("class");
+			$("input[name='ifAPPShow'][value=1]").removeAttr("checked");
+		}else{
+			$("input[name='ifAPPShow'][value=1]").parent().attr("class","checked");
+			$("input[name='ifAPPShow'][value=1]").attr("checked",true);
+			$("input[name='ifAPPShow'][value=0]").parent().removeAttr("class");
+			$("input[name='ifAPPShow'][value=0]").removeAttr("checked");
+		}
+		if(data.operativeState==0){
+			$("input[name='operativeState'][value=0]").parent().attr("class","checked");
+			$("input[name='operativeState'][value=0]").attr("checked",true);
+			$("input[name='operativeState'][value=1]").parent().removeAttr("class");
+			$("input[name='operativeState'][value=1]").removeAttr("checked");
+		}else{
+			$("input[name='operativeState'][value=1]").parent().attr("class","checked");
+			$("input[name='operativeState'][value=1]").attr("checked",true);
+			$("input[name='operativeState'][value=0]").parent().removeAttr("class");
+			$("input[name='operativeState'][value=0]").removeAttr("checked");
+		}
 		$("#OrganizationId").val(id);
 	});
 
@@ -332,6 +355,7 @@ function save() {
 		dataType : 'json',
 		data : $("#changeOrganization").serialize(),
 		success : function(data) {
+			
 			var model = eval(data.data);
 			// 0、不重复， 1、名称重复，2、编号重复，3、名称编号都重复 地市编码表中 0不存在，1存在
 			if (model.checkNameAndCode == 0 && model.checkCityCode == 1) {
