@@ -359,6 +359,7 @@ public class SignController extends BaseController {
                                         record.setOverdueScale(productDto.getOverdueScale());
                                         record.setRepayRate(productDto.getPreRepayRate());
                                         record.setOrgId(applyInfo.getStoreId());
+                                        record.setIsPunish(Constants.NO_INT);
                                         String operatorName = ShiroUtils.getCurrentUserName();
                                         MyphLogger.debug("待插入合同信息：【{}】", record.toString());
                                         contractService.insertSelective(record, operatorName);
