@@ -173,7 +173,7 @@
 								<div class="control-group span4 ">
 									<label class="control-label">开户行</label>
 									<div class="controls">
-										<input readonly="readonly" type="text" class="span9 m-wrap" value="${(jkContractDto.bankName)!}" name="bankName" />
+										<input readonly="readonly" type="text" class="span9 m-wrap" value="${(userCardInfo.accountBankName)!}" name="bankName" />
 									</div>
 								</div>
 								<div class="control-group span4 ">
@@ -189,7 +189,7 @@
                                 <div class="control-group span4 ">
                                     <label class="control-label">银行类别</label>
                                     <div class="controls">
-                                        <span class="text">${(jkContractDto.bankTypeName)!}</span>
+                                        <span class="text">${(bankInfo.sname)!}</span>
                                     </div>
                                 </div>
                                 <div class="control-group span4 ">
@@ -247,7 +247,7 @@
                         <input type="button" class="btn blue" onclick="upload(event)"
                                value="上传附件" />
                         <input type="button" class="btn blue" onclick="save(event)"
-                               value="保存" />
+                               value="保存" <#if userCardInfo??>disabled="disabled"</#if>/>
                         <input type="button" class="btn blue" onclick="submit(event)"
                                value="提交" <#if userCardInfo??><#if userCardInfo.authStatus == "0">disabled="disabled"</#if></#if>/>
                         <a href="javascript:page_back('${serverPath}/sign/list.htm')" class="btn">返回</a>

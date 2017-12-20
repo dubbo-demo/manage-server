@@ -53,6 +53,7 @@ import com.myph.organization.dto.OrganizationDto;
 import com.myph.organization.service.OrganizationService;
 import com.myph.payBank.dto.SysPayBankDto;
 import com.myph.payBank.service.SysPayBankService;
+import com.myph.product.dto.ProductDetailDto;
 import com.myph.product.dto.ProductDto;
 import com.myph.product.service.ProductService;
 import com.myph.repaymentPlan.dto.JkRepaymentPlanDto;
@@ -254,13 +255,12 @@ public class SignController extends BaseController {
     public String signDetail(Model model, String applyLoanNo, Integer subState) {
         MyphLogger.info("进入签约详情页面开始：/sign/signDetail.htm|applyLoanNo=" + applyLoanNo);
         try {
-            String productName = null;
             model.addAttribute("applyLoanNo", applyLoanNo);
-
-            ApplyInfoDto applyInfo = applyInfoService.queryInfoByAppNo(applyLoanNo).getData();// 查询申请单信息
-
-            ApplyUserDto applyUserDto = applyUserService.queryInfoByLoanNo(applyLoanNo).getData();// 查询用户基本信息
-
+            // 查询申请单信息
+            ApplyInfoDto applyInfo = applyInfoService.queryInfoByAppNo(applyLoanNo).getData();
+            // 查询用户基本信息
+            ApplyUserDto applyUserDto = applyUserService.queryInfoByLoanNo(applyLoanNo).getData();
+            //判断是待签约还是合规回退签约
             if (SignBisStateEnum.INIT.getCode().equals(subState)) {
                 JkAuditTaskDto jkAuditTaskDto = jkApplyAuditService.queryInfoByApplyLoanNo(applyLoanNo)
                         .getData();// 查询信审任务表
@@ -270,122 +270,66 @@ public class SignController extends BaseController {
                 model.addAttribute("compliance", complianceDto);
             }
 
-            JkContractDto jkContractDto = contractService.selectByApplyLoanNo(applyLoanNo).getData();// 查询合同表
-
             JkSignDto jkSignDto = signService.selectByApplyLoanNo(applyLoanNo).getData();// 查询签约表
-
             ProductDto productDto = productService.selectByPrimaryKey(applyInfo.getProductType()).getData();// 查询产品表
+            JkContractDto jkContractDto = contractService.selectByApplyLoanNo(applyLoanNo).getData();// 查询合同表
+            //第一次进入页面 插入新的合同
+            if(null == jkContractDto){
+                EmpDetailDto empDetail = ShiroUtils.getEmpDetail();
+                Long cityId = empDetail.getCityId();
+                CityCodeDto cityCodeDto = null;
+                if (cityId != null) {
+                    // 获取城市编码
+                    cityCodeDto = cityCodeService.selectByPrimaryKey(cityId).getData();
+                }else{
+                    throw  new Exception("城市编号为空：超级管理员是不能操作签约页面的！");
+                }
+                if (cityCodeDto != null) {
+                    JkContractDto record = new JkContractDto();
+                    String cityCode = cityCodeDto.getCityCode();
+                    //生成合同编号
+                    StringBuffer contractNo = new StringBuffer(cityCode);
+                    contractNo.append(DateUtils.getCurrentTimeNum());
+                    StringBuffer myphContractNo = new StringBuffer("MYPH");
+                    String nextVal = generatorService.getNextVal(contractNo.toString(), 4)
+                            .getData();
+                    myphContractNo.append(nextVal);
 
-            if (null != jkContractDto) {
-                productName = jkContractDto.getProductName();
+                    record.setOverdueScale(productDto.getOverdueScale());
+                    record.setRepayRate(productDto.getPreRepayRate());
+                    record.setApplyLoanNo(applyLoanNo);
+                    record.setContractNo(myphContractNo.toString());
+                    record.setOrgId(applyInfo.getStoreId());
+                    record.setReservedPhone(applyInfo.getPhone());
+                    String operatorName = ShiroUtils.getCurrentUserName();
+                    MyphLogger.debug("待插入合同信息：【{}】", record.toString());
+                    contractService.insertSelective(record, operatorName);
+                }else{
+                    throw  new Exception("城市编号为空：超级管理员是不能操作签约页面的！");
+                }
             }
-            if (null == productName || "".equals(productName)) {
-                productName = productService.getProductNameById(applyInfo.getProductType()).getData();// 从基础数据获取产品名称
-            }
-
-            int loanUpMax = productDto.getLoanUpLimit().setScale(0, RoundingMode.DOWN).toString().length();// 贷款额度上限
-
-            // 查询银行卡信息
-            ServiceResult<List<UserCardInfoDto>> result = cardService.queryUserCardInfo(applyUserDto.getPhone());
+            // 贷款额度上限
+            int loanUpMax = productDto.getLoanUpLimit().setScale(0, RoundingMode.DOWN).toString().length();
+            //银行卡信息
             SysPayBankDto bankDto = null;
             UserCardInfoDto userCardInfoDto = null;
-            if (result.success()) {
-                if (null != result.getData() && result.getData().size() > 0) {
-                    for (UserCardInfoDto dto : result.getData()) {
-                        if (dto.getIDKFlag().equals(Constants.YES_INT)) {
-                            model.addAttribute("userCardInfo", dto);
-                            userCardInfoDto = dto;
-                            //通过银行卡信息去查询银行名称
-                            ServiceResult<SysPayBankDto> bankResult = sysPayBankService
-                                    .selectBySbankNo(dto.getBankNo());
-                            if (bankResult.success()) {
-                                model.addAttribute("bankInfo", bankResult.getData());
-                                bankDto = bankResult.getData();
-
-                                // 获取产品期数，月息，综合服务费；计算合同金额、总利息、服务费和还款总额
-                                if (productDto != null && jkContractDto != null
-                                        && jkContractDto.getRepayMoney() != null) {
-                                    JkContractDto jkcontarct = calculateServiceRate(productDto,
-                                            jkContractDto.getRepayMoney());
-                                    jkContractDto.setServiceRate(jkcontarct.getServiceRate());
-                                }
-
-                                ServiceResult<JkContractDto> contractResult = contractService
-                                        .selectByApplyLoanNo(applyLoanNo);
-                                if (contractResult.success() && contractResult.getData() != null) {
-                                    JkContractDto contractDto = contractResult.getData();
-                                    model.addAttribute("contractNo", contractDto.getContractNo());
-                                    contractDto.setBankCardNo(userCardInfoDto.getBankCardNo());
-                                    contractDto.setBankCity(userCardInfoDto.getBankAccountCity());
-                                    contractDto.setBankName(userCardInfoDto.getAccountBankName());
-                                    contractDto.setBankType(bankDto.getSbankno());
-                                    contractDto.setBankTypeName(bankDto.getSname());
-                                    contractDto.setMemberName(userCardInfoDto.getAccountName());
-                                    contractDto.setIdCard(userCardInfoDto.getIdCardNo());
-                                    contractDto.setReservedPhone(userCardInfoDto.getMobile());
-                                    contractDto.setOverdueScale(productDto.getOverdueScale());
-                                    contractDto.setRepayRate(productDto.getPreRepayRate());
-                                    contractDto.setOrgId(applyInfo.getStoreId());
-                                    contractService.updateSelective(contractDto);
-                                } else {
-                                    EmpDetailDto empDetail = ShiroUtils.getEmpDetail();
-                                    Long cityId = empDetail.getCityId();
-                                    CityCodeDto cityCodeDto = null;
-                                    if (cityId != null) {
-                                        // 获取城市编码
-                                        cityCodeDto = cityCodeService.selectByPrimaryKey(cityId).getData();
-                                    }
-                                    if (cityCodeDto != null) {
-                                        String cityCode = cityCodeDto.getCityCode();
-                                        StringBuffer contractNo = new StringBuffer(cityCode);
-                                        contractNo.append(DateUtils.getCurrentTimeNum());
-                                        StringBuffer myphContractNo = new StringBuffer("MYPH");
-                                        String nextVal = generatorService.getNextVal(contractNo.toString(), 4)
-                                                .getData();
-                                        myphContractNo.append(nextVal);
-
-                                        JkContractDto record = new JkContractDto();
-                                        model.addAttribute("contractNo", myphContractNo);
-                                        record.setApplyLoanNo(applyLoanNo);
-                                        record.setContractNo(myphContractNo.toString());
-                                        record.setBankCardNo(userCardInfoDto.getBankCardNo());
-                                        record.setBankCity(userCardInfoDto.getBankAccountCity());
-                                        record.setBankName(userCardInfoDto.getAccountBankName());
-                                        record.setBankType(bankDto.getSbankno());
-                                        record.setBankTypeName(bankDto.getSname());
-                                        record.setMemberName(userCardInfoDto.getAccountName());
-                                        record.setIdCard(userCardInfoDto.getIdCardNo());
-                                        record.setReservedPhone(userCardInfoDto.getMobile());
-                                        record.setOverdueScale(productDto.getOverdueScale());
-                                        record.setRepayRate(productDto.getPreRepayRate());
-                                        record.setOrgId(applyInfo.getStoreId());
-                                        record.setIsPunish(Constants.NO_INT);
-                                        String operatorName = ShiroUtils.getCurrentUserName();
-                                        MyphLogger.debug("待插入合同信息：【{}】", record.toString());
-                                        contractService.insertSelective(record, operatorName);
-                                    }
-                                }
-                            }
-                            break;
-                        }
-                    }
-                }
-            } else {
-                MyphLogger.error(result.getMessage());
-            }
-
+            getBankInfo(applyInfo.getPhone(),userCardInfoDto,bankDto);
+            //注入邮寄地址
             toSetMailAddress(applyUserDto, applyLoanNo);
-
+            //贷款用途
             SysNodeDto nodeDto = nodeService.selectByPrimaryKey(applyInfo.getLoanPurpose()).getData();
             if (nodeDto != null) {
                 applyInfo.setLoanPurposes(nodeDto.getNodeName());
             }
 
+            model.addAttribute("contractNo", jkContractDto.getContractNo());
+            model.addAttribute("bankInfo", bankDto);
+            model.addAttribute("userCardInfo", userCardInfoDto);
             model.addAttribute("loanUpMax", loanUpMax);
             model.addAttribute("jkSignDto", jkSignDto);
             model.addAttribute("productDto", productDto);
             model.addAttribute("jkContractDto", jkContractDto);
-            model.addAttribute("productName", productName);
+            model.addAttribute("productName", productDto.getProdName());
             model.addAttribute("appInfo", applyInfo);
             model.addAttribute("applyUserDto", applyUserDto);
             model.addAttribute("subState", subState);
@@ -397,6 +341,34 @@ public class SignController extends BaseController {
         return "/apply/sign/sign_detail";
     }
 
+    /**
+     * 查询根据手机号 银行卡、用户信息
+     * @param mobile
+     * @param userCardInfoDto
+     * @param bankDto
+     */
+    public void getBankInfo(String mobile,UserCardInfoDto userCardInfoDto,SysPayBankDto bankDto){
+        // 查询银行卡信息
+        ServiceResult<List<UserCardInfoDto>> result = cardService.queryUserCardInfo(mobile);
+        if (result.success()) {
+            if (null != result.getData() && result.getData().size() > 0) {
+                for (UserCardInfoDto dto : result.getData()) {
+                    if (dto.getIDKFlag().equals(Constants.YES_INT)) {
+                        userCardInfoDto = dto;
+                        //通过银行卡信息去查询银行名称
+                        ServiceResult<SysPayBankDto> bankResult = sysPayBankService
+                                .selectBySbankNo(dto.getBankNo());
+                        if (bankResult.success()) {
+                            bankDto = bankResult.getData();
+                        }
+                        break;
+                    }
+                }
+            }
+        } else {
+            MyphLogger.error(result.getMessage());
+        }
+    }
     /**
      * 签约合同详情页保存
      *
@@ -465,27 +437,20 @@ public class SignController extends BaseController {
             return AjaxResult.failed("请求参数不能为空");
         }
         //验证银行卡信息
-        // 查询银行卡信息
-        ServiceResult<List<UserCardInfoDto>> userCardResult = cardService
-                .queryUserCardInfo(jkContractDto.getReservedPhone());
+        SysPayBankDto bankDto = null;
+        UserCardInfoDto userCardInfoDto = null;
+        //查询最新的一条银行卡
+        getBankInfo(jkContractDto.getReservedPhone(),userCardInfoDto,bankDto);
         MyphLogger.debug("提交签约时 银行卡 卡号信息为：【{}】", jkContractDto.getBankCardNo());
-        MyphLogger.debug("查询用户[{}]银行卡 卡号信息为：【{}】", jkContractDto.getReservedPhone(), userCardResult.getData());
-        if (userCardResult.success()) {
-            if (null != userCardResult.getData() && userCardResult.getData().size() > 0) {
-                boolean flag = true;
-                for (UserCardInfoDto dto : userCardResult.getData()) {
-                    if (dto.getIDKFlag().equals(Constants.YES_INT)) {
-                        if (dto.getBankCardNo().equals(jkContractDto.getBankCardNo())) {
-                            flag = false;
-                        }
-                    }
-                }
-                if (flag) {
-                    return AjaxResult.failed("绑定的银行卡已更新，请刷新页面，并重新打印合同！");
-                }
-            } else {
-                return AjaxResult.failed("银行卡已更新,请重新绑定银行卡！");
+        MyphLogger.debug("查询用户[{}]银行卡 卡号信息为：【{}】", jkContractDto.getReservedPhone(), userCardInfoDto);
+        //防止解绑银行卡
+        if (null != bankDto && null != userCardInfoDto) {
+            //防止操作过程中，用户自己重新绑定银行卡，导致数据不一致。
+            if (!userCardInfoDto.getBankCardNo().equals(jkContractDto.getBankCardNo())) {
+                return AjaxResult.failed("绑定的银行卡已更新，请刷新页面，并重新打印合同！");
             }
+        } else {
+            return AjaxResult.failed("银行卡已更新,请重新绑定银行卡！");
         }
         //新加检验++++罗荣+++++2017-09-08   通过合同号查询放款计划表中，首期 期初本金 与放款时间
         ServiceResult<JkRepaymentPlanDto> repaymentResult = repaymentPlanService
@@ -533,9 +498,13 @@ public class SignController extends BaseController {
 
             ProductDto productDto = productService.selectByPrimaryKey(jkContractDto.getProductType()).getData();
 
-            String productName = productService.getProductNameById(jkContractDto.getProductType()).getData();
-
-            constructParams(jkContractDto, productDto, productName);
+            ServiceResult<ProductDetailDto> productDetail = productService.queryProdDetailInfoById(productDto.getId());
+            if(!productDetail.success()||null == productDetail.getData()){
+                MyphLogger.error("提交异常,产品详细信息查询异常！{}", productDto.getId());
+                return AjaxResult.failed("产品详细信息查询异常！");
+            }
+            //设置那些默认参数
+            constructParams(jkContractDto, productDto, bankDto,userCardInfoDto,productDetail.getData());
 
             // 获取产品期数，月息，综合服务费；计算合同金额、总利息、服务费和还款总额
             if (productDto != null && jkContractDto != null) {
@@ -620,20 +589,37 @@ public class SignController extends BaseController {
         return AjaxResult.formatFromServiceResult(serviceResult);
     }
 
-    private void constructParams(JkContractDto jkContractDto, ProductDto productDto, String productName) {
+    /**
+     * 合同信息组装
+     * @param jkContractDto
+     * @param productDto
+     * @param bankDto
+     * @param userCardInfoDto
+     * @param data
+     */
+    private void constructParams(JkContractDto jkContractDto, ProductDto productDto, SysPayBankDto bankDto, UserCardInfoDto userCardInfoDto,ProductDetailDto data){
         jkContractDto.setTotalRate(productDto.getServiceRate());// 综合服务费率
         jkContractDto.setPenaltyRate(productDto.getPenaltyRate());// 罚息比例
         jkContractDto.setRepayRate(productDto.getPreRepayRate());// 提前还款费率
-        jkContractDto.setProductId(productDto.getId());
-        jkContractDto.setProductName(productName);
-        jkContractDto.setPeriods(productDto.getPeriods());
+        jkContractDto.setProductId(productDto.getId());//产品ID
+        jkContractDto.setProductName(productDto.getProdName());//产品名称
+        jkContractDto.setPeriods(productDto.getPeriods());//产品期数
         jkContractDto.setOverdueDay(productDto.getOverdueDays());// 逾期天数
-        jkContractDto.setLoanLimitUp(productDto.getLoanUpLimit());
-        jkContractDto.setSignTime(DateUtils.getCurrentDateTime());
-        jkContractDto.setUpdateTime(DateUtils.getCurrentDateTime());
-        jkContractDto.setCreateUser(ShiroUtils.getCurrentUserName());
-        jkContractDto.setCreateTime(DateUtils.getCurrentDateTime());
-        jkContractDto.setDelFlag(Constants.YES_INT);
+        jkContractDto.setLoanLimitUp(productDto.getLoanUpLimit());//放款上限
+        jkContractDto.setSignTime(DateUtils.getCurrentDateTime());//签约时间
+        jkContractDto.setUpdateTime(DateUtils.getCurrentDateTime());//更新时间
+        jkContractDto.setCreateUser(ShiroUtils.getCurrentUserName());//操作人
+        jkContractDto.setBankCardNo(userCardInfoDto.getBankCardNo());//银行卡号
+        jkContractDto.setBankCity(userCardInfoDto.getBankAccountCity());//开户行城市
+        jkContractDto.setBankName(userCardInfoDto.getAccountBankName());//开户银行名称
+        jkContractDto.setBankType(bankDto.getSbankno());//银行类型
+        jkContractDto.setBankTypeName(bankDto.getSname());//类型名称
+        jkContractDto.setMemberName(userCardInfoDto.getAccountName());//用户名
+        jkContractDto.setIdCard(userCardInfoDto.getIdCardNo());//身份证
+        jkContractDto.setReservedPhone(userCardInfoDto.getMobile());//开户行手机号
+        jkContractDto.setIsPunish(Constants.NO_INT);//滞纳金是否已经结算
+        jkContractDto.setContractTemplate(data.getContractTemplate());//合同模板类型
+        jkContractDto.setPunishRule(data.getPunishRule());//结算类型
     }
 
     /**
@@ -655,8 +641,7 @@ public class SignController extends BaseController {
         if (!mentionLoanAmount.isCheck()) {
             return AjaxResult.failed(mentionLoanAmount.getMessage());
         }
-        JkContractDto jkcontarct = new JkContractDto();
-        jkcontarct = calculateServiceRate(mentionLoanAmount.getProductDto(), new BigDecimal(reapyMoney));
+        JkContractDto jkcontarct = calculateServiceRate(mentionLoanAmount.getProductDto(), new BigDecimal(reapyMoney));
         MyphLogger.info("根据放款金额计算服务费结束：/sign/getServiceRate.htm|serviceRate=" + jkcontarct.getServiceRate());
         return AjaxResult.success(jkcontarct.getServiceRate());
     }
