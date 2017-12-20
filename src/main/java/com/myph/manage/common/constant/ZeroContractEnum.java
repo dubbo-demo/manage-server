@@ -1,12 +1,12 @@
 package com.myph.manage.common.constant;
 
 /**
- * 合同类型
- *
- * @author hf
- * @ClassName: ContarctTypeEnum
- * @Description: 默认
- * @date 2016年10月27日 下午7:25:19
+ * @Package: com.myph.manage.common.constant
+ * @company: 麦芽金服
+ * @Description: 零用贷签约模板
+ * @author heyx
+ * @date 2017/12/20
+ * @version V1.0
  */
 public enum ZeroContractEnum {
     // 利用构造函数传参
