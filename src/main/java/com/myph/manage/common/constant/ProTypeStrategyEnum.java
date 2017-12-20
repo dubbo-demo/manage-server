@@ -17,7 +17,7 @@ import java.util.Map;
 public enum ProTypeStrategyEnum {
     // 利用构造函数传参
     DEFAULT(1, "默认","defaultProTypeStrategy"),
-    ZERO(2, "零用贷","");
+    ZERO(2, "零用贷","zeroProTypeStrategy");
 
     private int type;
 

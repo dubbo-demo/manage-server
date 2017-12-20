@@ -53,7 +53,7 @@ public class ZeroProTypeStrategy extends BaseProTypeStrategy implements ProTypeS
             repay.setUpdateTime(DateUtils.getCurrentDateTime());
             repay.setCreateUser(ShiroUtils.getCurrentUserName());
             repay.setDelflag(Constants.YES_INT);
-            String agreeRepayDate = DateTimeUtil.getAddMonth(printPo.getLoanTime(), accumulation);// 用户账单还款开始日期
+            String agreeRepayDate = DateTimeUtil.getAddWeek(printPo.getLoanTime(), accumulation);// 用户账单还款开始日期
             repay.setAgreeRepayDate(DateTimeUtil.convertStringToDate(agreeRepayDate));// 协议还款日期
             repay.setRepayPeriod(new Integer(accumulation));// 期数
             // 月还本金 = 合同金额/期数
@@ -94,6 +94,7 @@ public class ZeroProTypeStrategy extends BaseProTypeStrategy implements ProTypeS
             repay.setReapyAmount(repayAmount); // 月还款额
             repay.setInitialPrincipal(initialCapital); // 期初本金
             repay.setEndPrincipal(endPrincipal); // 期末本金
+            repay.setReturnAmount(BigDecimal.ZERO);
             // 新增提前还款计划
             // 提前还款金额=月还款额+期末本金余额-提前结清减免
             aheadAmount = repayAmount.add(endPrincipal);
