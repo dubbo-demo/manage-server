@@ -53,6 +53,7 @@ import com.myph.organization.dto.OrganizationDto;
 import com.myph.organization.service.OrganizationService;
 import com.myph.payBank.dto.SysPayBankDto;
 import com.myph.payBank.service.SysPayBankService;
+import com.myph.product.dto.ProductDetailDto;
 import com.myph.product.dto.ProductDto;
 import com.myph.product.service.ProductService;
 import com.myph.repaymentPlan.dto.JkRepaymentPlanDto;
@@ -803,12 +804,22 @@ public class SignController extends BaseController {
 
         String contractFileName = ContractEnum.getViewName(type);// 合同文件名
         ApplyInfoDto applyInfo = applyInfoService.queryInfoByAppNo(applyLoanNo).getData();// 查询申请单信息
-        ProductDto productDto = productService.selectByPrimaryKey(applyInfo.getProductType()).getData();
+        JkContractDto jDto = contractService.selectByApplyLoanNo(applyLoanNo).getData();
+        ProductDetailDto productDto = productService.queryProdDetailInfoById(applyInfo.getProductType()).getData();
+        ProTypeStrategy proTypeStrategy = ProStrategyFactory
+                .getProTypeStrategy(ProTypeStrategyEnum.getEnum(productDto.getContractTemplate()));
         BigDecimal repayMon = new BigDecimal(repayMoney);// 放款金额
-        JkContractDto contractData = calculateServiceRate(productDto, repayMon);// 获取产品服务费明细
-        BigDecimal contractAmount = contractData.getContractAmount();// 合同金额
-        BigDecimal interestAmount = contractData.getInterestAmount();// 总利息
-        Integer num = productDto.getPeriods();// 还款期数
+        BigDecimal contractAmount = jDto.getContractAmount();// 合同金额
+        BigDecimal interestAmount = jDto.getInterestAmount();// 总利息
+        Integer num = jDto.getPeriods(); // 还款期数
+        if(applyInfo.getState() <= FlowStateEnum.SIGN.getCode()) {
+            ProductDto prdDto = new ProductDto();
+            BeanUtils.copyProperties(productDto,prdDto);
+            JkContractDto contractData = calculateServiceRate(prdDto, repayMon);// 获取产品服务费明细
+            contractAmount = contractData.getContractAmount();
+            interestAmount = contractData.getInterestAmount();
+            num = productDto.getPeriods();
+        }
         BigDecimal periods = new BigDecimal(Integer.toString(num));
 
         Long cityId = applyInfo.getCityId();
@@ -820,36 +831,32 @@ public class SignController extends BaseController {
         ContractModelView contractModelView = constructContractData(applyLoanNo, bankNo, bankName, applyInfo,
                 cityCodeDto, loanTime, num);
         Integer subState = applyInfo.getSubState();
-        PrintPo printPo = new PrintPo(subState, applyLoanNo, contractNo, loanTime, contractAmount, interestAmount,
+        PrintPo printPo = new PrintPo(subState, applyLoanNo, loanTime, contractNo, contractAmount, interestAmount,
                 num, periods, repayMon, bankNo, bankName);
-        ProTypeStrategy proTypeStrategy = ProStrategyFactory
-                .getProTypeStrategy(ProTypeStrategyEnum.getEnum(1));
+        PrintPlanPo resultPo = null;
         if (ContractEnum.CREDIT_LOAN_PROTOCOL.getType() == type) {
-            // TODO 1先写死，后面要从合同表中获得
-            contractModelView = initCreditLoanProtocol(printPo, 2, contractModelView);
-            contractFileName = contractModelView.getModelName();
+            contractModelView = initCreditLoanProtocol(printPo, productDto.getContractTemplate(), contractModelView);
             model.addAttribute("title", ContractEnum.CREDIT_LOAN_PROTOCOL.getDesc());
         } else if (ContractEnum.CREDIT_COUNSELING_MANAGE_SERVICE.getType() == type) {
-            contractModelView = initCreditCounselingManageService(printPo, 2, contractModelView);
-            contractFileName = contractModelView.getModelName();
+            contractModelView = initCreditCounselingManageService(printPo, productDto.getContractTemplate(), contractModelView);
             model.addAttribute("title", ContractEnum.CREDIT_COUNSELING_MANAGE_SERVICE.getDesc());
         } else if (ContractEnum.REPAYMENT_REMINDER.getType() == type) {
-            PrintPlanPo resultPo = initRepaymentReminder(model, printPo, 2);
-            contractFileName = resultPo != null ? resultPo.getModelName() : contractFileName;
+            resultPo = initRepaymentReminder(model, printPo, productDto.getContractTemplate());
+            model.addAttribute("repayAmount", resultPo.getRepayAmount());
+            model.addAttribute("repayPlans", resultPo.getRepayPlans());
             model.addAttribute("title", ContractEnum.REPAYMENT_REMINDER.getDesc());
         } else if (ContractEnum.FY_ACCOUNT_SPECIAL_PROTOCOL.getType() == type) {
             proTypeStrategy.accountSpecialProtocol(contractModelView); // 已走公共逻辑
             model.addAttribute("title", ContractEnum.FY_ACCOUNT_SPECIAL_PROTOCOL.getDesc());
-            contractFileName = contractModelView.getModelName();
         } else if (ContractEnum.CUSTOMER_CONTRACT_VERIFICATION_FORM.getType() == type) {
             initCustomerContractVerificationForm(applyLoanNo, contractNo, productName, contractModelView);
-            proTypeStrategy.contractVerificationForm(contractModelView);
+            contractModelView = proTypeStrategy.contractVerificationForm(contractModelView);
             model.addAttribute("title", ContractEnum.CUSTOMER_CONTRACT_VERIFICATION_FORM.getDesc());
         } else if (ContractEnum.ENTRUST_DEBIT_AUTHORIZATION.getType() == type) {
             proTypeStrategy.accountSpecialProtocol(contractModelView); // 已走公共逻辑
             model.addAttribute("title", ContractEnum.ENTRUST_DEBIT_AUTHORIZATION.getDesc());
-            contractFileName = contractModelView.getModelName();
         }
+        contractFileName = null != resultPo ? resultPo.getModelName():contractModelView.getModelName();
         model.addAttribute("applyLoanNo", applyLoanNo);
         model.addAttribute("contractNo", contractNo);
         model.addAttribute("contractModelView", contractModelView);
