@@ -1,7 +1,14 @@
 $(function(){
-	initProductType();
-	initPeriodsType();
-	initPeriodsUnitType();
+	if($('#id').val() != ''){
+		initSelectStore();
+		initSelectProductData();
+		$('#prodCode').attr("disabled","disabled").css("background-color","#EEEEEE;");
+	}else{
+		initStore();
+		initProductData();
+	}
+	$('#addStore').select2();
+		
 	var form = $("#submit_form");
 	form.validate({
 		onfocusout:false,
@@ -29,18 +36,6 @@ $(function(){
 				isFloat:true,
 				compare:["loanUpLimit","loanDownLimit"]
 			},
-			serviceRate : {
-				required : true,
-				Floatlen:[2,2]
-			},
-			overdueDays : {
-				required : true,
-				isInt:true
-			},
-			penaltyRate:{	
-				required : true,
-				Floatlen:[2,2]
-			},
 			prodType:{	
 				required : true,
 				productType:true
@@ -48,15 +43,6 @@ $(function(){
 		},
 
 		messages : { // custom messages for radio buttons and checkboxes
-			serviceRate:{
-				Floatlen:"请输入[00.00]数据"
-			},
-			penaltyRate:{
-				Floatlen:"请输入[00.00]数据"
-			},
-			interestRate:{
-				Floatlen:"请输入[00.000000]数据"
-			},
 			loanDownLimit:{
 				compare:"上限必须大于下限"
 			},
@@ -66,19 +52,45 @@ $(function(){
 		}
 	});
 });
-function initPeriodsType(){
+
+function save(){
+	var form = $("#submit_form");
+	if(!form.valid()){
+		return;
+	}
 	$.ajax({
-		url : serverPath + "/node/selectNodeList.htm",
+		url : serverPath + "/productAttribute/saveOrUpdate.htm",
+		type : "post",
+		data : $("#submit_form").serialize(),
+		dataType : "json",
+		success : function(result) {
+				if(result.code == 0){
+					BootstrapDialog.alert(result.message,function(){
+						window.location.href=serverPath+"/productAttribute/queryProductAttribute.htm"
+					});
+				}else{
+					BootstrapDialog.alert(result.message);
+				}
+		},
+		error : function() {
+			BootstrapDialog.alert("操作失败");
+		}
+	});
+}
+
+
+function initProductData() {
+	$.ajax({
+		url : serverPath + "/productAttribute/queryUnConfigProd.htm",
 		type : "post",
 		data : {
-			"parentCode" : "periods",
 			"Time" : new Date().getMilliseconds()
 		},
 		dataType : "json",
 		success : function(result) {
 			if (result.code == 0) {
 				// 清空除第一条内容的外的其它数据
-				var select_ = $("select[name='periods']");
+				var select_ = $("select[name='prodCode']");
 				select_.find("option:gt(0)").remove();
 				for (var i = 0; i < result.data.length; i++) {
 					var isSelected = result.data[i].nodeCode == select_
@@ -96,7 +108,68 @@ function initPeriodsType(){
 		}
 	});
 }
-function initProductType(){
+
+function initStore(){
+	var data = new Array();
+	$.ajax({
+		url : serverPath + "/organization/selectOrgByOrgType.htm",
+		type : "post",
+		data : {
+			"orgType":3,
+			"Time" : new Date().getMilliseconds()
+		},
+		dataType : "json",
+		success : function(result) {
+			$("#addStore").empty();
+			var datas = result.data;
+			for(var i=0;i<datas.length;i++){
+				$("#addStore").append("<option value='"+datas[i].orgCode+"'>"+datas[i].orgName+"</option>");
+				data.push(datas[i].orgCode);
+			}
+			$("#addStore").val(data).trigger('change');
+			$("#addStore").change();//告诉select2代码已经更新，需要重载
+		},
+		error : function() {
+			BootstrapDialog.alert("操作失败");
+		}
+	});
+}
+
+function initSelectStore(){
+	var storeArray= new Array();
+	var storeCodes = $('#storeCodes').val();
+	storeArray=storeCodes.split("|");
+	var data = new Array();
+	$.ajax({
+		url : serverPath + "/organization/selectOrgByOrgType.htm",
+		type : "post",
+		data : {
+			"orgType":3,
+			"Time" : new Date().getMilliseconds()
+		},
+		dataType : "json",
+		success : function(result) {
+			$("#addStore").empty();
+			var datas = result.data;
+			for(var i=0;i<datas.length;i++){
+				$("#addStore").append("<option value='"+datas[i].orgCode+"'>"+datas[i].orgName+"</option>");
+				for (j=0;j<storeArray.length ;j++ ) { 
+					if(storeArray[j] == datas[i].orgCode){
+						data.push(datas[i].orgCode);
+						break;
+					}
+				} 	
+			}
+			$("#addStore").val(data).trigger('change');
+			$("#addStore").change();//告诉select2代码已经更新，需要重载
+		},
+		error : function() {
+			BootstrapDialog.alert("操作失败");
+		}
+	});
+}
+
+function initSelectProductData() {
 	$.ajax({
 		url : serverPath + "/node/selectNodeList.htm",
 		type : "post",
@@ -108,41 +181,11 @@ function initProductType(){
 		success : function(result) {
 			if (result.code == 0) {
 				// 清空除第一条内容的外的其它数据
-				var select_ = $("select[name='prodType']");
-				select_.find("option:gt(0)").remove();
-				for (var i = 0; i < result.data.length; i++) {
-					var isSelected = result.data[i].id == select_
-							.attr('data-id') ? "selected='selected'" : "";
-					select_.append("<option " + isSelected + " value='"
-							+ result.data[i].id + "'>"
-							+ result.data[i].nodeName + "</option>");
-				}
-			} else {
-				BootstrapDialog.alert(result.message);
-			}
-		},
-		error : function() {
-			BootstrapDialog.alert("操作失败");
-		}
-	});
-}
-function initPeriodsUnitType(){
-	$.ajax({
-		url : serverPath + "/node/selectNodeList.htm",
-		type : "post",
-		data : {
-			"parentCode" : "periodsUnit",
-			"Time" : new Date().getMilliseconds()
-		},
-		dataType : "json",
-		success : function(result) {
-			if (result.code == 0) {
-				// 清空除第一条内容的外的其它数据
-				var select_ = $("select[name='periodsUnit']");
+				var select_ = $("select[name='prodCode']");
 				select_.find("option:gt(0)").remove();
 				for (var i = 0; i < result.data.length; i++) {
 					var isSelected = result.data[i].nodeCode == select_
-					.attr('data-id') ? "selected='selected'" : "";
+							.attr('data-id') ? "selected='selected'" : "";
 					select_.append("<option " + isSelected + " value='"
 							+ result.data[i].nodeCode + "'>"
 							+ result.data[i].nodeName + "</option>");
@@ -150,30 +193,6 @@ function initPeriodsUnitType(){
 			} else {
 				BootstrapDialog.alert(result.message);
 			}
-		},
-		error : function() {
-			BootstrapDialog.alert("操作失败");
-		}
-	});
-}
-function save(){
-	var form = $("#submit_form");
-	if(!form.valid()){
-		return;
-	}
-	$.ajax({
-		url : serverPath + "/product/saveOrUpdate.htm",
-		type : "post",
-		data : $("#submit_form").serialize(),
-		dataType : "json",
-		success : function(result) {
-				if(result.code == 0){
-					BootstrapDialog.alert(result.message,function(){
-						window.location.href=serverPath+"/product/queryPageList.htm"
-					});
-				}else{
-					BootstrapDialog.alert(result.message);
-				}
 		},
 		error : function() {
 			BootstrapDialog.alert("操作失败");

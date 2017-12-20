@@ -27,6 +27,7 @@ import com.myph.common.constant.NumberConstants;
 import com.myph.common.result.AjaxResult;
 import com.myph.common.result.ServiceResult;
 import com.myph.manage.common.shiro.ShiroUtils;
+import com.myph.node.dto.SysNodeDto;
 import com.myph.node.service.NodeService;
 import com.myph.organization.service.OrganizationService;
 import com.myph.prodAttribute.dto.ProdAttributeDto;
@@ -87,19 +88,23 @@ public class ProductAttributeController {
     @RequestMapping("/new_edit")
     public String newOrEdit(Long id, Model model) {
         if (null != id) {
-            ServiceResult<ProductDto> result = productService.selectByPrimaryKey(id);
+            ServiceResult<ProdAttributeDto> result = productAttributeService.selectByPrimaryKey(id);
             if (!result.success()) {
                 model.addAttribute("result", result);
                 return "/error/error";
             }
-            ProductDto dto = result.getData();
+            ProdAttributeDto dto = result.getData();
             model.addAttribute("record", dto);
         }
-        return "/product/new_edit";
+        return "/productAttribute/new_edit";
     }
     
-    
-    
+    @RequestMapping("/queryUnConfigProd")
+    @ResponseBody
+    public AjaxResult queryUnConfigProd() {
+        ServiceResult<List<SysNodeDto>> result = productAttributeService.queryUnConfigProd();
+        return AjaxResult.success(result.getData());
+    }
     
     
     
