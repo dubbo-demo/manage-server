@@ -54,7 +54,7 @@ public class DataDetailRelationController {
         if(dataDetailList.size() <= 0){
             return AjaxResult.success();
         }
-        /**2017-12-21 去除大小项关系唯一约束*/
+        /**2017-12-21 去除大小项关系唯一约束* /
 //        ServiceResult<List<DataDetailRelationDto>> dataDetailRelationList = dataDetailRelationService.selectAllDataDetailRelation();
 //        List<String> infoCodes = new ArrayList<String>();
 //        for(int i=0;i<dataDetailRelationList.getData().size();i++){
