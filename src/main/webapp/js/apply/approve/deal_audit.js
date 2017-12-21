@@ -170,10 +170,10 @@ function initloanPeriodsData(change) {
 		return;
 	}
 	$.ajax({
-		url : serverPath + "/product/selectByProductType.htm",
+		url : serverPath + "/product/showProductForAudit.htm",
 		type : "post",
 		data : {
-			"proType" : parentValue,
+			"applyLoanNo" : $('#applyLoanNo').val(),
 			"Time" : new Date().getMilliseconds()
 		},
 		dataType : "json",

@@ -21,6 +21,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.myph.apply.dto.ApplyInfoDto;
+import com.myph.apply.service.ApplyInfoService;
 import com.myph.cityCode.dto.CityCodeDto;
 import com.myph.cityCode.service.CityCodeService;
 import com.myph.common.constant.Constants;
@@ -51,6 +53,8 @@ public class ProductController {
     NodeService nodeService;
     @Autowired
     CityCodeService cityCodeService;
+    @Autowired
+    ApplyInfoService applyInfoService;
 
     @RequestMapping("/allList")
     @ResponseBody
@@ -191,8 +195,13 @@ public class ProductController {
      */
     @RequestMapping("/showProductForAudit")
     @ResponseBody
-    public AjaxResult showProductForAudit(String parentCode) {
-        ServiceResult<List<SysNodeDto>> result = productService.showProductByCityCode("");
-        return AjaxResult.success(result.getData());
+    public AjaxResult showProductForAudit(String applyLoanNo) {
+        List<SysNodeDto> result = new ArrayList<SysNodeDto>();
+        ServiceResult<ApplyInfoDto> applyInfoResult = applyInfoService.queryInfoByLoanNo(applyLoanNo);
+        ServiceResult<CityCodeDto> cityCodeResult = cityCodeService.selectByPrimaryKey(applyInfoResult.getData().getCityId());
+        if(cityCodeResult.getData() != null){
+            result = productService.showProductByCityCode(cityCodeResult.getData().getCityCode()).getData();
+        }
+        return AjaxResult.success(result);
     }
 }
