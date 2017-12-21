@@ -1,7 +1,6 @@
 
 <#include "/sys/top.ftl">
 <#include "/sys/left.ftl">
-<script src="${cdnPath}/js/product/new_edit.js"></script>
 	<div class="page-content">
 		<div class="container-fluid">
 			<div class="row-fluid">
@@ -126,5 +125,6 @@
 		
 	</div>
 	
+	<script src="${cdnPath}/js/product/new_edit.js?v=${VERSION_NO}"></script>
 	
 <#include "/sys/bottom.ftl">

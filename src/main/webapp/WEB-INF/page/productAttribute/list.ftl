@@ -1,7 +1,6 @@
 
 <#include "/sys/top.ftl">
 <#include "/sys/left.ftl">
-<script src="${cdnPath}/js/productAttribute/list.js"></script>
 
 	<div class="page-content">
 		<div class="container-fluid">
@@ -85,5 +84,6 @@
 			</div>
 	</div>
 	
+	<script src="${cdnPath}/js/productAttribute/list.js?v=${VERSION_NO}"></script>
 	
 <#include "/sys/bottom.ftl">
