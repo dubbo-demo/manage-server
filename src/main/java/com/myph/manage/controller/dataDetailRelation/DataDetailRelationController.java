@@ -54,21 +54,23 @@ public class DataDetailRelationController {
         if(dataDetailList.size() <= 0){
             return AjaxResult.success();
         }
-        ServiceResult<List<DataDetailRelationDto>> dataDetailRelationList = dataDetailRelationService.selectAllDataDetailRelation();
-        List<String> infoCodes = new ArrayList<String>();
-        for(int i=0;i<dataDetailRelationList.getData().size();i++){
-            String infoCode = dataDetailRelationList.getData().get(i).getInfoCode();
-            String[] infoCodeArray = infoCode.split("\\|");
-            List<String> infoCodeList = Arrays.asList(infoCodeArray);
-            infoCodes.addAll(infoCodeList);
-        }
-        Iterator<DataDetailDto> iter = dataDetailList.iterator(); 
-        while (iter.hasNext()) { 
-            String code = iter.next().getCode();
-            if(infoCodes.contains(code)){
-                iter.remove();
-            }
-        }
+        /**2017-12-21 去除大小项关系唯一约束* /
+//        ServiceResult<List<DataDetailRelationDto>> dataDetailRelationList = dataDetailRelationService.selectAllDataDetailRelation();
+//        List<String> infoCodes = new ArrayList<String>();
+//        for(int i=0;i<dataDetailRelationList.getData().size();i++){
+//            String infoCode = dataDetailRelationList.getData().get(i).getInfoCode();
+//            String[] infoCodeArray = infoCode.split("\\|");
+//            List<String> infoCodeList = Arrays.asList(infoCodeArray);
+//            infoCodes.addAll(infoCodeList);
+//        }
+//        Iterator<DataDetailDto> iter = dataDetailList.iterator(); 
+//        while (iter.hasNext()) { 
+//            String code = iter.next().getCode();
+//            if(infoCodes.contains(code)){
+//                iter.remove();
+//            }
+//        }
+        /**2017-12-21 去除大小项关系唯一约束*/
         return AjaxResult.success(dataDetailList);
     }
 
