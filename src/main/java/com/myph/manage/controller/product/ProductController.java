@@ -10,6 +10,7 @@
 package com.myph.manage.controller.product;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -20,11 +21,14 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.myph.cityCode.dto.CityCodeDto;
+import com.myph.cityCode.service.CityCodeService;
 import com.myph.common.constant.Constants;
 import com.myph.common.result.AjaxResult;
 import com.myph.common.result.ServiceResult;
 import com.myph.common.rom.annotation.BasePage;
 import com.myph.common.rom.annotation.Pagination;
+import com.myph.employee.dto.EmpDetailDto;
 import com.myph.manage.common.shiro.ShiroUtils;
 import com.myph.node.dto.SysNodeDto;
 import com.myph.node.service.NodeService;
@@ -45,6 +49,8 @@ public class ProductController {
     ProductService productService;
     @Autowired
     NodeService nodeService;
+    @Autowired
+    CityCodeService cityCodeService;
 
     @RequestMapping("/allList")
     @ResponseBody
@@ -149,5 +155,44 @@ public class ProductController {
             productService.insert(dto);
         }
        return AjaxResult.success();
+    }
+    
+    /**
+     * 
+     * @名称 showSupportProductForReception 
+     * @描述 根据渠道、门店获取可选的产品（接待使用）
+     * @返回类型 AjaxResult     
+     * @日期 2017年12月21日 下午2:54:38
+     * @创建人  吴阳春
+     * @更新人  吴阳春
+     *
+     */
+    @RequestMapping("/showProductForReception")
+    @ResponseBody
+    public AjaxResult showProductForReception() {
+        List<SysNodeDto> result = new ArrayList<SysNodeDto>();
+        EmpDetailDto empDetailDto = ShiroUtils.getEmpDetail();
+        ServiceResult<CityCodeDto> cityCodeResult = cityCodeService.selectByPrimaryKey(empDetailDto.getCityId());
+        if(cityCodeResult.getData() != null){
+            result = productService.showProductByCityCode(cityCodeResult.getData().getCityCode()).getData();
+        }
+        return AjaxResult.success(result);
+    }
+    
+    /**
+     * 
+     * @名称 showSupportProductForAudit 
+     * @描述 根据渠道、门店获取可选的产品（信审使用）
+     * @返回类型 AjaxResult     
+     * @日期 2017年12月21日 下午2:54:38
+     * @创建人  吴阳春
+     * @更新人  吴阳春
+     *
+     */
+    @RequestMapping("/showProductForAudit")
+    @ResponseBody
+    public AjaxResult showProductForAudit(String parentCode) {
+        ServiceResult<List<SysNodeDto>> result = productService.showProductByCityCode("");
+        return AjaxResult.success(result.getData());
     }
 }

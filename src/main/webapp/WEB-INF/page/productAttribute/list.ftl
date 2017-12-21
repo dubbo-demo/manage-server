@@ -71,7 +71,7 @@
 							<td><#if record.channel==1>APP<#elseif record.channel==2>线下<#else>APP&线下</#if></td>
 							<td style=" max-width: 200px;text-overflow:ellipsis;white-space:nowrap;overflow: hidden;" title='${record.storeNames!}'>${record.storeNames!}</td>
 							<td>${record.createTime?string('yyyy-MM-dd HH:mm:ss')}</td>
-							<td>${record.updateTime?string('yyyy-MM-dd HH:mm:ss')}</td>
+							<td>${(record.updateTime?string('yyyy-MM-dd HH:mm:ss'))!}</td>
 							<td>
 							<a href="javascript:page_jump('${serverPath}/productAttribute/new_edit.htm?id=${record.id!}');">修改</a>
 							&nbsp;

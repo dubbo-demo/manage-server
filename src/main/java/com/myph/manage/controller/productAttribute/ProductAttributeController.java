@@ -106,7 +106,18 @@ public class ProductAttributeController {
         return AjaxResult.success(result.getData());
     }
     
-    
+    @RequestMapping("/saveOrUpdate")
+    @ResponseBody
+    public AjaxResult saveOrUpdate(ProdAttributeDto dto, Model model) {
+        // 更新
+        if (null != dto.getId()) {
+            productAttributeService.updateByPrimaryKey(dto);
+        } else {
+            dto.setCreateUser(ShiroUtils.getCurrentUserName());
+            productAttributeService.insert(dto);
+        }
+       return AjaxResult.success();
+    }
     
     
     

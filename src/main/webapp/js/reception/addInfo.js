@@ -173,9 +173,9 @@ function save(event, e) {
 }
 
 function getNode(xmlId,parentCode) {
-	var url = serverPath+"/reception/showProduct.htm";
+	var url = serverPath+"/product/showProductForReception.htm";
 	var data = {
-		"parentCode" : parentCode,
+			"Time" : new Date().getMilliseconds()
 	};
 	$.getJSON(url, data, function(result) {
 		$(xmlId).empty();

@@ -66,6 +66,14 @@ $.validator.addMethod("productType", function(value, element) {
 $.validator.addMethod("periodsUnit", function(value, element) {
 	return this.optional(element) || value != '0';
 }, "请选择期数单位");
+
+$.validator.addMethod("contractTemplate", function(value, element) {
+	return this.optional(element) || value != '1' || value != '2';
+}, "请输入正确的模板类型（1、2）");
+$.validator.addMethod("punishRule", function(value, element) {
+	return this.optional(element) || value != '1' || value != '2';
+}, "请输入正确的规则类型（1、2）");
+
 // 判断浮点型 ,不做必要验证
 jQuery.validator.addMethod("isFloat", function(value, element) {
 	if ("" == value) {

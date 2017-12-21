@@ -36,13 +36,13 @@
 			<div class="row-fluid">
 				<div class="control-group span6 ">
 					<label class="help-inline  span2 text-right  control-label"> 产品名称<span class="required">*</span></label>
-					<select name="prodCode" id='prodCode' class="m-wrap span8" data-id="${(record.prodCode)!"0"}">
+					<select name="prodCode" id='prodCode' class="m-wrap span8" data-code="${(record.prodCode)!"0"}">
 						<option value="0">请选择</option>
 					</select>
 				</div>
                 <div class="control-group span6 ">
                     <label class="help-inline   span2 text-right  control-label"> 产品序号<span class="required">*</span></label> <input 
-                        type="text" class="m-wrap span8" name="prodIndex"
+                        type="text" class="m-wrap span8" name="prodIndex" id='prodIndex'
                         value="${(record.prodIndex)!}">
                 </div>				
 			</div>
@@ -50,20 +50,33 @@
 			<div class="row-fluid">
 				<div class="control-group span6 ">
 					<label class="help-inline   span2 text-right  control-label"> 贷款额度上限<span class="required">*</span></label> <input 
-						type="text" class="m-wrap span8" name="loanUpLimit"
+						type="text" class="m-wrap span8" name="loanUpLimit" id='loanUpLimit' 
 						value="${(record.loanUpLimit)!}">
 				</div>
 				<div class="control-group span6 ">
 					<label class="help-inline   span2 text-right  control-label"> 贷款额度下限<span class="required">*</span></label> <input 
-						type="text" class="m-wrap span8" name="loanDownLimit"
+						type="text" class="m-wrap span8" name="loanDownLimit" id='loanDownLimit'
 						value="${(record.loanDownLimit)!}">
 				</div>
 			</div>
+			
+            <div class="row-fluid">
+                <div class="control-group span6 ">
+                    <label class="help-inline   span2 text-right  control-label"> 模板类型<span class="required">*</span></label> <input 
+                        type="text" class="m-wrap span8" name="contractTemplate" id='contractTemplate'
+                        value="${(record.contractTemplate)!}">
+                </div>
+                <div class="control-group span6 ">
+                    <label class="help-inline   span2 text-right  control-label"> 结算规则<span class="required">*</span></label> <input 
+                        type="text" class="m-wrap span8" name="punishRule" id='punishRule'
+                        value="${(record.punishRule)!}">
+                </div>
+            </div>			
 			<div class="row-fluid">
                 <div class="control-group span6 ">
-                    <label class="help-inline   span2 text-right  control-label"> 产品可申请城市<span class="required">*</span></label>
-                    <select name="addStore" id="addStore" class="form-control span6" multiple="multiple">
-                    </select>
+                    <label class="help-inline   span2 text-right  control-label"> 产品图标<span class="required">*</span></label> <input 
+                        type="text" class="m-wrap span8" name="prodIcon" id='prodIcon' maxlength="100"
+                        value="${(record.prodIcon)!}">
                 </div>			
 				<div class="control-group span6 ">
 					<label class="help-inline   span2 text-right  control-label"> 进件渠道<span class="required">*</span></label>
@@ -74,7 +87,14 @@
                         </select>
 				</div>
 			</div>
-
+            <div class="row-fluid">
+                <div class="control-group span6 ">
+                    <label class="help-inline   span2 text-right  control-label"> 产品可申请城市<span class="required">*</span></label>
+                    <select name="addStore" id="addStore" class="form-control span6" multiple="multiple">
+                    </select>
+                </div>              
+            </div>
+            
 			<div class="well">
 				<center>
 				<a href="javascript:page_back('${serverPath}/productAttribute/queryProductAttribute.htm');" class="btn blue" >返回</a>

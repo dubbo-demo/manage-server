@@ -13,19 +13,6 @@ $(function(){
 	form.validate({
 		onfocusout:false,
 		rules : {
-			// account
-			periods : {
-				required : true,
-				loanPeriods : true
-			},
-			periodsUnit : {
-				required : true,
-				periodsUnit:true
-			},
-			interestRate : {
-				required : true,
-				Floatlen:[2,6]
-			},
 			loanUpLimit : {
 				required : true,
 				isFloat:true,
@@ -36,9 +23,26 @@ $(function(){
 				isFloat:true,
 				compare:["loanUpLimit","loanDownLimit"]
 			},
-			prodType:{	
+			prodCode:{	
 				required : true,
 				productType:true
+			},
+			prodIndex:{	
+				required : true
+			},	
+			contractTemplate:{	
+				required : true,
+				contractTemplate:true
+			},	
+			punishRule:{	
+				required : true,
+				punishRule:true
+			},
+			addStore:{	
+				required : true
+			},
+			prodIcon:{	
+				required : true
 			}
 		},
 
@@ -58,10 +62,35 @@ function save(){
 	if(!form.valid()){
 		return;
 	}
+	var storeCodes = "";
+	var storeCodeslist=$("#addStore").select2("data");
+	console.log(storeCodeslist);
+	for (var i = 0; i < storeCodeslist.length; i++) {
+		
+		if(storeCodes == ""){
+			storeCodes = storeCodeslist[i].id;
+		}else{
+			storeCodes = storeCodes + "|" + storeCodeslist[i].id;
+		}
+	}
 	$.ajax({
 		url : serverPath + "/productAttribute/saveOrUpdate.htm",
 		type : "post",
-		data : $("#submit_form").serialize(),
+		data : {
+			"Time" : new Date().getMilliseconds(),
+			"id" : $("#id").val(),
+			"prodId" :$("#prodCode").find("option:selected").attr('data-id') ,
+			"prodCode" :$("#prodCode").val() ,
+			"prodName" :$("#prodCode").find("option:selected").text(),
+			"storeCodes" : storeCodes,
+			"loanUpLimit" : $("#loanUpLimit").val(),
+			"loanDownLimit" : $("#loanDownLimit").val(),
+			"channel" : $("#channel").val(),
+			"prodIndex" : $("#prodIndex").val(),
+			"prodIcon" : $("#prodIcon").val(),
+			"contractTemplate" : $("#contractTemplate").val(),
+			"punishRule" : $("#punishRule").val()			
+		},
 		dataType : "json",
 		success : function(result) {
 				if(result.code == 0){
@@ -94,9 +123,9 @@ function initProductData() {
 				select_.find("option:gt(0)").remove();
 				for (var i = 0; i < result.data.length; i++) {
 					var isSelected = result.data[i].nodeCode == select_
-							.attr('data-id') ? "selected='selected'" : "";
+							.attr('data-code') ? "selected='selected'" : "";
 					select_.append("<option " + isSelected + " value='"
-							+ result.data[i].nodeCode + "'>"
+							+ result.data[i].nodeCode + "' data-id='" + result.data[i].id +"'>"
 							+ result.data[i].nodeName + "</option>");
 				}
 			} else {
@@ -185,7 +214,7 @@ function initSelectProductData() {
 				select_.find("option:gt(0)").remove();
 				for (var i = 0; i < result.data.length; i++) {
 					var isSelected = result.data[i].nodeCode == select_
-							.attr('data-id') ? "selected='selected'" : "";
+							.attr('data-code') ? "selected='selected'" : "";
 					select_.append("<option " + isSelected + " value='"
 							+ result.data[i].nodeCode + "'>"
 							+ result.data[i].nodeName + "</option>");
