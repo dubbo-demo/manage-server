@@ -34,13 +34,13 @@
 			<div class="row-fluid">
 						<div class="control-group span6 ">
 							<label class="help-inline  span2 text-right  control-label"> 产品名称<span class="required">*</span></label>
-							<select name="prodType" class="m-wrap span8" data-id="${(record.prodType)!"0"}">
+							<select name="prodType" id="prodType" class="m-wrap span8" data-id="${(record.prodType)!"0"}">
 								<option value="0">请选择</option>
 							</select>
 						</div>
 						<div class="control-group span6 ">
 							<label class="help-inline   span2 text-right  control-label"> 贷款期数<span class="required">*</span></label>
-							<select name="periods" class="m-wrap span8" data-id="${(record.periods)!"0"}">
+							<select name="periods" id="periods" class="m-wrap span8" data-id="${(record.periods)!"0"}">
 								<option value="0">请选择</option>
 							</select>
 						</div>
@@ -48,7 +48,7 @@
 			<div class="row-fluid">
 						<div class="control-group span6 ">
 							<label class="help-inline   span2 text-right  control-label"> 期数单位<span class="required">*</span></label> 
-							<select name="periodsUnit" class="m-wrap span8" data-id="${(record.periodsUnit)!"0"}">
+							<select name="periodsUnit" id='periodsUnit' class="m-wrap span8" data-id="${(record.periodsUnit)!"0"}">
 								<option value="0">请选择</option>
 							</select>
 						</div>

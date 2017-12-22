@@ -1,4 +1,9 @@
 $(function(){
+	if($('#id').val() != ''){
+		$('#prodType').attr("disabled","disabled").css("background-color","#EEEEEE;");
+		$('#periodsUnit').attr("disabled","disabled").css("background-color","#EEEEEE;");
+		$('#periods').attr("disabled","disabled").css("background-color","#EEEEEE;");
+	}
 	initProductType();
 	initPeriodsType();
 	initPeriodsUnitType();
