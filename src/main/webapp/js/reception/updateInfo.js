@@ -56,7 +56,7 @@ FormSamples.initReception = function () {
 //	}
 }
 $(function() {
-	getNode("#prodType","proType");
+	getProdType("#prodType");
 	FormSamples.init();
 	getNode("#tab select[name='loanUse']","loanUse");
 	FormSamples.initReception();
@@ -215,6 +215,33 @@ function getNode(xmlId,parentCode) {
 			$(xmlId).append(
 					"<option value='" + resultData[i].id + "'>"
 							+ resultData[i].nodeName + "</option>");
+			}
+		}
+	});
+}
+
+/**
+ *
+ * @param xmlId 目标节点
+ */
+function getProdType(xmlId) {
+	var url = serverPath+"/product/showProductForReception.htm";
+	var data = {
+		"Time" : new Date().getMilliseconds()
+	};
+	$.getJSON(url, data, function(result) {
+		$(xmlId).empty();
+		var resultData = result.data;
+		$(xmlId).append("<option value=''>请选择</option>");
+		for (var i = 0; i < resultData.length; i++) {
+			if($(xmlId).data("value") == resultData[i].id) {
+				$(xmlId).append(
+					"<option selected value='" + resultData[i].id + "'>"
+					+ resultData[i].nodeName + "</option>");
+			} else {
+				$(xmlId).append(
+					"<option value='" + resultData[i].id + "'>"
+					+ resultData[i].nodeName + "</option>");
 			}
 		}
 	});
