@@ -23,7 +23,7 @@ public class PrintPo extends BaseInfo {
 
     public PrintPo(Integer subState, String applyLoanNo, String loanTime, String contractNo,
             BigDecimal contractAmount, BigDecimal interestAmount, Integer num, BigDecimal periods,
-            BigDecimal repayMon,String bankNo,String bankName) {
+            BigDecimal repayMon,String bankNo,String bankName,String periodsUnit) {
         this.subState = subState;
         this.applyLoanNo = applyLoanNo;
         this.loanTime = loanTime;
@@ -35,6 +35,7 @@ public class PrintPo extends BaseInfo {
         this.repayMon = repayMon;
         this.bankNo = bankNo;
         this.bankName = bankName;
+        this.periodsUnit = periodsUnit;
     }
 
     private Integer subState;
@@ -48,6 +49,5 @@ public class PrintPo extends BaseInfo {
     private BigDecimal repayMon;
     private String bankNo;
     private String bankName;
-
-
+    private String periodsUnit;
 }

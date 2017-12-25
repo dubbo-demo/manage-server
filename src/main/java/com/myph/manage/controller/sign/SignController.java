@@ -796,7 +796,7 @@ public class SignController extends BaseController {
         BigDecimal contractAmount = jDto.getContractAmount();// 合同金额
         BigDecimal interestAmount = jDto.getInterestAmount();// 总利息
         Integer num = jDto.getPeriods(); // 还款期数
-        if(applyInfo.getState() <= FlowStateEnum.SIGN.getCode()) {
+        if(applyInfo.getState() > FlowStateEnum.CONTRACT.getCode()) {
             ProductDto prdDto = new ProductDto();
             BeanUtils.copyProperties(productDto,prdDto);
             JkContractDto contractData = calculateServiceRate(prdDto, repayMon);// 获取产品服务费明细
@@ -816,7 +816,7 @@ public class SignController extends BaseController {
                 cityCodeDto, loanTime, num);
         Integer subState = applyInfo.getSubState();
         PrintPo printPo = new PrintPo(subState, applyLoanNo, loanTime, contractNo, contractAmount, interestAmount,
-                num, periods, repayMon, bankNo, bankName);
+                num, periods, repayMon, bankNo, bankName,productDto.getPeriodsUnit());
         PrintPlanPo resultPo = null;
         if (ContractEnum.CREDIT_LOAN_PROTOCOL.getType() == type) {
             contractModelView = initCreditLoanProtocol(printPo, productDto.getContractTemplate(), contractModelView);

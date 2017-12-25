@@ -1,9 +1,13 @@
 package com.myph.manage.common.signStrategy;
 
+import com.myph.common.constant.PeriodsUnitEnum;
+import com.myph.common.util.DateTimeUtil;
 import com.myph.common.util.NumberToCN;
 import com.myph.contract.dto.JkContractDto;
 import com.myph.manage.po.PrintPo;
 import com.myph.sign.dto.ContractModelView;
+import org.apache.commons.lang3.StringUtils;
+import org.jboss.netty.util.internal.StringUtil;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -108,5 +112,17 @@ public class BaseProTypeStrategy {
             contractModelView.setServiceMoneyCN(NumberToCN.number2CNMontrayUnit(serviceMoney));
         }
         return contractModelView;
+    }
+
+    public String getAgreeDate(String loanTime,int accumulation,String periodsUnit) {
+        if(!StringUtils.isEmpty(periodsUnit)){
+            switch (PeriodsUnitEnum.getEnum(periodsUnit)) {
+                case MONTH:
+                    return DateTimeUtil.getAddMonth(loanTime, accumulation);
+                case WEEK:
+                    return DateTimeUtil.getAddWeek(loanTime, accumulation);
+            }
+        }
+        return DateTimeUtil.getAddMonth(loanTime, accumulation);// 用户账单还款开始日期
     }
 }
