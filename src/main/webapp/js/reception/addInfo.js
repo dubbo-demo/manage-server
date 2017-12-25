@@ -36,7 +36,7 @@ var FormSamples = function () {
 	}();
 
 $(function() {
-	getNode("#prodType","proType");
+	getProduct();
 	FormSamples.init();
 	getNode("#tab select[name='loanUse']","loanUse");
 	$("form").validate({
@@ -172,7 +172,7 @@ function save(event, e) {
 	$("#tab").submit();
 }
 
-function getNode(xmlId,parentCode) {
+function getProduct(xmlId,parentCode) {
 	var url = serverPath+"/product/showProductForReception.htm";
 	var data = {
 			"Time" : new Date().getMilliseconds()
@@ -185,6 +185,34 @@ function getNode(xmlId,parentCode) {
 			$(xmlId).append(
 					"<option value='" + resultData[i].id + "'>"
 							+ resultData[i].nodeName + "</option>");
+		}
+	});
+}
+
+/**
+ * 
+ * @param xmlId 目标节点
+ * @param parentCode 父id
+ */
+function getNode(xmlId,parentCode) {
+	var url = serverPath+"/reception/showProduct.htm";
+	var data = {
+		"parentCode" : parentCode,
+	};
+	$.getJSON(url, data, function(result) {
+		$(xmlId).empty();
+		var resultData = result.data;
+		$(xmlId).append("<option value=''>请选择</option>");
+		for (var i = 0; i < resultData.length; i++) {
+			if($(xmlId).data("value") == resultData[i].id) {
+				$(xmlId).append(
+						"<option selected value='" + resultData[i].id + "'>"
+								+ resultData[i].nodeName + "</option>");
+			} else {
+			$(xmlId).append(
+					"<option value='" + resultData[i].id + "'>"
+							+ resultData[i].nodeName + "</option>");
+			}
 		}
 	});
 }
