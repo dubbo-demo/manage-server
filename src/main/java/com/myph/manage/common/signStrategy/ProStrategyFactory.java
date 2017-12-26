@@ -1,6 +1,5 @@
 package com.myph.manage.common.signStrategy;
 
-import com.myph.manage.common.constant.ProTypeStrategyEnum;
 import com.myph.manage.spring.SpringContextHolder;
 
 /**

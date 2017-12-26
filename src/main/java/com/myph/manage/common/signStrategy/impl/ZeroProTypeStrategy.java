@@ -7,8 +7,6 @@ import com.myph.common.util.DateUtils;
 import com.myph.constant.IsAdvanceSettleEnum;
 import com.myph.constant.RepayStateEnum;
 import com.myph.contract.dto.JkContractDto;
-import com.myph.manage.common.constant.ContractEnum;
-import com.myph.manage.common.constant.ZeroContractEnum;
 import com.myph.manage.common.shiro.ShiroUtils;
 import com.myph.manage.common.signStrategy.BaseProTypeStrategy;
 import com.myph.manage.common.signStrategy.ProTypeStrategy;

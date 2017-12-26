@@ -4,8 +4,8 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>parent</artifactId>
-        <groupId>com.myph</groupId>
-        <version>1.0.3-SNAPSHOT</version>
+        <groupId>com.way</groupId>
+        <version>1.0-SNAPSHOT</version>
         <relativePath>../parent/pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -20,55 +20,30 @@
     </properties>
 
     <dependencies>
-        <dependency>
-            <groupId>com.maiyajf</groupId>
-            <artifactId>monitor-client</artifactId>
-        </dependency>
         <!--运行junit单元测试类需要的-->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
+            <version>3.8.1</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
+            <version>${springframework.version}</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
-            <groupId>com.myph</groupId>
-            <artifactId>user-service-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.myph</groupId>
-            <artifactId>employee-service-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.myph</groupId>
-            <artifactId>apply-service-api</artifactId>
-        </dependency>
-        <dependency>
-                <groupId>com.myph</groupId>
-                <artifactId>performance-service-api</artifactId>
-                <version>${performanceServiceVersion}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.myph</groupId>
-            <artifactId>common</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.myph</groupId>
+            <groupId>com.way</groupId>
             <artifactId>base-service-api</artifactId>
+            <version>${base-service.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.myph</groupId>
+            <groupId>com.way</groupId>
             <artifactId>member-service-api</artifactId>
+            <version>${member-service.version}</version>
         </dependency>
-        <dependency>
-            <groupId>com.myph</groupId>
-            <artifactId>order-service-api</artifactId>
-        </dependency>        
         <!-- begin shiro -->
         <dependency>
             <groupId>org.apache.shiro</groupId>
@@ -92,53 +67,11 @@
         </dependency>
         <!-- end shiro -->
         
-        <dependency> 
-            <groupId>com.maiya</groupId>
-            <artifactId>rocketmq-client</artifactId>
-        </dependency>
-        
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-web</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>commons-logging</groupId>
-                    <artifactId>commons-logging</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-webmvc</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.github.sgroschupf</groupId>
-            <artifactId>zkclient</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.alibaba</groupId>
-            <artifactId>dubbo</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.zookeeper</groupId>
-            <artifactId>zookeeper</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>javax.servlet.jsp</groupId>
-            <artifactId>javax.servlet.jsp-api</artifactId>
-            <scope>provided</scope>
-        </dependency>
-
         <!-- template:freemarker,velocity -->
         <dependency>
             <groupId>org.freemarker</groupId>
             <artifactId>freemarker</artifactId>
+            <version>2.3.23</version>
         </dependency>
         <!-- poi -->
         <dependency>
@@ -165,17 +98,6 @@
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
             <version>2.5.0</version>
-        </dependency>
-        <dependency>
-            <groupId>com.repayment</groupId>
-            <artifactId>repayment-debit-interface</artifactId>
-            <exclusions>
-                <exclusion>
-                    <artifactId>base-util</artifactId>
-                    <groupId>com.maiya</groupId>
-                </exclusion>
-            </exclusions>
-            <version>${repayMentServiceVersion}</version>
         </dependency>
     </dependencies>
 

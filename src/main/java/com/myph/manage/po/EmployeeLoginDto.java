@@ -2,6 +2,7 @@ package com.myph.manage.po;
 
 import com.myph.base.dto.MenuDto;
 import com.myph.common.bean.BaseInfo;
+import com.way.common.bean.BaseEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -18,7 +19,7 @@ import java.util.Map;
 @Data
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = false)
-public class EmployeeLoginDto extends BaseInfo {
+public class EmployeeLoginDto extends BaseEntity {
      
     private static final long serialVersionUID = 3984953473366018219L;
     private String employeeName; // '员工姓名'
