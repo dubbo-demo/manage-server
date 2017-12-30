@@ -2,36 +2,28 @@ package com.myph.manage.controller;
 
 /**
  * INFO: info
- * User: zhaokai
- * Date: 2016/8/26 - 9:31
+ * User: xinpei.xu
  * Version: 1.0
  * History: <p>如果有修改过程，请记录</P>
  */
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URLEncoder;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import com.myph.manage.common.util.ExcelUtil;
+import com.myph.manage.common.util.MYPHConfigUtils;
+import com.way.common.log.WayLogger;
+import com.way.common.rom.annotation.BasePage;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.myph.common.log.MyphLogger;
-import com.myph.common.rom.annotation.BasePage;
-import com.myph.manage.common.util.ExcelUtil;
-import com.myph.manage.common.util.MYPHConfigUtils;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.*;
+import java.net.URLEncoder;
+import java.util.List;
+import java.util.Map;
 
 public abstract class BaseController {
     protected final Logger log = LoggerFactory.getLogger(this.getClass());
@@ -94,7 +86,7 @@ public abstract class BaseController {
                 bos.write(buff, 0, bytesRead);
             out.flush();
         } catch (Exception e) {
-            MyphLogger.error(e, "exportExcel异常");
+            WayLogger.error(e, "exportExcel异常");
         } finally {
             try {
                 if (null != is) {
@@ -108,7 +100,7 @@ public abstract class BaseController {
                 }
                 buff = null;
             } catch (IOException e) {
-                MyphLogger.error(e, "exportExcel异常");
+                WayLogger.error(e, "exportExcel异常");
             }
         }
     }

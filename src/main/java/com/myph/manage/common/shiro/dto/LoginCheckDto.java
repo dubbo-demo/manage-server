@@ -1,7 +1,6 @@
 package com.myph.manage.common.shiro.dto;
 
-import com.myph.common.bean.BaseInfo;
-
+import com.way.common.bean.BaseEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -9,7 +8,7 @@ import lombok.ToString;
 @Data
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
-public class LoginCheckDto extends BaseInfo {
+public class LoginCheckDto extends BaseEntity {
 	/**
 	 * 
 	 */

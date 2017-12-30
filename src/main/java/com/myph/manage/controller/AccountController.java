@@ -1,22 +1,14 @@
 package com.myph.manage.controller;
 
-import com.myph.common.result.AjaxResult;
-import com.myph.common.rom.annotation.BasePage;
-import com.myph.common.rom.annotation.Pagination;
-import com.myph.employee.dto.EmployeeDto;
-import com.myph.flow.dto.BaseActionDto;
-import com.myph.flow.dto.ContinueActionDto;
-import com.myph.flow.dto.FallbackActionDto;
-import com.myph.flow.dto.RejectActionDto;
-import com.myph.idgenerator.service.IdGeneratorService;
 import com.myph.manage.common.shiro.ShiroUtils;
-import com.myph.manage.facadeService.FacadeFlowStateExchangeService;
 import com.myph.manage.permission.AuthPermission;
 import com.myph.manage.permission.AuthorityType;
+import com.way.common.result.AjaxResult;
+import com.way.common.rom.annotation.BasePage;
+import com.way.common.rom.annotation.Pagination;
 import org.apache.commons.collections.map.HashedMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,8 +25,8 @@ public class AccountController extends BaseController {
 
     private Logger LOGGER = LoggerFactory.getLogger(AccountController.class);
 
-    @Autowired
-    private IdGeneratorService idGeneratorService;
+//    @Autowired
+//    private IdGeneratorService idGeneratorService;
 
     /**
      * DEMO :调整到FREEMARKER页面
@@ -74,9 +66,6 @@ public class AccountController extends BaseController {
     public String ftlPage(Model model) {
         return "ftlpage_demo";
     }
-
-    @Autowired
-    private FacadeFlowStateExchangeService facadeFlowStateExchangeService;
 
     @RequestMapping("/test")
     @ResponseBody
@@ -122,9 +111,10 @@ public class AccountController extends BaseController {
     @RequestMapping("/test10")
     @ResponseBody
     public AjaxResult test10() {
-        EmployeeDto userDto = new EmployeeDto();
-        userDto.setAge(2);
-        return AjaxResult.success(userDto, "请继续下一步");
+//        EmployeeDto userDto = new EmployeeDto();
+//        userDto.setAge(2);
+//        return AjaxResult.success(userDto, "请继续下一步");
+        return AjaxResult.success("请继续下一步");
     }
 
     @RequestMapping("/notifyState")
@@ -133,11 +123,11 @@ public class AccountController extends BaseController {
 
         String applyNo = "MYPH20160908";
 
-        FallbackActionDto fallbackActionDto = new FallbackActionDto();
-        fallbackActionDto.setRecptUserId(800L);
-        fallbackActionDto.setApplyLoanNo(applyNo);
-        fallbackActionDto.setOperateUser("zhaudit");
-        facadeFlowStateExchangeService.doAction(fallbackActionDto);
+//        FallbackActionDto fallbackActionDto = new FallbackActionDto();
+//        fallbackActionDto.setRecptUserId(800L);
+//        fallbackActionDto.setApplyLoanNo(applyNo);
+//        fallbackActionDto.setOperateUser("zhaudit");
+//        facadeFlowStateExchangeService.doAction(fallbackActionDto);
         /*
          * RejectActionDto rejectActionDto = new RejectActionDto(); rejectActionDto.setApplyLoanNo(applyNo);
          * rejectActionDto.setOperateUser("zhaudit"); rejectActionDto.setRejectDays(60);

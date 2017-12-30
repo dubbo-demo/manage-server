@@ -1,54 +1,29 @@
 package com.myph.manage.common.shiro;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
+import com.myph.manage.common.shiro.dto.EmpDetailDto;
+import com.myph.manage.common.shiro.dto.RoleConditionDto;
+import com.way.base.menu.dto.MenuDto;
+import com.way.base.menu.service.MenuService;
+import com.way.base.sms.service.SmsService;
+import com.way.common.constant.Constants;
+import com.way.common.exception.DataValidateException;
+import com.way.common.log.WayLogger;
+import com.way.common.result.ServiceResult;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.authc.AuthenticationException;
-import org.apache.shiro.authc.AuthenticationInfo;
-import org.apache.shiro.authc.AuthenticationToken;
-import org.apache.shiro.authc.SimpleAuthenticationInfo;
-import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.subject.Subject;
-import org.apache.tools.ant.taskdefs.condition.And;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.myph.base.dto.MenuDto;
-import com.myph.base.service.MenuService;
-import com.myph.common.constant.Constants;
-import com.myph.common.exception.DataValidateException;
-import com.myph.common.log.MyphLogger;
-import com.myph.common.result.ServiceResult;
-import com.myph.constant.NodeConstant;
-import com.myph.constant.RoleConditionEnum;
-import com.myph.employee.dto.EmployeeDetailDto;
-import com.myph.employee.dto.EmployeeInfoDto;
-import com.myph.employee.service.EmployeeInfoService;
-import com.myph.manage.common.shiro.dto.RoleConditionDto;
-import com.myph.employee.constants.EmployeeMsg.ORGANIZATION_TYPE;
-import com.myph.employee.dto.EmpDetailDto;
-import com.myph.node.dto.SysNodeDto;
-import com.myph.node.service.NodeService;
-import com.myph.organization.dto.OrganizationDto;
-import com.myph.organization.service.OrganizationService;
-import com.myph.permission.dto.PermissionDto;
-import com.myph.permission.service.PermissionService;
-import com.myph.position.dto.PositionDto;
-import com.myph.position.service.PositionService;
-import com.myph.role.service.SysRoleService;
-import com.myph.roleCondition.dto.SysRoleConditionDto;
-import com.myph.roleCondition.service.SysRoleConditionService;
-import com.myph.sms.service.SmsService;
-import com.myph.user.dto.SysUserDto;
-import com.myph.user.service.SysUserService;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * 自定义Realm AuthorizingRealm将获取的Subject相关信息分成两步 主要实现认证和授权的管理操作
@@ -151,19 +126,19 @@ public class MaiyaphRealm extends AuthorizingRealm {
                 throw new DataValidateException(smsCheckResult.getMessage());
             }
             // 员工信息服务 账号信息服务
-            MyphLogger.info("[MaiyaphRealm.doGetAuthenticationInfo]登录麦芽普惠信贷后台，获取缓存里面的短信验证码");
+            WayLogger.info("[MaiyaphRealm.doGetAuthenticationInfo]登录麦芽普惠信贷后台，获取缓存里面的短信验证码");
             ServiceResult<EmployeeInfoDto> employeeResult = employeeInfoService.getEntityByMobile(token.getUsername());
             EmployeeInfoDto employeeInfoDto = employeeResult.getData();
             if (null == employeeInfoDto) {
-                MyphLogger.debug("用户名不正确,手机号:{}", token.getUsername());
+                WayLogger.debug("用户名不正确,手机号:{}", token.getUsername());
                 throw new DataValidateException("用户名不正确");
             }
             if (employeeInfoDto.getUserFlag() == null || Constants.NO.equals(employeeInfoDto.getUserFlag())) {
-                MyphLogger.debug("用户账户未启用,手机号:{},用户ID:{}", employeeInfoDto.getMobilePhone(), employeeInfoDto.getId());
+                WayLogger.debug("用户账户未启用,手机号:{},用户ID:{}", employeeInfoDto.getMobilePhone(), employeeInfoDto.getId());
                 throw new DataValidateException("用户账户未启用");
             }
             if (employeeInfoDto.getIcmbFlag() == null || Constants.YES.equals(employeeInfoDto.getIcmbFlag())) {
-                MyphLogger.debug("用户已离职,手机号:{},用户ID:{}", employeeInfoDto.getMobilePhone(), employeeInfoDto.getId());
+                WayLogger.debug("用户已离职,手机号:{},用户ID:{}", employeeInfoDto.getMobilePhone(), employeeInfoDto.getId());
                 throw new DataValidateException("用户已离职");
             }
             AuthenticationInfo authcInfo = new SimpleAuthenticationInfo(employeeInfoDto.getMobilePhone(),
@@ -204,10 +179,10 @@ public class MaiyaphRealm extends AuthorizingRealm {
             this.setSession(ShiroUtils.ROLE_CONDITION, roleConditionDto);// 角色权限
             return authcInfo;
         } catch (DataValidateException e) {
-            MyphLogger.error("[MaiyaphRealm.doGetAuthenticationInfo]麦芽普惠登录身份认证信息异常", e);
+            WayLogger.error("[MaiyaphRealm.doGetAuthenticationInfo]麦芽普惠登录身份认证信息异常", e);
             throw new AuthenticationException(e.getMessage());
         } catch (Exception e) {
-            MyphLogger.error("[MaiyaphRealm.doGetAuthenticationInfo]麦芽普惠登录身份认证信息异常", e);
+            WayLogger.error("[MaiyaphRealm.doGetAuthenticationInfo]麦芽普惠登录身份认证信息异常", e);
             throw new AuthenticationException("登录失败,请重试");
         }
     }
@@ -222,7 +197,7 @@ public class MaiyaphRealm extends AuthorizingRealm {
         if (null != currentUser) {
             Session session = currentUser.getSession();
             if (null != session) {
-                MyphLogger.info("Session默认超时时间为[" + session.getTimeout() + "]毫秒");
+                WayLogger.info("Session默认超时时间为[" + session.getTimeout() + "]毫秒");
                 session.setAttribute(key, value);
             }
         }
@@ -294,7 +269,7 @@ public class MaiyaphRealm extends AuthorizingRealm {
             List<OrganizationDto> curOrgs = this.getCurOrgs(orgType,empDetailDto);
             result.setOrgs(curOrgs);
         }
-        MyphLogger.debug("数据权限缓存:"+result.toString());
+        WayLogger.debug("数据权限缓存:"+result.toString());
         return result;
     }
     

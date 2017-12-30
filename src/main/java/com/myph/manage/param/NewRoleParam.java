@@ -7,6 +7,7 @@ import com.myph.role.dto.RolePermissionSimpleTreeDto;
 import com.myph.role.dto.RolePermissionTreeDto;
 import com.myph.role.dto.RolePositionDto;
 
+import com.way.common.bean.BaseEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -14,7 +15,7 @@ import lombok.ToString;
 @Data
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
-public class NewRoleParam extends BaseInfo{
+public class NewRoleParam extends BaseEntity {
     /** 
      * @Fields serialVersionUID : TODO(用一句话描述这个变量表示什么) 
      */ 

@@ -1,20 +1,14 @@
 package com.myph.manage.common.util;
 
+import com.way.common.log.WayLogger;
+
+import javax.servlet.*;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.Map;
-
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import com.myph.common.log.MyphLogger;
 
 /**
  * 
@@ -52,7 +46,7 @@ public class AntiXssFilter implements Filter {
                 }
                 if (AntXssUtil.existsXssElement(v)) {
                     HttpServletResponse res = (HttpServletResponse) response;
-                    MyphLogger.error("参数非法url:{},请求:{}", req.getRequestURL(), v);
+                    WayLogger.error("参数非法url:{},请求:{}", req.getRequestURL(), v);
                     res.sendRedirect(req.getContextPath() + "/error/400.html");
                     return;
                 }

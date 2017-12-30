@@ -1,30 +1,18 @@
-/**   
- * @Title: EmpDetailDto.java 
- * @Package: com.myph.manage.common.shiro.dto
- * @company: 麦芽金服
- * @Description: TODO
- * @date 2016年9月29日 下午2:51:56 
- * @version V1.0   
- */
 package com.myph.manage.common.shiro.dto;
 
+import com.way.common.bean.BaseEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
-import com.myph.common.bean.BaseInfo;
-
 /**
  * @ClassName: EmpDetailDto
- * @Description: TODO
- * @author hf
- * @date 2016年9月29日 下午2:51:56
- * 
+ *
  */
 @Data
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
-public class EmpDetailDto extends BaseInfo {
+public class EmpDetailDto extends BaseEntity {
 
     /**
      * @Fields serialVersionUID : TODO

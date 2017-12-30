@@ -1,6 +1,6 @@
 package com.myph.manage.po;
 
-import com.myph.common.bean.BaseInfo;
+import com.way.common.bean.BaseEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -10,33 +10,13 @@ import java.math.BigDecimal;
 /**
  * 员工信息DTO
  *
- * @author dell
  */
 @Data
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = false)
-public class PrintPo extends BaseInfo {
+public class PrintPo extends BaseEntity {
 
     private static final long serialVersionUID = -8459792496440019138L;
-
-    public PrintPo(){}
-
-    public PrintPo(Integer subState, String applyLoanNo, String loanTime, String contractNo,
-            BigDecimal contractAmount, BigDecimal interestAmount, Integer num, BigDecimal periods,
-            BigDecimal repayMon,String bankNo,String bankName,String periodsUnit) {
-        this.subState = subState;
-        this.applyLoanNo = applyLoanNo;
-        this.loanTime = loanTime;
-        this.contractNo = contractNo;
-        this.contractAmount = contractAmount;
-        this.interestAmount = interestAmount;
-        this.num = num;
-        this.periods = periods;
-        this.repayMon = repayMon;
-        this.bankNo = bankNo;
-        this.bankName = bankName;
-        this.periodsUnit = periodsUnit;
-    }
 
     private Integer subState;
     private String applyLoanNo;

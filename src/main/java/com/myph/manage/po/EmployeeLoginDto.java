@@ -1,7 +1,6 @@
 package com.myph.manage.po;
 
-import com.myph.base.dto.MenuDto;
-import com.myph.common.bean.BaseInfo;
+import com.way.base.menu.dto.MenuDto;
 import com.way.common.bean.BaseEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -13,8 +12,6 @@ import java.util.Map;
 /**
  * 员工信息DTO
  * 
- * @author dell
- *
  */
 @Data
 @ToString(callSuper = true)
