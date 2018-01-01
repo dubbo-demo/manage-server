@@ -1,8 +1,6 @@
 package com.myph.manage.controller.sysRoleCondition;
 
-import com.myph.common.log.MyphLogger;
-import com.myph.common.result.AjaxResult;
-import com.myph.common.result.ServiceResult;
+import com.alibaba.fastjson.JSONObject;
 import com.myph.constant.NodeConstant;
 import com.myph.constant.RoleConditionEnum;
 import com.myph.employee.constants.EmployeeMsg;
@@ -11,32 +9,25 @@ import com.myph.node.dto.SysNodeDto;
 import com.myph.node.service.NodeService;
 import com.myph.organization.dto.OrganizationDto;
 import com.myph.organization.service.OrganizationService;
-import com.myph.product.dto.ProductDto;
-import com.myph.product.service.ProductService;
 import com.myph.roleCondition.dto.SysRoleConditionDto;
 import com.myph.roleCondition.service.SysRoleConditionService;
+import com.way.common.log.WayLogger;
+import com.way.common.result.AjaxResult;
+import com.way.common.result.ServiceResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @author heyx
  * @version V1.0
- * @Package: com.myph.manage.controller.sysRoleCondition
- * @company: 麦芽金服
- * @Description: TODO V2.0 数据权限添加
- * @date 2017/7/17
+ * @Description: 数据权限添加
  */
 @Controller
 @RequestMapping("/roleCondition")
@@ -89,7 +80,7 @@ public class SysRoleConditionController {
         try {
             roleList = sysRoleConditionService.selectByRoleId(roleId);
         } catch (Exception e) {
-            MyphLogger.error("数据权限查询异常,roleId:{}", e, roleId);
+            WayLogger.error("数据权限查询异常,roleId:{}", e, roleId);
             return;
         }
         String orgStr = null;
@@ -147,7 +138,7 @@ public class SysRoleConditionController {
     public AjaxResult saveInfo(@RequestBody String jsonStr) {
         String operatorName = ShiroUtils.getCurrentUserName();
         Long operatorId = ShiroUtils.getCurrentUserId();
-        MyphLogger.info("数据权限保存,当前操作人:{},操作人编号:{},权限数据:{}", operatorName, operatorId, jsonStr);
+        WayLogger.info("数据权限保存,当前操作人:{},操作人编号:{},权限数据:{}", operatorName, operatorId, jsonStr);
         try {
             if (null == jsonStr) {
                 return AjaxResult.formatFromServiceResult(null);
@@ -167,7 +158,7 @@ public class SysRoleConditionController {
                 return AjaxResult.success();
             }
         } catch (Exception e) {
-            MyphLogger.error("数据权限保存异常", e);
+            WayLogger.error("数据权限保存异常", e);
             return AjaxResult.failed("服务异常，请稍后重试");
         }
         return AjaxResult.failed("数据权限保存失败");

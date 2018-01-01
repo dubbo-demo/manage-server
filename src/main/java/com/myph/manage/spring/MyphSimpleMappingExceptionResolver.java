@@ -1,10 +1,9 @@
 package com.myph.manage.spring;
 
 import com.alibaba.fastjson.JSONObject;
-import com.myph.common.log.MyphLogger;
-import com.myph.common.result.AjaxResult;
 import com.myph.manage.common.shiro.ShiroUtils;
-
+import com.way.common.log.WayLogger;
+import com.way.common.result.AjaxResult;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.SimpleMappingExceptionResolver;
 
@@ -15,8 +14,6 @@ import java.io.PrintWriter;
 
 /**
  * INFO: 自定义 异常处理类
- * User: zhaokai
- * Date: 2016/9/9 - 10:19
  * Version: 1.0
  * History: <p>如果有修改过程，请记录</P>
  */
@@ -27,7 +24,7 @@ public class MyphSimpleMappingExceptionResolver extends SimpleMappingExceptionRe
     @Override
     protected ModelAndView doResolveException(HttpServletRequest request, HttpServletResponse response,
                                               Object handler, Exception ex) {
-        MyphLogger.error("操作人ID【"+ShiroUtils.getCurrentUserId()+"】操作人【"+ShiroUtils.getCurrentUserName()+"】 请求异常！【"+request.getRequestURL().toString()+"】",ex);
+        WayLogger.error("操作人ID【"+ShiroUtils.getCurrentUserId()+"】操作人【"+ShiroUtils.getCurrentUserName()+"】 请求异常！【"+request.getRequestURL().toString()+"】",ex);
         // Expose ModelAndView for chosen error view.
         String viewName = determineViewName(ex, request);
         if (viewName != null) {// JSP格式返回

@@ -1,6 +1,6 @@
 package com.myph.manage.po;
 
-import com.myph.common.bean.BaseEntity;
+import com.way.common.bean.BaseEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;

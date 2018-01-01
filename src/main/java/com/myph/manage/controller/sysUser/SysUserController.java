@@ -1,10 +1,14 @@
 package com.myph.manage.controller.sysUser;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import com.myph.constants.SysUserMsg;
+import com.myph.employee.dto.EmployeeSysUserDto;
+import com.myph.employee.service.EmployeeInfoService;
+import com.myph.user.dto.SysUserDto;
+import com.myph.user.service.SysUserService;
+import com.way.common.log.WayLogger;
+import com.way.common.result.AjaxResult;
+import com.way.common.result.ServiceResult;
+import com.way.common.rom.annotation.BasePage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,16 +16,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.myph.common.log.MyphLogger;
-import com.myph.common.result.AjaxResult;
-import com.myph.common.result.ServiceResult;
-import com.myph.common.rom.annotation.BasePage;
-import com.myph.common.rom.annotation.Pagination;
-import com.myph.constants.SysUserMsg;
-import com.myph.employee.dto.EmployeeSysUserDto;
-import com.myph.employee.service.EmployeeInfoService;
-import com.myph.user.dto.SysUserDto;
-import com.myph.user.service.SysUserService;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/sysUser")
@@ -80,7 +78,7 @@ public class SysUserController {
             model.addAttribute("queryDto", queryDto);
             return "sysUser/sysUser";
         } catch (Exception e) {
-            MyphLogger.error(e, "查询账户信息异常,入参:{}", queryDto.toString());
+            WayLogger.error(e, "查询账户信息异常,入参:{}", queryDto.toString());
             return "error/500";
         }
     }
@@ -102,7 +100,7 @@ public class SysUserController {
             ServiceResult<Integer> result = sysUserService.updateSysUserAmountState(sysUserDto);
             return AjaxResult.success(result.getData());
         } catch (Exception e) {
-            MyphLogger.error(e, "更新账户状态异常,入参:{}", sysUserDto.toString());
+            WayLogger.error(e, "更新账户状态异常,入参:{}", sysUserDto.toString());
             return AjaxResult.failed("更新账户状态异常");
         }
     }

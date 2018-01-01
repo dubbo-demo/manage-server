@@ -1,8 +1,8 @@
 package com.myph.manage.common.shiro;
 
 import com.alibaba.fastjson.JSONObject;
-import com.myph.common.result.AjaxResult;
 import com.myph.manage.common.shiro.dto.Authorization;
+import com.way.common.result.AjaxResult;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.subject.Subject;
