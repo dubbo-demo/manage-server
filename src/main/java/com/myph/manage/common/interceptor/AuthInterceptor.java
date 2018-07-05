@@ -9,10 +9,10 @@ package com.myph.manage.common.interceptor;
  * History: <p>如果有修改过程，请记录</P>
  */
 
-import com.myph.common.exception.ForbiddenException;
-import com.myph.common.log.MyphLogger;
-import com.myph.manage.permission.AuthorityType;
 import com.myph.manage.permission.AuthPermission;
+import com.myph.manage.permission.AuthorityType;
+import com.way.common.exception.ForbiddenException;
+import com.way.common.log.WayLogger;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.web.util.WebUtils;
@@ -49,7 +49,7 @@ public class AuthInterceptor extends HandlerInterceptorAdapter {
             }
             //获取链接完成请求地址 比如 http://localhost:8082/demo/ftl.htm 会得到 /demo/ftl.htm地址。
             String requestUrl = WebUtils.getPathWithinApplication(request);
-            MyphLogger.debug("拦截到了mvc方法:" + m + "方法，当前请求地址是" + requestUrl);
+            WayLogger.debug("拦截到了mvc方法:" + m + "方法，当前请求地址是" + requestUrl);
 
             //没有获得注解  及不需要权限-- 则直接运行
             if (null != authPermission) {

@@ -1,8 +1,20 @@
 package com.myph.manage.controller.role;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import com.myph.manage.common.shiro.ShiroUtils;
+import com.myph.manage.param.NewRoleParam;
+import com.way.base.menu.dto.MenuDto;
+import com.way.base.menu.service.MenuService;
+import com.way.base.role.dto.AuditPositionRoleDto;
+import com.way.base.role.dto.RolePermissionSimpleTreeDto;
+import com.way.base.role.dto.RolePermissionTreeDto;
+import com.way.base.role.dto.SysRoleDto;
+import com.way.base.role.service.SysRoleService;
+import com.way.common.constant.Constants;
+import com.way.common.log.WayLogger;
+import com.way.common.result.AjaxResult;
+import com.way.common.result.ServiceResult;
+import com.way.common.rom.annotation.BasePage;
+import com.way.common.rom.annotation.Pagination;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -10,23 +22,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.myph.base.dto.MenuDto;
-import com.myph.base.service.MenuService;
-import com.myph.common.constant.Constants;
-import com.myph.common.log.MyphLogger;
-import com.myph.common.result.AjaxResult;
-import com.myph.common.result.ServiceResult;
-import com.myph.common.rom.annotation.BasePage;
-import com.myph.common.rom.annotation.Pagination;
-import com.myph.manage.common.shiro.ShiroUtils;
-import com.myph.manage.param.NewRoleParam;
-import com.myph.position.service.OrgPositionService;
-import com.myph.position.service.PositionService;
-import com.myph.role.dto.AuditPositionRoleDto;
-import com.myph.role.dto.RolePermissionSimpleTreeDto;
-import com.myph.role.dto.RolePermissionTreeDto;
-import com.myph.role.dto.SysRoleDto;
-import com.myph.role.service.SysRoleService;
+import java.util.ArrayList;
+import java.util.List;
 
 @Controller
 @RequestMapping("/role")
@@ -35,19 +32,13 @@ public class RoleController {
     public final static String ERROR = "error";
     
     @Autowired
-    SysRoleService roleService;
+    private SysRoleService roleService;
     
     @Autowired
-    MenuService menuService;
-
-    @Autowired
-    OrgPositionService orgPositionService;
-    
-    @Autowired
-    PositionService positionService;
+    private MenuService menuService;
 
     @RequestMapping("/queryPageList")
-    public String queryPageList(SysRoleDto queryDto,BasePage page, Model model) {
+    public String queryPageList(SysRoleDto queryDto, BasePage page, Model model) {
         ServiceResult<Pagination<SysRoleDto>> list = roleService.queryPageList(queryDto,page.getPageIndex(), page.getPageSize());
         model.addAttribute("result", list.getData());
         model.addAttribute("page", list.getData());
@@ -74,7 +65,7 @@ public class RoleController {
         dto.setCreateUser(ShiroUtils.getCurrentUserName());
         ServiceResult<Long> result = roleService.save(dto);
         Long id = result.getData();
-        MyphLogger.access("保存角色成功！【" + id + "】");
+        WayLogger.access("保存角色成功！【" + id + "】");
         return result;
     }
 
@@ -93,25 +84,25 @@ public class RoleController {
         dto.setId(param.getId());
         ServiceResult<Integer> result = roleService.update(dto);
 
-        MyphLogger.access("更新角色成功！【" + dto.getId() + "】");
+        WayLogger.access("更新角色成功！【" + dto.getId() + "】");
         return result;
     }
 
     @RequestMapping("/updateStatus")
     @ResponseBody
     public ServiceResult<String> updateStatus(@RequestBody NewRoleParam param, Model model) {
-        MyphLogger.info("updateStatus-param:" + param.toString());
+        WayLogger.info("updateStatus-param:" + param.toString());
 
         ServiceResult<String> result = roleService.updateStatus(param.getId(), param.getStatus());
 
-        MyphLogger.access("更新角色与岗位成功！【" + result.toString() + "】");
+        WayLogger.access("更新角色与岗位成功！【" + result.toString() + "】");
         return result;
     }
 
     @RequestMapping("/saveRolePermission")
     @ResponseBody
     public ServiceResult<Object> saveRolePermission(@RequestBody NewRoleParam param, Model model) {
-        MyphLogger.info("saveRolePermission-param:" + param.toString());
+        WayLogger.info("saveRolePermission-param:" + param.toString());
         //设置当时登录用户
         for (RolePermissionSimpleTreeDto e : param.getSaves()) {
             e.setCreateUser(ShiroUtils.getCurrentUserName());
@@ -122,29 +113,29 @@ public class RoleController {
         }
         ServiceResult<Object> result = roleService.insertListSelective(param.getSaves(), param.getRemoves());
 
-        MyphLogger.access("更新角色与权限成功！【" + result.toString() + "】");
+        WayLogger.access("更新角色与权限成功！【" + result.toString() + "】");
         return result;
     }
 
     @RequestMapping("/isExistRoleName")
     @ResponseBody
     public Boolean isExistRoleName(String roleName,String roleOldName, Model model) {
-        MyphLogger.info("isExistRoleName-param:" + roleName);
+        WayLogger.info("isExistRoleName-param:" + roleName);
 
         ServiceResult<Boolean> result = roleService.isExistRoleName(roleName,roleOldName);
 
-        MyphLogger.access("角色是否存在RoleName【" + result.toString() + "】");
+        WayLogger.access("角色是否存在RoleName【" + result.toString() + "】");
         return result.getData();
     }
 
     @RequestMapping("/isExistRoleCode")
     @ResponseBody
     public Boolean saveRolePermission(String roleCode,String roleOldCode, Model model) {
-        MyphLogger.info("isExistRoleCode-param:" + roleCode);
+        WayLogger.info("isExistRoleCode-param:" + roleCode);
 
         ServiceResult<Boolean> result = roleService.isExistRoleCode(roleCode,roleOldCode);
 
-        MyphLogger.access("角色是否存在RoleName【" + result.toString() + "】");
+        WayLogger.access("角色是否存在RoleName【" + result.toString() + "】");
         return result.getData();
     }
 
@@ -202,7 +193,7 @@ public class RoleController {
     @ResponseBody
     public AjaxResult selectRolesByTypeAndPositionId(Integer roleType,Long positionId) {
         ServiceResult<List<SysRoleDto>> sysRoles = roleService.selectRolesByType(roleType);
-        ServiceResult<List<Long>> menuRoleIds = roleService.selectRoleIds(positionId,Constants.NO_INT);
+        ServiceResult<List<Long>> menuRoleIds = roleService.selectRoleIds(positionId, Constants.NO_INT);
         ServiceResult<List<Long>> dataRoleIds = roleService.selectRoleIds(positionId,Constants.YES_INT);
         AuditPositionRoleDto result = new AuditPositionRoleDto();
         result.setRoles(sysRoles.getData());

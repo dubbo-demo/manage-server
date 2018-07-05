@@ -1,7 +1,5 @@
 package com.myph.manage.common.shiro.dto;
 
-import com.myph.organization.dto.OrganizationDto;
-import com.myph.roleCondition.dto.SysRoleConditionDto;
 import com.way.common.bean.BaseEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

@@ -25,7 +25,6 @@ import com.myph.common.constant.Constants;
 import com.myph.common.log.MyphLogger;
 import com.myph.common.util.DateUtils;
 import com.myph.constant.FlowStateEnum;
-import com.myph.manage.common.util.BeanUtils;
 import com.myph.manage.controller.BaseController;
 import com.myph.performance.dto.AuditorPerformanceDto;
 import com.myph.performance.dto.AuditorQueryDto;

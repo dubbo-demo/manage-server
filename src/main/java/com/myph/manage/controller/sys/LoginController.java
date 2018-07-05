@@ -1,22 +1,29 @@
 package com.myph.manage.controller.sys;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
+import com.alibaba.dubbo.rpc.RpcException;
+import com.myph.manage.common.shiro.ShiroUtils;
+import com.myph.manage.common.shiro.session.ShiroRedisSessionDao;
+import com.myph.manage.permission.AuthPermission;
+import com.myph.manage.permission.AuthorityType;
 import com.myph.manage.po.EmployeeLoginDto;
-import org.apache.commons.lang.StringUtils;
+import com.way.base.log.dto.OperatorLogDto;
+import com.way.base.log.service.LogService;
+import com.way.base.menu.dto.MenuDto;
+import com.way.base.menu.service.MenuService;
+import com.way.base.permission.dto.PermissionDto;
+import com.way.base.permission.service.PermissionService;
+import com.way.base.role.service.SysRoleService;
+import com.way.base.sms.service.SmsService;
+import com.way.common.constant.Constants;
+import com.way.common.exception.SmsException;
+import com.way.common.log.WayLogger;
+import com.way.common.redis.CacheService;
+import com.way.common.result.AjaxResult;
+import com.way.common.result.ServiceResult;
+import com.way.common.util.IpUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.authc.AuthenticationException;
-import org.apache.shiro.authc.ExcessiveAttemptsException;
-import org.apache.shiro.authc.IncorrectCredentialsException;
-import org.apache.shiro.authc.LockedAccountException;
-import org.apache.shiro.authc.UnknownAccountException;
-import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.authc.*;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.session.SessionException;
 import org.apache.shiro.subject.Subject;
@@ -24,41 +31,13 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.client.RestTemplate;
 
-import com.alibaba.dubbo.rpc.RpcException;
-import com.myph.base.common.SmsTemplateEnum;
-import com.myph.base.dto.MenuDto;
-import com.myph.base.service.MenuService;
-import com.myph.common.constant.Constants;
-import com.myph.common.exception.DataValidateException;
-import com.myph.common.exception.SmsException;
-import com.myph.common.log.MyphLogger;
-import com.myph.common.redis.CacheService;
-import com.myph.common.result.AjaxResult;
-import com.myph.common.result.ServiceResult;
-import com.myph.common.util.DateUtils;
-import com.myph.common.util.IpUtil;
-import com.myph.employee.dto.EmployeeInfoDto;
-import com.myph.employee.dto.EmployeePositionInfoDto;
-import com.myph.employee.service.EmployeeInfoService;
-import com.myph.log.dto.OperatorLogDto;
-import com.myph.log.service.LogService;
-import com.myph.manage.common.shiro.ShiroUtils;
-import com.myph.manage.common.shiro.session.ShiroRedisSessionDao;
-import com.myph.manage.permission.AuthPermission;
-import com.myph.manage.permission.AuthorityType;
-import com.myph.permission.dto.PermissionDto;
-import com.myph.permission.service.PermissionService;
-import com.myph.role.service.SysRoleService;
-import com.myph.sms.service.SmsService;
-import com.myph.user.dto.SysUserDto;
-import com.myph.user.service.SysUserService;
+import javax.servlet.http.HttpServletRequest;
+import java.util.*;
 
 /**
  * 麦芽普惠登录
@@ -120,7 +99,7 @@ public class LoginController {
 			Subject subject = SecurityUtils.getSubject();
 			subject.login(new UsernamePasswordToken(phone, smsCode));
 			if (subject.isAuthenticated()) {
-				MyphLogger.info("--------登录后台成功--------更新最后登录时间，记录登录日志");
+				WayLogger.info("--------登录后台成功--------更新最后登录时间，记录登录日志");
 				String userIpAddress = IpUtil.getIpAddr(request);
 				Long employeeId = ShiroUtils.getCurrentUser().getId();
 				// 记录登录日志,调用罗荣 的日志服务组件
@@ -135,28 +114,28 @@ public class LoginController {
 		} catch (UnknownAccountException e) {
 			result = "用户名或密码不正确";
 		} catch (IncorrectCredentialsException e) {
-			MyphLogger.error("登录麦芽普惠信贷管理系统异常", e);
+			WayLogger.error("登录麦芽普惠信贷管理系统异常", e);
 			result = "用户名或密码不正确";
 		} catch (LockedAccountException e) {
 			result = "账户已锁定";
-			MyphLogger.error("登录麦芽普惠信贷管理系统异常", e);
+			WayLogger.error("登录麦芽普惠信贷管理系统异常", e);
 		} catch (ExcessiveAttemptsException e) {
 			result = "用户名或密码错误次数过多";
-			MyphLogger.error("登录麦芽普惠信贷管理系统异常", e);
+			WayLogger.error("登录麦芽普惠信贷管理系统异常", e);
 		} catch (SessionException e) {
 			result = "会话已过期,请重新登录";
-			MyphLogger.error("登录麦芽普惠信贷管理系统异常", e);
+			WayLogger.error("登录麦芽普惠信贷管理系统异常", e);
 		} catch (AuthenticationException e) {
 			result = e.getMessage();
-			MyphLogger.error("登录麦芽普惠信贷管理系统异常", e);
+			WayLogger.error("登录麦芽普惠信贷管理系统异常", e);
 		} catch (RpcException e) {
 			result = "系统异常,请稍后重试";
-			MyphLogger.error("登录麦芽普惠信贷管理系统异常", e);
+			WayLogger.error("登录麦芽普惠信贷管理系统异常", e);
 		} catch (Exception e) {
 			result = "系统异常,请稍后重试";
-			MyphLogger.error("登录麦芽普惠信贷管理系统异常", e);
+			WayLogger.error("登录麦芽普惠信贷管理系统异常", e);
 		}
-		MyphLogger.info("处理登录的post请求dologin.htm，手机号:{},短信验证码:{}", phone, smsCode);
+		WayLogger.info("处理登录的post请求dologin.htm，手机号:{},短信验证码:{}", phone, smsCode);
 		if (!"".equals(result)) {
 			return AjaxResult.failed(result);
 		} else {
@@ -203,7 +182,7 @@ public class LoginController {
 				}
 			}
 		} catch (Exception e) {
-			MyphLogger.error(e, "进入首页异常");
+			WayLogger.error(e, "进入首页异常");
 		}
 		return "index";
 	}
@@ -222,14 +201,14 @@ public class LoginController {
 				// 更新此次登录的退出时间
 				String userName = ShiroUtils.getCurrentUserName();
 				String phone = ShiroUtils.getCurrentUser().getMobilePhone();
-				MyphLogger.info("用户{}退出登录", userName);
+				WayLogger.info("用户{}退出登录", userName);
 				subject.logout();
 				//调用催收登录退出接口
 				String url = mycsUrl + "/loginOut.htm";
 				restTemplate.postForObject(url, phone, Object.class);
 			}
 		} catch (Exception e) {
-			MyphLogger.error(e, "用户退出登录异常");
+			WayLogger.error(e, "用户退出登录异常");
 		}
 		return "redirect:login.htm";
 	}
@@ -262,20 +241,20 @@ public class LoginController {
 			result = sendSmsService.sendLoginMessage(phone, SmsTemplateEnum.LOGIN_TEMPLATE);
 			return AjaxResult.formatFromServiceResult(result);
 		} catch (SmsException e) {
-			MyphLogger.error(e, "发送短信异常,请稍后重试");
+			WayLogger.error(e, "发送短信异常,请稍后重试");
 			return AjaxResult.failed(e.getMessage());
 		} catch (Exception e) {
-			MyphLogger.error(e, "发送登录短信异常");
+			WayLogger.error(e, "发送登录短信异常");
 			return AjaxResult.failed("发送短信异常,请稍后重试");
 		} finally {
-			MyphLogger.access("{}发送登录短信", phone);
+			WayLogger.access("{}发送登录短信", phone);
 		}
 	}
 	
 	@RequestMapping(value = "/checkLogin", method = RequestMethod.GET)
     @ResponseBody
 	public ServiceResult<EmployeeLoginDto> checkLogin(String token) {
-        MyphLogger.info("checkLogin :{}",token);
+        WayLogger.info("checkLogin :{}",token);
         final String redisKey = SHIRO_REDIS_SESSION + ":" + token;
         // 验证是否存在redis缓存，存在表示已登录
         if (!CacheService.KeyBase.isExistsKey(redisKey)) {

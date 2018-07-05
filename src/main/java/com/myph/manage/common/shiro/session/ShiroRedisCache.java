@@ -1,7 +1,6 @@
 package com.myph.manage.common.shiro.session;
 
 import com.myph.common.log.MyphLogger;
-import com.myph.manage.common.shiro.SerializeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.cache.Cache;
 import org.apache.shiro.cache.CacheException;

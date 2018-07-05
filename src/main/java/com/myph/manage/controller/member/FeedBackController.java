@@ -1,6 +1,5 @@
 package com.myph.manage.controller.member;
 
-import com.myph.manage.common.util.BeanUtils;
 import com.myph.manage.controller.BaseController;
 import com.myph.member.feedback.dto.FeedBackDto;
 import com.myph.member.feedback.service.FeedBackService;

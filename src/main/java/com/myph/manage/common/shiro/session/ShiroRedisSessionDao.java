@@ -1,15 +1,12 @@
 package com.myph.manage.common.shiro.session;
 
 import com.myph.common.log.MyphLogger;
-import com.myph.manage.common.shiro.SerializeUtils;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.session.UnknownSessionException;
 import org.apache.shiro.session.mgt.eis.AbstractSessionDAO;
 
 import java.io.Serializable;
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
 
 public class ShiroRedisSessionDao extends AbstractSessionDAO {
 

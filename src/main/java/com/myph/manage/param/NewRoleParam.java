@@ -1,16 +1,12 @@
 package com.myph.manage.param;
 
-import java.util.List;
-
-import com.myph.common.bean.BaseInfo;
-import com.myph.role.dto.RolePermissionSimpleTreeDto;
-import com.myph.role.dto.RolePermissionTreeDto;
-import com.myph.role.dto.RolePositionDto;
-
+import com.way.base.role.dto.RolePermissionSimpleTreeDto;
 import com.way.common.bean.BaseEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+
+import java.util.List;
 
 @Data
 @ToString(callSuper = true)

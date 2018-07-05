@@ -90,7 +90,7 @@
 	
 	<filter>
 		<filter-name>AntiXssFilter</filter-name>
-		<filter-class>com.myph.manage.common.util.AntiXssFilter</filter-class>
+		<filter-class>com.myph.manage.filter.AntiXssFilter</filter-class>
 	</filter>
 	<filter-mapping>
 		<filter-name>AntiXssFilter</filter-name>

@@ -1,6 +1,3 @@
-/**
- * 
- */
 package com.myph.manage.common.shiro;
 
 import com.myph.manage.common.shiro.dto.RoleConditionDto;

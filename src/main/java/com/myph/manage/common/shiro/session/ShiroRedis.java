@@ -8,8 +8,6 @@ import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
 
-import com.myph.manage.common.shiro.SerializeUtils;
-
 public class ShiroRedis {
     public ShiroRedis() {
 
